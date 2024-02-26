@@ -1,4 +1,4 @@
-package br.com.telematica.ciloapi.controller;
+package br.com.telematica.siloapi.controller;
 
 import java.util.Date;
 
@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.telematica.ciloapi.model.dto.AuthenticationDTO;
-import br.com.telematica.ciloapi.model.dto.ResponseAuthenticationDTO;
-import br.com.telematica.ciloapi.repository.AuthenticationRepository;
+import br.com.telematica.siloapi.model.dto.AuthenticationDTO;
+import br.com.telematica.siloapi.model.dto.ResponseAuthenticationDTO;
+import br.com.telematica.siloapi.repository.AuthenticationRepository;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController

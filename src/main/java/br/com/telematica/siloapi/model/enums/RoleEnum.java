@@ -1,4 +1,4 @@
-package br.com.telematica.ciloapi.model.enums;
+package br.com.telematica.siloapi.model.enums;
 
 public enum RoleEnum {
     ADMIN("ADMIN"), USER("USER");

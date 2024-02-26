@@ -1,6 +1,6 @@
-package br.com.telematica.ciloapi.model.interfaces;
+package br.com.telematica.siloapi.model.interfaces;
 
-import br.com.telematica.ciloapi.utils.error.GenericResponseModel;
+import br.com.telematica.siloapi.utils.error.GenericResponseModel;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

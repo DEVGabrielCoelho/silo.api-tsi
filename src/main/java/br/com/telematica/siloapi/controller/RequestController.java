@@ -1,4 +1,4 @@
-package br.com.telematica.ciloapi.controller;
+package br.com.telematica.siloapi.controller;
 
 import java.util.Date;
 
@@ -12,11 +12,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.telematica.ciloapi.model.dto.RegistryDTO;
-import br.com.telematica.ciloapi.model.enttity.UserEntity;
-import br.com.telematica.ciloapi.model.interfaces.SecurityRestController;
-import br.com.telematica.ciloapi.service.UserServices;
-import br.com.telematica.ciloapi.utils.error.GenericResponseModel;
+import br.com.telematica.siloapi.model.dto.RegistryDTO;
+import br.com.telematica.siloapi.model.enttity.UserEntity;
+import br.com.telematica.siloapi.model.interfaces.SecurityRestController;
+import br.com.telematica.siloapi.service.UserServices;
+import br.com.telematica.siloapi.utils.error.GenericResponseModel;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 

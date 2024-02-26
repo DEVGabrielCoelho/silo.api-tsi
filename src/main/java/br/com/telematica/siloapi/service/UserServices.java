@@ -1,4 +1,4 @@
-package br.com.telematica.ciloapi.service;
+package br.com.telematica.siloapi.service;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -10,10 +10,10 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import br.com.telematica.ciloapi.model.dto.RegistryDTO;
-import br.com.telematica.ciloapi.model.enttity.UserEntity;
-import br.com.telematica.ciloapi.model.enums.RoleEnum;
-import br.com.telematica.ciloapi.repository.UserRepository;
+import br.com.telematica.siloapi.model.dto.RegistryDTO;
+import br.com.telematica.siloapi.model.enttity.UserEntity;
+import br.com.telematica.siloapi.model.enums.RoleEnum;
+import br.com.telematica.siloapi.repository.UserRepository;
 
 @Service
 public class UserServices {

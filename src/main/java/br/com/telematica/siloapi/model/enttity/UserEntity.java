@@ -1,4 +1,4 @@
-package br.com.telematica.ciloapi.model.enttity;
+package br.com.telematica.siloapi.model.enttity;
 
 import java.math.BigInteger;
 import java.util.Collection;
@@ -8,7 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import br.com.telematica.ciloapi.model.enums.RoleEnum;
+import br.com.telematica.siloapi.model.enums.RoleEnum;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;

@@ -1,4 +1,4 @@
-package br.com.telematica.ciloapi.service;
+package br.com.telematica.siloapi.service;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -14,10 +14,10 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 
-import br.com.telematica.ciloapi.model.dto.AuthenticationDTO;
-import br.com.telematica.ciloapi.model.enttity.UserEntity;
-import br.com.telematica.ciloapi.repository.AuthenticationRepository;
-import br.com.telematica.ciloapi.repository.UserRepository;
+import br.com.telematica.siloapi.model.dto.AuthenticationDTO;
+import br.com.telematica.siloapi.model.enttity.UserEntity;
+import br.com.telematica.siloapi.repository.AuthenticationRepository;
+import br.com.telematica.siloapi.repository.UserRepository;
 
 @Service
 public class AuthService implements AuthenticationRepository{

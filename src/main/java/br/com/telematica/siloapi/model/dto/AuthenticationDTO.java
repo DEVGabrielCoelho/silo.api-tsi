@@ -1,4 +1,4 @@
-package br.com.telematica.ciloapi.model.dto;
+package br.com.telematica.siloapi.model.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 

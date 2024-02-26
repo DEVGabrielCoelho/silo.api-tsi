@@ -1,7 +1,7 @@
-package br.com.telematica.ciloapi.model.dto;
+package br.com.telematica.siloapi.model.dto;
 
-import br.com.telematica.ciloapi.model.enttity.UserEntity;
-import br.com.telematica.ciloapi.model.enums.RoleEnum;
+import br.com.telematica.siloapi.model.enttity.UserEntity;
+import br.com.telematica.siloapi.model.enums.RoleEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**

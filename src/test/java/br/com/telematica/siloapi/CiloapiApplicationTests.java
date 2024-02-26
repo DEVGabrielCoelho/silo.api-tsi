@@ -1,10 +1,10 @@
-package br.com.telematica.ciloapi;
+package br.com.telematica.siloapi;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class CiloapiApplicationTests {
+class SiloapiApplicationTests {
 
 	@Test
 	void contextLoads() {
