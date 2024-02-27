@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.telematica.siloapi.model.dto.RegistryDTO;
-import br.com.telematica.siloapi.model.enttity.UserEntity;
+import br.com.telematica.siloapi.model.enttity.UsuarioEntity;
 import br.com.telematica.siloapi.model.interfaces.SecurityRestController;
-import br.com.telematica.siloapi.service.UserServices;
+import br.com.telematica.siloapi.service.UsuarioServices;
 import br.com.telematica.siloapi.utils.error.GenericResponseModel;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -26,13 +26,13 @@ import jakarta.validation.Valid;
 public class RequestController implements SecurityRestController {
 
 	@Autowired
-	private UserServices userServices;
+	private UsuarioServices userServices;
 
 	@PostMapping("/register")
 	public ResponseEntity<GenericResponseModel> postRegister(@Valid @RequestBody RegistryDTO entity) {
 		GenericResponseModel response = new GenericResponseModel();
 		try {
-			UserEntity user = new UserEntity(entity.getUser(), entity.getPassword(), entity.getName(), entity.getEmail(), entity.getRole().toRole().toUpperCase());
+			UsuarioEntity user = new UsuarioEntity(entity.getUser(), entity.getPassword(), entity.getName(), entity.getEmail(), entity.getRole());
 
 			userServices.saveUserEncodePassword(user);
 

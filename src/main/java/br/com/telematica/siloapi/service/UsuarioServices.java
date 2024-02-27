@@ -11,19 +11,19 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import br.com.telematica.siloapi.model.dto.RegistryDTO;
-import br.com.telematica.siloapi.model.enttity.UserEntity;
-import br.com.telematica.siloapi.model.enums.RoleEnum;
-import br.com.telematica.siloapi.repository.UserRepository;
+import br.com.telematica.siloapi.model.enttity.UsuarioEntity;
+import br.com.telematica.siloapi.model.enums.RoleColectionEnum;
+import br.com.telematica.siloapi.repository.UsuarioRepository;
 
 @Service
-public class UserServices {
+public class UsuarioServices {
 
 	@Autowired
-	private UserRepository userRepository;
+	private UsuarioRepository userRepository;
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
-	public RegistryDTO saveUserEncodePassword(UserEntity user) {
+	public RegistryDTO saveUserEncodePassword(UsuarioEntity user) {
 
 		var userEntity = userRepository.findByUsulog(user.getUsulog());
 		if (userEntity != null) {
@@ -32,7 +32,7 @@ public class UserServices {
 
 		user.setUsusen(this.passwordEncoder.encode(user.getPassword()));
 		userRepository.save(user);
-		RoleEnum role = RoleEnum.valueOf(user.getUsurol());
+		RoleColectionEnum role = user.getUsurol();
 
 		return new RegistryDTO(user.getUsulog(), user.getUsusen(), user.getUsunom(), user.getUsuema(), role);
 	}
@@ -44,14 +44,14 @@ public class UserServices {
 		userRepository.deleteById(id);
 	}
 
-	public UserEntity update(UserEntity usuario) throws IOException {
+	public UsuarioEntity update(UsuarioEntity usuario) throws IOException {
 		if (usuario == null) {
 			throw new RuntimeException("Usuário está nulo.");
 		}
 		return userRepository.save(usuario);
 	}
 
-	public List<UserEntity> findAll() throws IOException {
+	public List<UsuarioEntity> findAll() throws IOException {
 		return userRepository.findAll();
 	}
 
@@ -59,18 +59,18 @@ public class UserServices {
 		return userRepository.findAll().stream().map(this::convertToRegistryDTO).collect(Collectors.toList());
 	}
 
-	public UserEntity findLogin(String login) throws IOException {
+	public UsuarioEntity findLogin(String login) throws IOException {
 		return userRepository.findByUsulog(login);
 	}
 
-	public UserEntity findById(BigInteger id) throws IOException, EmptyResultDataAccessException {
+	public UsuarioEntity findById(BigInteger id) throws IOException, EmptyResultDataAccessException {
 		if (id == null) {
 			throw new IOException("Id está nulo.");
 		}
 		return userRepository.findById(id).orElse(null);
 	}
 
-	private RegistryDTO convertToRegistryDTO(UserEntity userEntity) {
+	private RegistryDTO convertToRegistryDTO(UsuarioEntity userEntity) {
 		return new RegistryDTO(userEntity);
 	}
 }

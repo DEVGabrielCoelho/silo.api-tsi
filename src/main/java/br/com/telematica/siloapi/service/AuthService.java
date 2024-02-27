@@ -15,15 +15,15 @@ import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 
 import br.com.telematica.siloapi.model.dto.AuthenticationDTO;
-import br.com.telematica.siloapi.model.enttity.UserEntity;
+import br.com.telematica.siloapi.model.enttity.UsuarioEntity;
 import br.com.telematica.siloapi.repository.AuthenticationRepository;
-import br.com.telematica.siloapi.repository.UserRepository;
+import br.com.telematica.siloapi.repository.UsuarioRepository;
 
 @Service
 public class AuthService implements AuthenticationRepository{
 
     @Autowired
-    private UserRepository userRepository;
+    private UsuarioRepository userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -32,7 +32,7 @@ public class AuthService implements AuthenticationRepository{
 
     @Override
     public String getToken(AuthenticationDTO authToken) {
-        UserEntity user = userRepository.findByUsulog(authToken.getLogin());
+        UsuarioEntity user = userRepository.findByUsulog(authToken.getLogin());
         return generateToken(user);
     }
 
@@ -45,7 +45,7 @@ public class AuthService implements AuthenticationRepository{
     	}
     }
 
-    public String generateToken(UserEntity user) {
+    public String generateToken(UsuarioEntity user) {
         try {
             Algorithm algorithm = Algorithm.HMAC256("my-secret");
             String token = JWT.create().withIssuer("auth-api").withSubject(user.getUsulog()).withExpiresAt(genExpirationDate()).sign(algorithm);

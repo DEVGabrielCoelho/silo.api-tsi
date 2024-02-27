@@ -2,14 +2,14 @@ package br.com.telematica.siloapi.model.enttity;
 
 import java.math.BigInteger;
 import java.util.Collection;
-import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import br.com.telematica.siloapi.model.enums.RoleEnum;
+import br.com.telematica.siloapi.model.enums.RoleColectionEnum;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -17,7 +17,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "usuario")
-public class UserEntity implements UserDetails {
+public class UsuarioEntity implements UserDetails {
 
 	/**
 	 * 
@@ -30,12 +30,13 @@ public class UserEntity implements UserDetails {
 	private String ususen;
 	private String usunom;
 	private String usuema;
-	private String usurol;
+	@Enumerated(EnumType.STRING)
+	private RoleColectionEnum usurol;
 
-	public UserEntity() {
+	public UsuarioEntity() {
 	}
 
-	public UserEntity(String usulog, String ususen, String usunom, String usuema, String usurol) {
+	public UsuarioEntity(String usulog, String ususen, String usunom, String usuema, RoleColectionEnum usurol) {
 		this.usulog = usulog;
 		this.ususen = ususen;
 		this.usunom = usunom;
@@ -83,21 +84,18 @@ public class UserEntity implements UserDetails {
 		this.usuema = usuema;
 	}
 
-	public String getUsurol() {
+	public RoleColectionEnum getUsurol() {
 		return usurol;
 	}
 
-	public void setUsurol(String usurol) {
+	public void setUsurol(RoleColectionEnum usurol) {
 		this.usurol = usurol;
 	}
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		try {
-			if (this.usurol == RoleEnum.ADMIN.toRole())
-				return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
-			else
-				return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+			return usurol.getAuthorities();
 		} catch (Exception e) {
 			throw new UnsupportedOperationException("Unimplemented method 'getAuthorities'");
 		}
