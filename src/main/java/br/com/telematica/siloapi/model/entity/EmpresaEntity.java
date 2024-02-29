@@ -1,6 +1,11 @@
-package br.com.telematica.siloapi.model.enttity;
+package br.com.telematica.siloapi.model.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "empresa")
@@ -13,7 +18,7 @@ public class EmpresaEntity {
     @Column(length = 150, nullable = false)
     private String empnom;
     @Column(length = 150, nullable = false)
-    private Integer empcnpl;
+    private Integer empcnp;
 
     public EmpresaEntity() {
     }
@@ -21,7 +26,7 @@ public class EmpresaEntity {
     public EmpresaEntity(Integer empcod, String empnom, Integer empcnpl) {
         this.empcod = empcod;
         this.empnom = empnom;
-        this.empcnpl = empcnpl;
+        this.empcnp = empcnpl;
     }
 
     public Integer getEmpcod() {
@@ -40,12 +45,12 @@ public class EmpresaEntity {
         this.empnom = empnom;
     }
 
-    public Integer getEmpcnpl() {
-        return empcnpl;
+    public Integer getEmpcnp() {
+        return empcnp;
     }
 
-    public void setEmpcnpl(Integer empcnpl) {
-        this.empcnpl = empcnpl;
+    public void setEmpcnp(Integer empcnpl) {
+        this.empcnp = empcnpl;
     }
 
     @Override
@@ -53,7 +58,7 @@ public class EmpresaEntity {
         final StringBuffer sb = new StringBuffer("EmpresaEntity{");
         sb.append("empcod=").append(empcod);
         sb.append(", empnom='").append(empnom).append('\'');
-        sb.append(", empcnpl=").append(empcnpl);
+        sb.append(", empcnp=").append(empcnp);
         sb.append('}');
         return sb.toString();
     }

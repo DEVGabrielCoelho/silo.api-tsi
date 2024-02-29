@@ -1,4 +1,4 @@
-package br.com.telematica.siloapi.model.enttity;
+package br.com.telematica.siloapi.model.entity;
 
 import java.math.BigInteger;
 

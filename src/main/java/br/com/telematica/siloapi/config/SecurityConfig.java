@@ -24,21 +24,17 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme;
 @SecurityScheme(name = "bearerAuth", description = "JWT Authentication", type = SecuritySchemeType.HTTP, scheme = "bearer", bearerFormat = "JWT", in = SecuritySchemeIn.HEADER)
 public class SecurityConfig {
 
-	private static final String[] WHITE_LIST_URL = { "/api/v1/auth/**", "/api/v1/auth/authenticate","/v2/api-docs", "/v3/api-docs", "/v3/api-docs/**", "/swagger-resources", "/swagger-resources/**", "/configuration/ui", "/configuration/security", "/swagger-ui/**", "/webjars/**", "/swagger-ui.html" };
-	
-	
+	private static final String[] WHITE_LIST_URL = { "/v2/api-docs", "/v3/api-docs", "/v3/api-docs/**", "/swagger-resources", "/swagger-resources/**", "/configuration/ui", "/configuration/security", "/swagger-ui/**", "/webjars/**", "/swagger-ui.html" };
+
 	@Autowired
 	private JWTAuthenticationFilter jwtAuthenticationFilter;
-
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		return http.csrf(csrf -> csrf.disable()).sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)).exceptionHandling(ex -> ex.accessDeniedHandler(new CustomAccessDeniedHandler()))
-				.authorizeHttpRequests(requests -> requests
-						.requestMatchers(HttpMethod.GET, WHITE_LIST_URL).permitAll()
-						.requestMatchers(HttpMethod.POST, WHITE_LIST_URL).permitAll()
-//						.requestMatchers(HttpMethod.GET, "/api/v1/auth/authenticate").permitAll()
-//						.requestMatchers(HttpMethod.POST, "/api/v1/auth/authenticate").permitAll()
+				.authorizeHttpRequests(requests -> requests.requestMatchers(WHITE_LIST_URL).permitAll()
+						.requestMatchers(HttpMethod.POST, "/api/v1/management/authenticate").permitAll()
+						.requestMatchers(HttpMethod.POST, "/api/v1/management/register").permitAll()
 						.anyRequest().authenticated())
 				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class).build();
 	}

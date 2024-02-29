@@ -6,14 +6,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import static br.com.telematica.siloapi.model.enums.Permission.USER_1;
-import static br.com.telematica.siloapi.model.enums.Permission.USER_2;
-import static br.com.telematica.siloapi.model.enums.Permission.USER_3;
-import static br.com.telematica.siloapi.model.enums.Permission.USER_4;
 
 public enum RoleColectionEnum {
 
-	USER(Set.of(USER_1, USER_2, USER_3, USER_4)), ADMIN(Collections.emptySet());
+	USER(Collections.emptySet()), ADMIN(Collections.emptySet());
 
 	private final Set<Permission> permission;
 

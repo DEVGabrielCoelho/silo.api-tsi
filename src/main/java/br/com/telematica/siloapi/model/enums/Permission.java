@@ -14,6 +14,5 @@ public enum Permission {
 	private Permission(String permission) {
 		this.permission = permission;
 	}
-	
-	
+
 }

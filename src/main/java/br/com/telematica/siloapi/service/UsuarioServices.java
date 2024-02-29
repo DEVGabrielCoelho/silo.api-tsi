@@ -1,7 +1,6 @@
 package br.com.telematica.siloapi.service;
 
 import java.io.IOException;
-import java.math.BigInteger;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -11,7 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import br.com.telematica.siloapi.model.dto.RegistryDTO;
-import br.com.telematica.siloapi.model.enttity.UsuarioEntity;
+import br.com.telematica.siloapi.model.entity.UsuarioEntity;
 import br.com.telematica.siloapi.model.enums.RoleColectionEnum;
 import br.com.telematica.siloapi.repository.UsuarioRepository;
 
@@ -23,7 +22,7 @@ public class UsuarioServices {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
-	public RegistryDTO saveUserEncodePassword(UsuarioEntity user) {
+	public RegistryDTO saveUserEncodePassword(UsuarioEntity user) throws RuntimeException {
 
 		var userEntity = userRepository.findByUsulog(user.getUsulog());
 		if (userEntity != null) {
@@ -37,7 +36,7 @@ public class UsuarioServices {
 		return new RegistryDTO(user.getUsulog(), user.getUsusen(), user.getUsunom(), user.getUsuema(), role);
 	}
 
-	public void deleteById(BigInteger id) throws IOException {
+	public void deleteById(Integer id) throws IOException {
 		if (id == null) {
 			throw new IOException("Id está nulo.");
 		}
@@ -63,7 +62,7 @@ public class UsuarioServices {
 		return userRepository.findByUsulog(login);
 	}
 
-	public UsuarioEntity findById(BigInteger id) throws IOException, EmptyResultDataAccessException {
+	public UsuarioEntity findById(Integer id) throws IOException, EmptyResultDataAccessException {
 		if (id == null) {
 			throw new IOException("Id está nulo.");
 		}

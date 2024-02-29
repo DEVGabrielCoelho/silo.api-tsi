@@ -15,7 +15,7 @@ import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 
 import br.com.telematica.siloapi.model.dto.AuthenticationDTO;
-import br.com.telematica.siloapi.model.enttity.UsuarioEntity;
+import br.com.telematica.siloapi.model.entity.UsuarioEntity;
 import br.com.telematica.siloapi.repository.AuthenticationRepository;
 import br.com.telematica.siloapi.repository.UsuarioRepository;
 

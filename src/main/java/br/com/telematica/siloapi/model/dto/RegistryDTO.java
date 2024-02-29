@@ -1,6 +1,6 @@
 package br.com.telematica.siloapi.model.dto;
 
-import br.com.telematica.siloapi.model.enttity.UsuarioEntity;
+import br.com.telematica.siloapi.model.entity.UsuarioEntity;
 import br.com.telematica.siloapi.model.enums.RoleColectionEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 

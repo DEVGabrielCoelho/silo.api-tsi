@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.telematica.siloapi.model.dto.SiloDTO;
 import br.com.telematica.siloapi.model.interfaces.SecurityRestController;
+import br.com.telematica.siloapi.utils.error.MessageResponse;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
@@ -23,24 +24,24 @@ public class SiloController implements SecurityRestController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable("id") Long id) {
         // implementation here
-        return new ResponseEntity<>(null, HttpStatus.OK);
+        return new ResponseEntity<>(MessageResponse.sucessRequest200("Registro feito com Sucesso", null, null), HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable("id") Long id, @RequestBody SiloDTO siloDTO) {
-        return new ResponseEntity<>(null, HttpStatus.OK);
+        return new ResponseEntity<>(MessageResponse.sucessRequest200("Registro feito com Sucesso", null, null), HttpStatus.OK);
     }
 
     @PostMapping
     public ResponseEntity<?> create(@RequestBody SiloDTO siloDTO) {
         // implementation here
-        return new ResponseEntity<>(null, HttpStatus.OK);
+        return new ResponseEntity<>(MessageResponse.sucessRequest200("Registro feito com Sucesso", null, null), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable("id") Long id) {
         // implementation here
-        return new ResponseEntity<>(null, HttpStatus.OK);
+        return new ResponseEntity<>(MessageResponse.sucessRequest200("Registro feito com Sucesso", null, null), HttpStatus.OK);
     }
 
 }
