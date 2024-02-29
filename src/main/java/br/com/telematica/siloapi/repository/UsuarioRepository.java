@@ -8,4 +8,5 @@ import br.com.telematica.siloapi.model.entity.UsuarioEntity;
 @Repository
 public interface UsuarioRepository extends JpaRepository<UsuarioEntity, Integer> {
 	UsuarioEntity findByUsulog(String login);
+
 }

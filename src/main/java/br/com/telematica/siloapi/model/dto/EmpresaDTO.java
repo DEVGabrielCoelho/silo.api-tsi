@@ -1,18 +1,31 @@
 package br.com.telematica.siloapi.model.dto;
 
+import br.com.telematica.siloapi.model.entity.EmpresaEntity;
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description = "Empresa")
 public class EmpresaDTO {
 
+    @Schema(description = "Código", example = "1", required = true)
     private Integer codigo;
+    @Schema(description = "Nome", example = "Empresa 1", required = true)
     private String nome;
-    private String cnpj;
+    @Schema(description = "CNPJ", example = "12345678901234", required = true)
+    private Long cnpj;
 
     public EmpresaDTO() {
     }
 
-    public EmpresaDTO(Integer codigo, String nome, String cnpj) {
+    public EmpresaDTO(Integer codigo, String nome, Long cnpj) {
         this.codigo = codigo;
         this.nome = nome;
         this.cnpj = cnpj;
+    }
+
+    public EmpresaDTO(EmpresaEntity empresa) {
+        this.codigo = empresa.getEmpcod();
+        this.nome = empresa.getEmpnom();
+        this.cnpj = empresa.getEmpcnp();
     }
 
     public Integer getCodigo() {
@@ -31,11 +44,11 @@ public class EmpresaDTO {
         this.nome = nome;
     }
 
-    public String getCnpj() {
+    public Long getCnpj() {
         return cnpj;
     }
 
-    public void setCnpj(String cnpj) {
+    public void setCnpj(Long cnpj) {
         this.cnpj = cnpj;
     }
 

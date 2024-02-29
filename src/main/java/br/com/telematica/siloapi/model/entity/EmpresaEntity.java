@@ -18,12 +18,12 @@ public class EmpresaEntity {
     @Column(length = 150, nullable = false)
     private String empnom;
     @Column(length = 150, nullable = false)
-    private Integer empcnp;
+    private Long empcnp;
 
     public EmpresaEntity() {
     }
 
-    public EmpresaEntity(Integer empcod, String empnom, Integer empcnpl) {
+    public EmpresaEntity(Integer empcod, String empnom, Long empcnpl) {
         this.empcod = empcod;
         this.empnom = empnom;
         this.empcnp = empcnpl;
@@ -45,11 +45,11 @@ public class EmpresaEntity {
         this.empnom = empnom;
     }
 
-    public Integer getEmpcnp() {
+    public Long getEmpcnp() {
         return empcnp;
     }
 
-    public void setEmpcnp(Integer empcnpl) {
+    public void setEmpcnp(Long empcnpl) {
         this.empcnp = empcnpl;
     }
 
