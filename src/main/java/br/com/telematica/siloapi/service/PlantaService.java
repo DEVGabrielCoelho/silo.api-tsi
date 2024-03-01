@@ -23,6 +23,9 @@ public class PlantaService {
 	private PlantaRepository plantaRepository;
 
 	public PlantaDTO save(PlantaDTO planta) throws RuntimeException {
+		try {
+			
+		
 		if (planta == null) {
 			throw new RuntimeException("Planta está nula.");
 		}
@@ -31,6 +34,9 @@ public class PlantaService {
 
 		logger.info("Planta salva com sucesso." + result);
 		return new PlantaDTO(result.getPlacod(), result.getPlanom(), result.getEmpcod());
+	} catch (Exception e) {
+		throw new RuntimeException("Exceção:" + e.getCause());
+	}
 	}
 
 	@Transactional

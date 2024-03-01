@@ -21,6 +21,7 @@ import br.com.telematica.siloapi.utils.error.MessageResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/planta")
@@ -30,56 +31,71 @@ public class PlantaController implements SecurityRestController {
     @Autowired
     private PlantaService plantaService;
 
-
     @GetMapping("/listaPlantas")
     @Operation(description = "Busca pelas plantas cadastradas")
-    public ResponseEntity<GenericResponseModel> getPlanta(@PathVariable Long id) {
+    public ResponseEntity<GenericResponseModel> getPlanta(@Valid @PathVariable Long id) {
         try {
             var entity = plantaService.findAllPlantaDTO();
-            return new ResponseEntity<>(MessageResponse.sucessRequest200("Registro feito com Sucesso", null, entity), HttpStatus.OK);
+            return new ResponseEntity<>(MessageResponse.sucessRequest200("Registro feito com Sucesso", null, entity),
+                    HttpStatus.OK);
         } catch (IOException e) {
-            return new ResponseEntity<>(MessageResponse.exceptionRequest400(e.getMessage(), null, null), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(MessageResponse.exceptionRequest400(e.getMessage(), null, null),
+                    HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            return new ResponseEntity<>(MessageResponse.exceptionRequest500("Exceção gerada ao executar o registro. " + e.getCause(), null, null), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(MessageResponse
+                    .exceptionRequest500("Exceção gerada ao executar o registro. " + e.getCause(), null, null),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @PostMapping("/cadastraPlanta")
     @Operation(description = "Cadastro de uma nova planta")
-    public ResponseEntity<GenericResponseModel> createPlanta(@RequestBody PlantaDTO planta) {
+    public ResponseEntity<GenericResponseModel> createPlanta(@Valid @RequestBody PlantaDTO planta) {
         try {
             var entity = plantaService.save(planta);
-            return new ResponseEntity<>(MessageResponse.sucessRequest200("Registro feito com Sucesso", null, entity), HttpStatus.OK);
+            return new ResponseEntity<>(MessageResponse.sucessRequest200("Registro feito com Sucesso", null, entity),
+                    HttpStatus.OK);
         } catch (RuntimeException e) {
-            return new ResponseEntity<>(MessageResponse.exceptionRequest400(e.getMessage(), null, null), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(MessageResponse.exceptionRequest400(e.getMessage(), null, null),
+                    HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            return new ResponseEntity<>(MessageResponse.exceptionRequest500("Exceção gerada ao executar o registro. " + e.getCause(), null, null), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(MessageResponse
+                    .exceptionRequest500("Exceção gerada ao executar o registro. " + e.getCause(), null, null),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @PutMapping("/atualizaPlanta")
     @Operation(description = "Atualização de uma planta")
-    public ResponseEntity<GenericResponseModel> updatePlanta(@PathVariable Long id, @RequestBody PlantaDTO planta) {
+    public ResponseEntity<GenericResponseModel> updatePlanta(@Valid @RequestBody PlantaDTO planta) {
         try {
             var entity = plantaService.update(planta);
-            return new ResponseEntity<>(MessageResponse.sucessRequest200("Registro feito com Sucesso", null, entity), HttpStatus.OK);
+            return new ResponseEntity<>(MessageResponse.sucessRequest200("Registro feito com Sucesso", null, entity),
+                    HttpStatus.OK);
         } catch (IOException e) {
-            return new ResponseEntity<>(MessageResponse.exceptionRequest400(e.getMessage(), null, null), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(MessageResponse.exceptionRequest400(e.getMessage(), null, null),
+                    HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            return new ResponseEntity<>(MessageResponse.exceptionRequest500("Exceção gerada ao executar o registro. " + e.getCause(), null, null), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(MessageResponse
+                    .exceptionRequest500("Exceção gerada ao executar o registro. " + e.getCause(), null, null),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @DeleteMapping("/deletaPlanta/{codigo}")
     @Operation(description = "Deletar uma planta")
-    public ResponseEntity<GenericResponseModel> deletePlanta(@PathVariable Integer codigo) {
+    public ResponseEntity<GenericResponseModel> deletePlanta(@Valid @PathVariable Integer codigo) {
         try {
             plantaService.deleteByPlacod(codigo);
-            return new ResponseEntity<>(MessageResponse.sucessRequest200("Registro feito com Sucesso", null, null), HttpStatus.OK);
+            return new ResponseEntity<>(MessageResponse.sucessRequest200("Registro feito com Sucesso", null, null),
+                    HttpStatus.OK);
         } catch (IOException e) {
-            return new ResponseEntity<>(MessageResponse.exceptionRequest400(e.getMessage(), null, null), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(MessageResponse.exceptionRequest400(e.getMessage(), null, null),
+                    HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            return new ResponseEntity<>(MessageResponse.exceptionRequest500("Exceção gerada ao executar o registro. " + e.getCause(), null, null), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(MessageResponse
+                    .exceptionRequest500("Exceção gerada ao executar o registro. " + e.getCause(), null, null),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

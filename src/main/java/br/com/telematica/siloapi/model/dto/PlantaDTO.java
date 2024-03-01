@@ -1,11 +1,16 @@
 package br.com.telematica.siloapi.model.dto;
 
 import br.com.telematica.siloapi.model.entity.PlantaEntity;
+import io.swagger.v3.oas.annotations.media.Schema;
 
+@Schema(name = "PlantaDTO", description = "Objeto de transferência de dados de Planta")
 public class PlantaDTO {
 
+    @Schema(description = "Código da planta", example = "1", nullable = false)
     private Integer codigo;
+    @Schema(description = "Código da empresa", example = "1", nullable = false)
     private Integer codigoEmpresa;
+    @Schema(description = "Nome da planta", example = "Planta 1", nullable = false)
     private String nome;
 
     public PlantaDTO() {
@@ -22,7 +27,6 @@ public class PlantaDTO {
         this.codigoEmpresa = entity.getEmpcod();
         this.nome = entity.getPlanom();
     }
-
 
     public Integer getCodigo() {
         return codigo;
