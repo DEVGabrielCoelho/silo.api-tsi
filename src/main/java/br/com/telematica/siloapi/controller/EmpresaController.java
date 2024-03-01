@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.telematica.siloapi.model.dto.EmpresaDTO;
+import br.com.telematica.siloapi.model.interfaces.SecurityRestController;
 import br.com.telematica.siloapi.service.EmpresaService;
 import br.com.telematica.siloapi.utils.error.GenericResponseModel;
 import br.com.telematica.siloapi.utils.error.MessageResponse;
@@ -24,13 +25,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RestController
 @RequestMapping("/api/v1/empresa")
 @Tag(name = "Empresa", description = "Empresa API")
-public class EmpresaController {
-    // implements SecurityRestController
+public class EmpresaController implements SecurityRestController {
 
     @Autowired
     private EmpresaService empresaService;
 
-    @GetMapping
+    @GetMapping("/listaEmpresa")
     @Operation(description = "Busca pelas empresas cadastradas")
     public ResponseEntity<GenericResponseModel> getEmpresa() {
         try {
@@ -43,7 +43,7 @@ public class EmpresaController {
         }
     }
 
-    @PostMapping
+    @PostMapping("/cadastraEmpresa")
     @Operation(description = "Cadastro de uma nova empresa")
     public ResponseEntity<GenericResponseModel> createEmpresa(@RequestBody EmpresaDTO empresa) {
         try {
@@ -56,7 +56,7 @@ public class EmpresaController {
         }
     }
 
-    @PutMapping
+    @PutMapping("/atualizaEmpresa")
     @Operation(description = "Atualização de uma empresa")
     public ResponseEntity<GenericResponseModel> updateEmpresa(@RequestBody EmpresaDTO empresa) {
         try {
@@ -69,7 +69,7 @@ public class EmpresaController {
         }
     }
 
-    @DeleteMapping("/{codigo}")
+    @DeleteMapping("/deletaEmpresa/{codigo}")
     @Operation(description = "Deletar uma empresa")
     public ResponseEntity<GenericResponseModel> deleteEmpresa(@PathVariable Integer codigo) {
         try {

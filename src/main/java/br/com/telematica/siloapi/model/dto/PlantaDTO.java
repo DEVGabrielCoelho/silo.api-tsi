@@ -1,5 +1,7 @@
 package br.com.telematica.siloapi.model.dto;
 
+import br.com.telematica.siloapi.model.entity.PlantaEntity;
+
 public class PlantaDTO {
 
     private Integer codigo;
@@ -9,11 +11,18 @@ public class PlantaDTO {
     public PlantaDTO() {
     }
 
-    public PlantaDTO(Integer codigo, Integer codigoEmpresa, String nome) {
+    public PlantaDTO(Integer codigo, String nome, Integer codigoEmpresa) {
         this.codigo = codigo;
         this.codigoEmpresa = codigoEmpresa;
         this.nome = nome;
     }
+
+    public PlantaDTO(PlantaEntity entity) {
+        this.codigo = entity.getPlacod();
+        this.codigoEmpresa = entity.getEmpcod();
+        this.nome = entity.getPlanom();
+    }
+
 
     public Integer getCodigo() {
         return codigo;
