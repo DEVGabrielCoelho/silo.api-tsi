@@ -25,10 +25,8 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme;
 public class SecurityConfig {
 
 	private static final String[] WHITE_LIST_URL = { "/api/v1/management/authenticate", "/api/v1/management/register", "/v2/api-docs", "/v3/api-docs", "/v3/api-docs/**", "/swagger-resources", "/swagger-resources/**", "/configuration/ui", "/configuration/security", "/swagger-ui/**", "/webjars/**", "/swagger-ui.html" };
-	private static final String[] WHITE_LIST_URL_POST = { "/api/v1/empresa/**", "/api/v1/planta/**" };
-	private static final String[] WHITE_LIST_URL_GET = { "/api/v1/empresa/**", "/api/v1/planta/**" };
-	private static final String[] WHITE_LIST_URL_PUT = { "/api/v1/empresa/**", "/api/v1/planta/**" };
-	private static final String[] WHITE_LIST_URL_DELETE = {"/api/v1/empresa/**", "/api/v1/planta/**"};
+	private static final String[] WHITE_LIST_URL_TESTE = { "/api/v1/empresa/**", "/api/v1/planta/**", "/api/v1/silo/**", "/api/v1/tipo-silo/**", "/api/v1/medicao/**" };
+
 
 	@Autowired
 	private JWTAuthenticationFilter jwtAuthenticationFilter;
@@ -38,11 +36,16 @@ public class SecurityConfig {
 		return http.csrf(csrf -> csrf.disable()).sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)).exceptionHandling(ex -> ex.accessDeniedHandler(new CustomAccessDeniedHandler()))
 				.authorizeHttpRequests(requests -> requests
 						.requestMatchers(WHITE_LIST_URL).permitAll()
-						.requestMatchers(HttpMethod.POST, WHITE_LIST_URL_POST).permitAll()
-						.requestMatchers(HttpMethod.GET, WHITE_LIST_URL_GET).permitAll()
-						.requestMatchers(HttpMethod.PUT, WHITE_LIST_URL_PUT).permitAll()
-						.requestMatchers(HttpMethod.DELETE, WHITE_LIST_URL_DELETE).permitAll()
-						.anyRequest().authenticated())
+						.requestMatchers(HttpMethod.POST, WHITE_LIST_URL_TESTE).permitAll()
+						.requestMatchers(HttpMethod.GET, WHITE_LIST_URL_TESTE).permitAll()
+						.requestMatchers(HttpMethod.PUT, WHITE_LIST_URL_TESTE).permitAll()
+						.requestMatchers(HttpMethod.DELETE, WHITE_LIST_URL_TESTE).permitAll()
+						// .requestMatchers(HttpMethod.POST, "/api/v1/empresa/**", "/api/v1/planta/**", "/api/v1/silo/**", "/api/v1/tipo-silo/**").permitAll()
+						// .requestMatchers(HttpMethod.GET, "/api/v1/empresa/**", "/api/v1/planta/**", "/api/v1/silo/**", "/api/v1/tipo-silo/**").permitAll()
+						// .requestMatchers(HttpMethod.PUT, "/api/v1/empresa/**", "/api/v1/planta/**", "/api/v1/silo/**", "/api/v1/tipo-silo/**").permitAll()
+						// .requestMatchers(HttpMethod.DELETE, "/api/v1/empresa/**", "/api/v1/planta/**", "/api/v1/silo/**", "/api/v1/tipo-silo/**").permitAll()
+						// .anyRequest().authenticated()
+						)
 				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class).build();
 	}
 

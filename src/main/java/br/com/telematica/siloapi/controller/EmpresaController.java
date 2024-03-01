@@ -21,6 +21,7 @@ import br.com.telematica.siloapi.utils.error.GenericResponseModel;
 import br.com.telematica.siloapi.utils.error.MessageResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/empresa")
@@ -45,7 +46,7 @@ public class EmpresaController implements SecurityRestController {
 
     @PostMapping("/cadastraEmpresa")
     @Operation(description = "Cadastro de uma nova empresa")
-    public ResponseEntity<GenericResponseModel> createEmpresa(@RequestBody EmpresaDTO empresa) {
+    public ResponseEntity<GenericResponseModel> createEmpresa(@Valid @RequestBody EmpresaDTO empresa) {
         try {
             var entity = empresaService.salvar(empresa);
             return new ResponseEntity<>(MessageResponse.sucessRequest200("Registro feito com Sucesso", null, entity), HttpStatus.OK);
@@ -58,7 +59,7 @@ public class EmpresaController implements SecurityRestController {
 
     @PutMapping("/atualizaEmpresa")
     @Operation(description = "Atualização de uma empresa")
-    public ResponseEntity<GenericResponseModel> updateEmpresa(@RequestBody EmpresaDTO empresa) {
+    public ResponseEntity<GenericResponseModel> updateEmpresa(@Valid @RequestBody EmpresaDTO empresa) {
         try {
             var entity = empresaService.update(empresa);
             return new ResponseEntity<>(MessageResponse.sucessRequest200("Registro feito com Sucesso", null, entity), HttpStatus.OK);
@@ -71,7 +72,7 @@ public class EmpresaController implements SecurityRestController {
 
     @DeleteMapping("/deletaEmpresa/{codigo}")
     @Operation(description = "Deletar uma empresa")
-    public ResponseEntity<GenericResponseModel> deleteEmpresa(@PathVariable Integer codigo) {
+    public ResponseEntity<GenericResponseModel> deleteEmpresa(@Valid @PathVariable Integer codigo) {
         try {
             empresaService.deleteByEmpcod(codigo);
             return new ResponseEntity<>(MessageResponse.sucessRequest200("Deletado com Sucesso", null, null), HttpStatus.OK);

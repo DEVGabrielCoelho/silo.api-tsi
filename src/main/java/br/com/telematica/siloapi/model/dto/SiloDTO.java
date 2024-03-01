@@ -1,5 +1,6 @@
 package br.com.telematica.siloapi.model.dto;
 
+import br.com.telematica.siloapi.model.entity.SiloEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "Silo")
@@ -7,21 +8,27 @@ public class SiloDTO {
 
     @Schema(description = "Código", example = "1", required = true)
     private Integer codigo;
-    @Schema(description = "Tipo", example = "1", required = false)
-    private Integer tipo_cilo;
+    @Schema(description = "Tipo do Silo", example = "1", required = false)
+    private Integer tipoSilo;
     @Schema(description = "Código Planta", example = "1", required = true)
-    private Integer codi_planta;
+    private Integer codiPlanta;
     @Schema(description = "Nome", example = "Silo 1", required = true)
     private String nome;
 
     public SiloDTO() {
     }
 
-    public SiloDTO(Integer codigo, Integer tipo_cilo, Integer codi_planta, String nome) {
+    public SiloDTO(Integer codigo, Integer tipoSilo, Integer codiPlanta, String nome) {
         this.codigo = codigo;
-        this.tipo_cilo = tipo_cilo;
-        this.codi_planta = codi_planta;
+        this.tipoSilo = tipoSilo;
+        this.codiPlanta = codiPlanta;
         this.nome = nome;
+    }
+    public SiloDTO(SiloEntity entity) {
+        this.codigo = entity.getSilcod();
+        this.tipoSilo = entity.getTsicod();
+        this.codiPlanta = entity.getPlacod();
+        this.nome = entity.getSilnom();
     }
 
     public Integer getCodigo() {
@@ -32,20 +39,20 @@ public class SiloDTO {
         this.codigo = codigo;
     }
 
-    public Integer getTipo_cilo() {
-        return tipo_cilo;
+    public Integer getTipoSilo() {
+        return tipoSilo;
     }
 
-    public void setTipo_cilo(Integer tipo_cilo) {
-        this.tipo_cilo = tipo_cilo;
+    public void setTipoSilo(Integer tipoSilo) {
+        this.tipoSilo = tipoSilo;
     }
 
-    public Integer getCodi_planta() {
-        return codi_planta;
+    public Integer getCodiPlanta() {
+        return codiPlanta;
     }
 
-    public void setCodi_planta(Integer codi_planta) {
-        this.codi_planta = codi_planta;
+    public void setCodiPlanta(Integer codiPlanta) {
+        this.codiPlanta = codiPlanta;
     }
 
     public String getNome() {
@@ -61,10 +68,10 @@ public class SiloDTO {
         StringBuilder builder = new StringBuilder();
         builder.append("SiloDTO [codigo=");
         builder.append(codigo);
-        builder.append(", tipo_cilo=");
-        builder.append(tipo_cilo);
-        builder.append(", codi_planta=");
-        builder.append(codi_planta);
+        builder.append(", tipoSilo=");
+        builder.append(tipoSilo);
+        builder.append(", codiPlanta=");
+        builder.append(codiPlanta);
         builder.append(", nome=");
         builder.append(nome);
         builder.append("]");

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,7 +20,6 @@ import br.com.telematica.siloapi.service.PlantaService;
 import br.com.telematica.siloapi.utils.error.GenericResponseModel;
 import br.com.telematica.siloapi.utils.error.MessageResponse;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
@@ -33,7 +33,7 @@ public class PlantaController implements SecurityRestController {
 
     @GetMapping("/listaPlantas")
     @Operation(description = "Busca pelas plantas cadastradas")
-    public ResponseEntity<GenericResponseModel> getPlanta(@Valid @PathVariable Long id) {
+    public ResponseEntity<GenericResponseModel> getPlanta() {
         try {
             var entity = plantaService.findAllPlantaDTO();
             return new ResponseEntity<>(MessageResponse.sucessRequest200("Registro feito com Sucesso", null, entity),
@@ -67,7 +67,7 @@ public class PlantaController implements SecurityRestController {
 
     @PutMapping("/atualizaPlanta")
     @Operation(description = "Atualização de uma planta")
-    public ResponseEntity<GenericResponseModel> updatePlanta(@Valid @RequestBody PlantaDTO planta) {
+    public ResponseEntity<GenericResponseModel> updatePlanta(@Valid PlantaDTO planta) {
         try {
             var entity = plantaService.update(planta);
             return new ResponseEntity<>(MessageResponse.sucessRequest200("Registro feito com Sucesso", null, entity),

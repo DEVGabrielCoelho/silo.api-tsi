@@ -1,6 +1,7 @@
 package br.com.telematica.siloapi.controller;
 
 import java.io.IOException;
+import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,9 +15,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.telematica.siloapi.model.dto.SiloDTO;
+import br.com.telematica.siloapi.model.dto.MedicaoDTO;
 import br.com.telematica.siloapi.model.interfaces.SecurityRestController;
-import br.com.telematica.siloapi.service.SiloService;
+import br.com.telematica.siloapi.service.MedicaoService;
 import br.com.telematica.siloapi.utils.error.GenericResponseModel;
 import br.com.telematica.siloapi.utils.error.MessageResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,18 +25,18 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/v1/silo")
-@Tag(name = "Silo", description = "Silo API")
-public class SiloController implements SecurityRestController {
+@RequestMapping("/api/v1/medicao")
+@Tag(name = "Medições", description = "Medições API")
+public class MedicaoController implements SecurityRestController {
 
     @Autowired
-    private SiloService siloService;
+    private MedicaoService medicaoService;
 
-    @GetMapping("/buscarSilo")
-    @Operation(description = "Busca pelos silos cadastrados")
-    public ResponseEntity<GenericResponseModel> getSilo() {
+    @GetMapping("/buscarMedicoes")
+    @Operation(description = "Busca pelas medição registrada")
+    public ResponseEntity<GenericResponseModel> getMedicao() {
         try {
-            var entity = siloService.findAllSiloDTO();
+            var entity = medicaoService.findAllMedicaoDTO();
             return new ResponseEntity<>(MessageResponse.sucessRequest200("Registro feito com Sucesso", null, entity), HttpStatus.OK);
         } catch (IOException e) {
             return new ResponseEntity<>(MessageResponse.exceptionRequest400(e.getMessage(), null, null), HttpStatus.BAD_REQUEST);
@@ -44,11 +45,11 @@ public class SiloController implements SecurityRestController {
         }
     }
 
-    @PostMapping("/cadastraSilo")
-    @Operation(description = "Cadastro de um novo silo")
-    public ResponseEntity<GenericResponseModel> createSilo(@Valid @RequestBody SiloDTO siloDTO) {
+    @PostMapping("/cadastraMedicao")
+    @Operation(description = "Cadastro de uma nova medição")
+    public ResponseEntity<GenericResponseModel> createMedicao(@Valid @RequestBody MedicaoDTO medicaoDTO) {
         try {
-            var entity = siloService.save(siloDTO);
+            var entity = medicaoService.save(medicaoDTO);
             return new ResponseEntity<>(MessageResponse.sucessRequest200("Registro feito com Sucesso", null, entity), HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(MessageResponse.exceptionRequest400(e.getMessage(), null, null), HttpStatus.BAD_REQUEST);
@@ -57,11 +58,11 @@ public class SiloController implements SecurityRestController {
         }
     }
 
-    @PutMapping("/atualizaSilo")
-    @Operation(description = "Atualização de um silo")
-    public ResponseEntity<GenericResponseModel> updateSilo(@Valid @RequestBody SiloDTO siloDTO) {
+    @PutMapping("/atualizaMedicao")
+    @Operation(description = "Atualização de uma medição")
+    public ResponseEntity<GenericResponseModel> updateMedicao(@Valid @RequestBody MedicaoDTO medicaoDTO) {
         try {
-            var entity = siloService.update(siloDTO);
+            var entity = medicaoService.update(medicaoDTO);
             return new ResponseEntity<>(MessageResponse.sucessRequest200("Registro feito com Sucesso", null, entity), HttpStatus.OK);
         } catch (IOException e) {
             return new ResponseEntity<>(MessageResponse.exceptionRequest400(e.getMessage(), null, null), HttpStatus.BAD_REQUEST);
@@ -70,11 +71,11 @@ public class SiloController implements SecurityRestController {
         }
     }
 
-    @DeleteMapping("/deletarSilo/{codigo}")
-    @Operation(description = "Deletar um silo")
-    public ResponseEntity<GenericResponseModel> deleteSilo(@Valid @PathVariable("codigo") Integer codigo) {
+    @DeleteMapping("/deletarMedicao/{dataMedicao}")
+    @Operation(description = "Deletar uma medição")
+    public ResponseEntity<GenericResponseModel> deleteMedicao(@Valid @PathVariable("dataMedicao") Date dataMedicao) {
         try {
-            siloService.deleteByPlacod(codigo);
+            medicaoService.deleteByMsidth(dataMedicao);
             return new ResponseEntity<>(MessageResponse.sucessRequest200("Registro feito com Sucesso", null, null), HttpStatus.OK);
         } catch (IOException e) {
             return new ResponseEntity<>(MessageResponse.exceptionRequest400(e.getMessage(), null, null), HttpStatus.BAD_REQUEST);

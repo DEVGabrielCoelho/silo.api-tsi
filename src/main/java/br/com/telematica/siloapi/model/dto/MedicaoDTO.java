@@ -2,15 +2,16 @@ package br.com.telematica.siloapi.model.dto;
 
 import java.util.Date;
 
+import br.com.telematica.siloapi.model.entity.MedicaoEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "Medicão")
 public class MedicaoDTO {
 
     @Schema(description = "Data", example = "2021-08-01T00:00:00.000Z", required = true)
-    private Date data;
+    private Date dataMedicao;
     @Schema(description = "Código", example = "1", required = true)
-    private Integer codigo;
+    private Integer codigoSilo;
     @Schema(description = "Umidade", example = "1.0", required = false)
     private Double umidade;
     @Schema(description = "Ana", example = "1.0", required = false)
@@ -25,9 +26,9 @@ public class MedicaoDTO {
     public MedicaoDTO() {
     }
 
-    public MedicaoDTO(Date data, Integer codigo, Double umidade, Double ana, Double barometro, Double temperatura, Double distancia) {
-        this.data = data;
-        this.codigo = codigo;
+    public MedicaoDTO(Date dataMedicao, Integer codigoSilo, Double umidade, Double ana, Double barometro, Double temperatura, Double distancia) {
+        this.dataMedicao = dataMedicao;
+        this.codigoSilo = codigoSilo;
         this.umidade = umidade;
         this.ana = ana;
         this.barometro = barometro;
@@ -35,20 +36,30 @@ public class MedicaoDTO {
         this.distancia = distancia;
     }
 
-    public Date getData() {
-        return data;
+    public MedicaoDTO(MedicaoEntity medicaoEntity) {
+        this.dataMedicao = medicaoEntity.getMsidth();
+        this.codigoSilo = medicaoEntity.getSilcod();
+        this.umidade = medicaoEntity.getMsiumi();
+        this.ana = medicaoEntity.getMsiana();
+        this.barometro = medicaoEntity.getMsibar();
+        this.temperatura = medicaoEntity.getMsitem();
+        this.distancia = medicaoEntity.getMsidis();
     }
 
-    public void setData(Date data) {
-        this.data = data;
+    public Date getDataMedicao() {
+        return dataMedicao;
     }
 
-    public Integer getCodigo() {
-        return codigo;
+    public void setDataMedicao(Date dataMedicao) {
+        this.dataMedicao = dataMedicao;
     }
 
-    public void setCodigo(Integer codigo) {
-        this.codigo = codigo;
+    public Integer getCodigoSilo() {
+        return codigoSilo;
+    }
+
+    public void setCodigoSilo(Integer codigoSilo) {
+        this.codigoSilo = codigoSilo;
     }
 
     public Double getUmidade() {
@@ -94,10 +105,10 @@ public class MedicaoDTO {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("MedicaoDTO [data=");
-        builder.append(data);
-        builder.append(", codigo=");
-        builder.append(codigo);
+        builder.append("MedicaoDTO [dataMedicao=");
+        builder.append(dataMedicao);
+        builder.append(", codigoSilo=");
+        builder.append(codigoSilo);
         builder.append(", umidade=");
         builder.append(umidade);
         builder.append(", ana=");

@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.telematica.siloapi.model.dto.SiloDTO;
+import br.com.telematica.siloapi.model.dto.TipoSiloDTO;
 import br.com.telematica.siloapi.model.interfaces.SecurityRestController;
-import br.com.telematica.siloapi.service.SiloService;
+import br.com.telematica.siloapi.service.TipoSiloService;
 import br.com.telematica.siloapi.utils.error.GenericResponseModel;
 import br.com.telematica.siloapi.utils.error.MessageResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,18 +24,18 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/v1/silo")
-@Tag(name = "Silo", description = "Silo API")
-public class SiloController implements SecurityRestController {
+@RequestMapping("/api/v1/tipo-silo")
+@Tag(name = "Tipo Silo", description = "Tipo de Silo API")
+public class TipoSiloController implements SecurityRestController {
 
     @Autowired
-    private SiloService siloService;
+    private TipoSiloService tipoSiloService;
 
-    @GetMapping("/buscarSilo")
-    @Operation(description = "Busca pelos silos cadastrados")
+    @GetMapping("/buscarTiposSilos")
+    @Operation(description = "Busca pelos tipos silos cadastrados")
     public ResponseEntity<GenericResponseModel> getSilo() {
         try {
-            var entity = siloService.findAllSiloDTO();
+            var entity = tipoSiloService.findAllTipoSiloDTO();
             return new ResponseEntity<>(MessageResponse.sucessRequest200("Registro feito com Sucesso", null, entity), HttpStatus.OK);
         } catch (IOException e) {
             return new ResponseEntity<>(MessageResponse.exceptionRequest400(e.getMessage(), null, null), HttpStatus.BAD_REQUEST);
@@ -44,11 +44,11 @@ public class SiloController implements SecurityRestController {
         }
     }
 
-    @PostMapping("/cadastraSilo")
-    @Operation(description = "Cadastro de um novo silo")
-    public ResponseEntity<GenericResponseModel> createSilo(@Valid @RequestBody SiloDTO siloDTO) {
+    @PostMapping("/cadastraTipoSilo")
+    @Operation(description = "Cadastro de um novo tipo de silo")
+    public ResponseEntity<GenericResponseModel> createSilo(@Valid @RequestBody TipoSiloDTO tipoSiloDTO) {
         try {
-            var entity = siloService.save(siloDTO);
+            var entity = tipoSiloService.save(tipoSiloDTO);
             return new ResponseEntity<>(MessageResponse.sucessRequest200("Registro feito com Sucesso", null, entity), HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(MessageResponse.exceptionRequest400(e.getMessage(), null, null), HttpStatus.BAD_REQUEST);
@@ -58,10 +58,10 @@ public class SiloController implements SecurityRestController {
     }
 
     @PutMapping("/atualizaSilo")
-    @Operation(description = "Atualização de um silo")
-    public ResponseEntity<GenericResponseModel> updateSilo(@Valid @RequestBody SiloDTO siloDTO) {
+    @Operation(description = "Atualização de um tipo de silo")
+    public ResponseEntity<GenericResponseModel> updateSilo(@Valid @RequestBody TipoSiloDTO tipoSiloDTO) {
         try {
-            var entity = siloService.update(siloDTO);
+            var entity = tipoSiloService.update(tipoSiloDTO);
             return new ResponseEntity<>(MessageResponse.sucessRequest200("Registro feito com Sucesso", null, entity), HttpStatus.OK);
         } catch (IOException e) {
             return new ResponseEntity<>(MessageResponse.exceptionRequest400(e.getMessage(), null, null), HttpStatus.BAD_REQUEST);
@@ -70,11 +70,11 @@ public class SiloController implements SecurityRestController {
         }
     }
 
-    @DeleteMapping("/deletarSilo/{codigo}")
-    @Operation(description = "Deletar um silo")
+    @DeleteMapping("/deletarTipoSilo/{codigo}")
+    @Operation(description = "Deletar um Tipo de Silo")
     public ResponseEntity<GenericResponseModel> deleteSilo(@Valid @PathVariable("codigo") Integer codigo) {
         try {
-            siloService.deleteByPlacod(codigo);
+            tipoSiloService.deleteByTsicod(codigo);
             return new ResponseEntity<>(MessageResponse.sucessRequest200("Registro feito com Sucesso", null, null), HttpStatus.OK);
         } catch (IOException e) {
             return new ResponseEntity<>(MessageResponse.exceptionRequest400(e.getMessage(), null, null), HttpStatus.BAD_REQUEST);
