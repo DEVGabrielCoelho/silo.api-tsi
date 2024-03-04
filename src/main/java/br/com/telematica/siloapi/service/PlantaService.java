@@ -27,6 +27,7 @@ public class PlantaService {
 			
 		
 		if (planta == null) {
+			logger.error("Planta está nula.");
 			throw new RuntimeException("Planta está nula.");
 		}
 		var entity = new PlantaEntity(planta.getCodigo(), planta.getNome(), planta.getCodigoEmpresa());
@@ -35,6 +36,7 @@ public class PlantaService {
 		logger.info("Planta salva com sucesso." + result);
 		return new PlantaDTO(result.getPlacod(), result.getPlanom(), result.getEmpcod());
 	} catch (Exception e) {
+		logger.error("Ocorreu um erro ao salvar a planta. Error: " +  e.getCause());
 		throw new RuntimeException("Exceção:" + e.getCause());
 	}
 	}
@@ -42,6 +44,7 @@ public class PlantaService {
 	@Transactional
 	public void deleteByPlacod(Integer codigo) throws IOException {
 		if (codigo == null) {
+			logger.error("O ID da planta está nulo.");
 			throw new IOException("O ID da planta está nulo.");
 		}
 		try {
@@ -58,6 +61,7 @@ public class PlantaService {
 
 	public PlantaDTO update(PlantaDTO planta) throws IOException {
 		if (planta == null) {
+			logger.error("Planta está nula.");
 			throw new RuntimeException("Planta está nulo.");
 		}
 		var entity = new PlantaEntity(planta.getCodigo(), planta.getNome(), planta.getCodigoEmpresa());
@@ -76,11 +80,13 @@ public class PlantaService {
 
 	public PlantaDTO findById(Integer id) throws IOException, EmptyResultDataAccessException {
 		if (id == null) {
+			logger.error("Id está nulo.");
 			throw new IOException("Id está nulo.");
 		}
 		var result = plantaRepository.findById(id).orElse(null);
 
 		if (result == null) {
+			logger.error("Planta não encontrada.");
 			throw new EmptyResultDataAccessException("Planta não encontrada.", 1);
 		}
         return new PlantaDTO(result.getPlacod(), result.getPlanom(), result.getEmpcod());

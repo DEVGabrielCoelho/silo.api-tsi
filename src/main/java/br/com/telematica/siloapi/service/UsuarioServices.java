@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -13,9 +14,12 @@ import br.com.telematica.siloapi.model.dto.RegistryDTO;
 import br.com.telematica.siloapi.model.entity.UsuarioEntity;
 import br.com.telematica.siloapi.model.enums.RoleColectionEnum;
 import br.com.telematica.siloapi.repository.UsuarioRepository;
+import ch.qos.logback.classic.Logger;
 
 @Service
 public class UsuarioServices {
+
+	private static Logger logger = (Logger) LoggerFactory.getLogger(TipoSiloService.class);
 
 	@Autowired
 	private UsuarioRepository userRepository;
@@ -26,6 +30,7 @@ public class UsuarioServices {
 
 		var userEntity = userRepository.findByUsulog(user.getUsulog());
 		if (userEntity != null) {
+			logger.error("Usuário já existe!");
 			throw new RuntimeException("Usuário já existe!");
 		}
 
@@ -38,6 +43,7 @@ public class UsuarioServices {
 
 	public void deleteById(Integer id) throws IOException {
 		if (id == null) {
+			logger.error("Id está nulo.");
 			throw new IOException("Id está nulo.");
 		}
 		userRepository.deleteById(id);
@@ -45,6 +51,7 @@ public class UsuarioServices {
 
 	public UsuarioEntity update(UsuarioEntity usuario) throws IOException {
 		if (usuario == null) {
+			logger.error("Usuário está nulo.");
 			throw new RuntimeException("Usuário está nulo.");
 		}
 		return userRepository.save(usuario);
@@ -64,6 +71,7 @@ public class UsuarioServices {
 
 	public UsuarioEntity findById(Integer id) throws IOException, EmptyResultDataAccessException {
 		if (id == null) {
+			logger.error("Id está nulo.");
 			throw new IOException("Id está nulo.");
 		}
 		return userRepository.findById(id).orElse(null);

@@ -27,15 +27,17 @@ public class SiloService {
 			
 		
 		if (siloDTO == null) {
-			throw new RuntimeException("Planta está nula.");
+			logger.error("Silo está nula.");
+			throw new RuntimeException("Silo está nula.");
 		}
         // Integer silcod, Integer tsicod, String silnom, Integer placod
 		var entity = new SiloEntity(siloDTO.getCodigo(), siloDTO.getTipoSilo(), siloDTO.getNome(), siloDTO.getCodiPlanta());
 		var result = siloRepository.save(entity);
 
-		logger.info("Planta salva com sucesso." + result);
+		logger.info("Silo salva com sucesso." + result);
 		return new SiloDTO(result.getSilcod(), result.getTsicod(), result.getPlacod(), result.getSilnom());
 	} catch (Exception e) {
+		logger.error("Ocorreu um erro ao salvar a Silo. Error: " +  e.getCause());
 		throw new RuntimeException("Exceção:" + e.getCause());
 	}
 	}
@@ -43,6 +45,7 @@ public class SiloService {
 	@Transactional
 	public void deleteByPlacod(Integer codigo) throws IOException {
 		if (codigo == null) {
+			logger.error("O ID do silo está nulo.");
 			throw new IOException("O ID do silo está nulo.");
 		}
 		try {
@@ -59,11 +62,12 @@ public class SiloService {
 
 	public SiloDTO update(SiloDTO siloDTO) throws IOException {
 		if (siloDTO == null) {
-			throw new RuntimeException("Planta está nulo.");
+			logger.error("Silo está nula.");
+			throw new RuntimeException("Silo está nulo.");
 		}
 		var entity = new SiloEntity(siloDTO.getCodigo(), siloDTO.getTipoSilo(), siloDTO.getNome(), siloDTO.getCodiPlanta());
 		var result = siloRepository.save(entity);
-		logger.info("Planta atualizado com sucesso." + result);
+		logger.info("Silo atualizado com sucesso." + result);
 		return new SiloDTO(result.getSilcod(), result.getTsicod(), result.getPlacod(), result.getSilnom());
 	}
 
@@ -77,12 +81,14 @@ public class SiloService {
 
 	public SiloDTO findById(Integer id) throws IOException, EmptyResultDataAccessException {
 		if (id == null) {
+			logger.error("Id está nulo.");
 			throw new IOException("Id está nulo.");
 		}
 		var result = siloRepository.findById(id).orElse(null);
 
 		if (result == null) {
-			throw new EmptyResultDataAccessException("Planta não encontrada.", 1);
+			logger.error("Silo não encontrada.");
+			throw new EmptyResultDataAccessException("Silo não encontrada.", 1);
 		}
         return new SiloDTO(result.getSilcod(), result.getTsicod(), result.getPlacod(), result.getSilnom());
 	}

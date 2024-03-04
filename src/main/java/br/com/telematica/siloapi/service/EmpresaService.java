@@ -24,6 +24,7 @@ public class EmpresaService {
 
 	public EmpresaDTO salvar(EmpresaDTO empresa) throws RuntimeException {
 		if (empresa == null) {
+			logger.error("Empresa está nula.");
 			throw new RuntimeException("Empresa está nula.");
 		}
 		var entity = new EmpresaEntity(empresa.getCodigo(), empresa.getNome(), empresa.getCnpj());
@@ -36,6 +37,7 @@ public class EmpresaService {
 	@Transactional
 	public void deleteByEmpcod(Integer codigo) throws IOException {
 		if (codigo == null) {
+			logger.error("O ID da empresa está nulo.");
 			throw new IOException("O ID da empresa está nulo.");
 		}
 		try {
@@ -52,6 +54,7 @@ public class EmpresaService {
 
 	public EmpresaDTO update(EmpresaDTO empresa) throws IOException {
 		if (empresa == null) {
+			logger.error("Empresa está nula.");
 			throw new RuntimeException("Empresa está nulo.");
 		}
 		var entity = new EmpresaEntity(empresa.getCodigo(), empresa.getNome(), empresa.getCnpj());
@@ -70,6 +73,7 @@ public class EmpresaService {
 
 	public EmpresaDTO findById(Integer id) throws IOException, EmptyResultDataAccessException {
 		if (id == null) {
+			logger.error("Id está nulo.");
 			throw new IOException("Id está nulo.");
 		}
 		var result = empresaRepository.findById(id).orElse(null);

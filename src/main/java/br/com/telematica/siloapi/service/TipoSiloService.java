@@ -26,13 +26,14 @@ public class TipoSiloService {
         try {
 
             if (tipoSiloDTO == null) {
-                throw new RuntimeException("Planta está nula.");
+                logger.error("Tipo Silo está nula.");
+                throw new RuntimeException("Tipo Silo está nula.");
             }
             // Integer silcod, Integer tsicod, String silnom, Integer placod
             var entity = new TipoSiloEntity(tipoSiloDTO.getCodigo(), tipoSiloDTO.getEmpresa(), tipoSiloDTO.getDescricao());
             var result = tipoSiloRepository.save(entity);
 
-            logger.info("Planta salva com sucesso." + result);
+            logger.info("Tipo Silo salva com sucesso." + result);
             return new TipoSiloDTO(result.getTsicod(), result.getEmpcod(), result.getTsides());
         } catch (Exception e) {
             throw new RuntimeException("Exceção:" + e.getCause());
@@ -42,27 +43,29 @@ public class TipoSiloService {
     @Transactional
     public void deleteByTsicod(Integer codigo) throws IOException {
         if (codigo == null) {
-            throw new IOException("O ID do silo está nulo.");
+            logger.error("O ID do tipo silo está nulo.");
+            throw new IOException("O ID do tipo silo está nulo.");
         }
         try {
             tipoSiloRepository.deleteByTsicod(codigo);
 
         } catch (EmptyResultDataAccessException e) {
-            logger.error("Não foi possível encontrar o silo com o ID fornecido. Error: " + e.getCause());
-            throw new IOException("Não foi possível encontrar o silo com o ID fornecido.", e);
+            logger.error("Não foi possível encontrar o tipo silo com o ID fornecido. Error: " + e.getCause());
+            throw new IOException("Não foi possível encontrar o tipo silo com o ID fornecido.", e);
         } catch (Exception e) {
-            logger.error("Ocorreu um erro ao excluir o silo. Error: " + e.getCause());
-            throw new IOException("Ocorreu um erro ao excluir o silo.", e.getCause());
+            logger.error("Ocorreu um erro ao excluir o tipo silo. Error: " + e.getCause());
+            throw new IOException("Ocorreu um erro ao excluir o tipo silo.", e.getCause());
         }
     }
 
     public TipoSiloDTO update(TipoSiloDTO tipoSiloDTO) throws IOException {
         if (tipoSiloDTO == null) {
-            throw new RuntimeException("Planta está nulo.");
+            logger.error("Tipo Silo está nula.");
+            throw new RuntimeException("Tipo Silo está nulo.");
         }
         var entity = new TipoSiloEntity(tipoSiloDTO.getCodigo(), tipoSiloDTO.getEmpresa(), tipoSiloDTO.getDescricao());
         var result = tipoSiloRepository.save(entity);
-        logger.info("Planta atualizado com sucesso." + result);
+        logger.info("Tipo Silo atualizado com sucesso." + result);
         return new TipoSiloDTO(result.getTsicod(), result.getEmpcod(), result.getTsides());
     }
 
@@ -76,12 +79,14 @@ public class TipoSiloService {
 
     public TipoSiloDTO findById(Integer id) throws IOException, EmptyResultDataAccessException {
         if (id == null) {
+            logger.error("Id está nulo.");
             throw new IOException("Id está nulo.");
         }
         var result = tipoSiloRepository.findById(id).orElse(null);
 
         if (result == null) {
-            throw new EmptyResultDataAccessException("Planta não encontrada.", 1);
+            logger.error("Tipo Silo não encontrada.");
+            throw new EmptyResultDataAccessException("Tipo Silo não encontrada.", 1);
         }
         return new TipoSiloDTO(result.getTsicod(), result.getEmpcod(), result.getTsides());
     }
