@@ -18,28 +18,27 @@ import jakarta.transaction.Transactional;
 @Service
 public class SiloService {
 
-    private static Logger logger = (Logger) LoggerFactory.getLogger(SiloService.class);
+	private static Logger logger = (Logger) LoggerFactory.getLogger(SiloService.class);
 	@Autowired
 	private SiloRepository siloRepository;
 
 	public SiloDTO save(SiloDTO siloDTO) throws RuntimeException {
 		try {
-			
-		
-		if (siloDTO == null) {
-			logger.error("Silo está nula.");
-			throw new RuntimeException("Silo está nula.");
-		}
-        // Integer silcod, Integer tsicod, String silnom, Integer placod
-		var entity = new SiloEntity(siloDTO.getCodigo(), siloDTO.getTipoSilo(), siloDTO.getNome(), siloDTO.getCodiPlanta());
-		var result = siloRepository.save(entity);
 
-		logger.info("Silo salva com sucesso." + result);
-		return new SiloDTO(result.getSilcod(), result.getTsicod(), result.getPlacod(), result.getSilnom());
-	} catch (Exception e) {
-		logger.error("Ocorreu um erro ao salvar a Silo. Error: " +  e.getCause());
-		throw new RuntimeException("Exceção:" + e.getCause());
-	}
+			if (siloDTO == null) {
+				logger.error("Silo está nula.");
+				throw new RuntimeException("Silo está nula.");
+			}
+			// Integer silcod, Integer tsicod, String silnom, Integer placod
+			var entity = new SiloEntity(siloDTO.getCodigo(), siloDTO.getTipoSilo(), siloDTO.getNome(), siloDTO.getCodiPlanta());
+			var result = siloRepository.save(entity);
+
+			logger.info("Silo salva com sucesso." + result);
+			return new SiloDTO(result.getSilcod(), result.getTsicod(), result.getPlacod(), result.getSilnom());
+		} catch (Exception e) {
+			logger.error("Ocorreu um erro ao salvar a Silo. Error: " + e.getCause());
+			throw new RuntimeException("Exceção:" + e.getCause());
+		}
 	}
 
 	@Transactional
@@ -52,10 +51,10 @@ public class SiloService {
 			siloRepository.deleteByPlacod(codigo);
 
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Não foi possível encontrar o silo com o ID fornecido. Error: " +  e.getCause());
+			logger.error("Não foi possível encontrar o silo com o ID fornecido. Error: " + e.getCause());
 			throw new IOException("Não foi possível encontrar o silo com o ID fornecido.", e);
 		} catch (Exception e) {
-			logger.error("Ocorreu um erro ao excluir o silo. Error: " +  e.getCause());
+			logger.error("Ocorreu um erro ao excluir o silo. Error: " + e.getCause());
 			throw new IOException("Ocorreu um erro ao excluir o silo.", e.getCause());
 		}
 	}
@@ -90,7 +89,7 @@ public class SiloService {
 			logger.error("Silo não encontrada.");
 			throw new EmptyResultDataAccessException("Silo não encontrada.", 1);
 		}
-        return new SiloDTO(result.getSilcod(), result.getTsicod(), result.getPlacod(), result.getSilnom());
+		return new SiloDTO(result.getSilcod(), result.getTsicod(), result.getPlacod(), result.getSilnom());
 	}
 
 	private SiloDTO convertToSiloDTO(SiloEntity siloDTOEntity) {

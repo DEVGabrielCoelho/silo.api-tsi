@@ -8,8 +8,8 @@ import br.com.telematica.siloapi.model.entity.MedicaoEntity;
 
 public interface MedicaoRepository extends JpaRepository<MedicaoEntity, Date> {
 
-    void deleteByMsidth(Date msidth);
+	void deleteByMsidth(Date msidth);
 
-    MedicaoEntity findByMsidth(Date msidth);
+	MedicaoEntity findByMsidth(Date msidth);
 
 }

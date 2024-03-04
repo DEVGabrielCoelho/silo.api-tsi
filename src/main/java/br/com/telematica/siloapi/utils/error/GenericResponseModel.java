@@ -6,13 +6,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 public class GenericResponseModel {
 
-	@Schema(name = "code", type = "Integer", description = "Request Code.", example = "200" )
+	@Schema(name = "code", type = "Integer", description = "Request Code.", example = "200")
 	private Integer code;
-	@Schema(name = "description", type = "String", description = "Request description." , example = "Description" )
+	@Schema(name = "description", type = "String", description = "Request description.", example = "Description")
 	private String desc;
-	@Schema(name = "date", type = "Date", description = "Request date." , example = "200" )
+	@Schema(name = "date", type = "Date", description = "Request date.", example = "200")
 	private Date date;
-	@Schema(name = "resultListSize", type = "Integer", description = "Request result list size.", example = "200" )
+	@Schema(name = "resultListSize", type = "Integer", description = "Request result list size.", example = "200")
 	private Integer listSize;
 	@Schema(name = "resultObject", type = "Integer", description = "Request result object.")
 	private Object object;
@@ -22,7 +22,7 @@ public class GenericResponseModel {
 		// TODO Auto-generated constructor stub
 	}
 
-	public GenericResponseModel(Integer code,  String desc, Date date, Integer listSize, Object object) {
+	public GenericResponseModel(Integer code, String desc, Date date, Integer listSize, Object object) {
 		super();
 		this.code = code;
 		this.desc = desc;

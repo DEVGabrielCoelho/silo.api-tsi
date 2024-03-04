@@ -30,14 +30,11 @@ public class MedicaoService {
 				logger.error("Medição está nula.");
 				throw new RuntimeException("Medição está nula.");
 			}
-			var entity = new MedicaoEntity(medicaoDTO.getDataMedicao(), medicaoDTO.getCodigoSilo(),
-					medicaoDTO.getUmidade(), medicaoDTO.getAna(), medicaoDTO.getBarometro(),
-					medicaoDTO.getTemperatura(), medicaoDTO.getDistancia());
+			var entity = new MedicaoEntity(medicaoDTO.getDataMedicao(), medicaoDTO.getCodigoSilo(), medicaoDTO.getUmidade(), medicaoDTO.getAna(), medicaoDTO.getBarometro(), medicaoDTO.getTemperatura(), medicaoDTO.getDistancia());
 			var result = medicaoRepository.save(entity);
 
 			logger.info("Medição salva com sucesso." + result);
-			return new MedicaoDTO(result.getMsidth(), result.getSilcod(), result.getMsiumi(), result.getMsiana(),
-					result.getMsibar(), result.getMsitem(), result.getMsidis());
+			return new MedicaoDTO(result.getMsidth(), result.getSilcod(), result.getMsiumi(), result.getMsiana(), result.getMsibar(), result.getMsitem(), result.getMsidis());
 		} catch (Exception e) {
 			logger.error("Ocorreu um erro ao salvar a Medição. Error: " + e.getCause());
 			throw new RuntimeException("Exceção:" + e.getCause());
@@ -67,12 +64,10 @@ public class MedicaoService {
 			logger.error("Medição está nula.");
 			throw new RuntimeException("Medição está nulo.");
 		}
-		var entity = new MedicaoEntity(medicaoDTO.getDataMedicao(), medicaoDTO.getCodigoSilo(), medicaoDTO.getUmidade(),
-				medicaoDTO.getAna(), medicaoDTO.getBarometro(), medicaoDTO.getTemperatura(), medicaoDTO.getDistancia());
+		var entity = new MedicaoEntity(medicaoDTO.getDataMedicao(), medicaoDTO.getCodigoSilo(), medicaoDTO.getUmidade(), medicaoDTO.getAna(), medicaoDTO.getBarometro(), medicaoDTO.getTemperatura(), medicaoDTO.getDistancia());
 		var result = medicaoRepository.save(entity);
 		logger.info("Medição atualizado com sucesso." + result);
-		return new MedicaoDTO(result.getMsidth(), result.getSilcod(), result.getMsiumi(), result.getMsiana(),
-				result.getMsibar(), result.getMsitem(), result.getMsidis());
+		return new MedicaoDTO(result.getMsidth(), result.getSilcod(), result.getMsiumi(), result.getMsiana(), result.getMsibar(), result.getMsitem(), result.getMsidis());
 	}
 
 	public List<MedicaoEntity> findAll() throws IOException {
@@ -94,8 +89,7 @@ public class MedicaoService {
 			logger.error("Medição não encontrada.");
 			throw new EmptyResultDataAccessException("Medição não encontrada.", 1);
 		}
-		return new MedicaoDTO(result.getMsidth(), result.getSilcod(), result.getMsiumi(), result.getMsiana(),
-				result.getMsibar(), result.getMsitem(), result.getMsidis());
+		return new MedicaoDTO(result.getMsidth(), result.getSilcod(), result.getMsiumi(), result.getMsiana(), result.getMsibar(), result.getMsitem(), result.getMsidis());
 	}
 
 	private MedicaoDTO convertToMedicaoDTO(MedicaoEntity medicaoDTOEntity) {

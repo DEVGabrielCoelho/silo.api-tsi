@@ -6,8 +6,8 @@ import br.com.telematica.siloapi.model.entity.EmpresaEntity;
 
 public interface EmpresaRepository extends JpaRepository<EmpresaEntity, Integer> {
 
-    EmpresaEntity findByEmpcnp(Integer empcnp);
+	EmpresaEntity findByEmpcnp(Integer empcnp);
 
-    Integer removeByEmpcod(Integer empcod);
+	Integer removeByEmpcod(Integer empcod);
 
 }

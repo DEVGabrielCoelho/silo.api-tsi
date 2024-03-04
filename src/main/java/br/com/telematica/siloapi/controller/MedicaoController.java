@@ -29,59 +29,59 @@ import jakarta.validation.Valid;
 @Tag(name = "Medições", description = "Medições API")
 public class MedicaoController implements SecurityRestController {
 
-    @Autowired
-    private MedicaoService medicaoService;
+	@Autowired
+	private MedicaoService medicaoService;
 
-    @GetMapping("/buscarMedicoes")
-    @Operation(description = "Busca pelas medição registrada")
-    public ResponseEntity<GenericResponseModel> getMedicao() {
-        try {
-            var entity = medicaoService.findAllMedicaoDTO();
-            return new ResponseEntity<>(MessageResponse.sucessRequest200("Registro feito com Sucesso", null, entity), HttpStatus.OK);
-        } catch (IOException e) {
-            return new ResponseEntity<>(MessageResponse.exceptionRequest400(e.getMessage(), null, null), HttpStatus.BAD_REQUEST);
-        } catch (Exception e) {
-            return new ResponseEntity<>(MessageResponse.exceptionRequest500("Exceção gerada ao executar o registro. " + e.getCause(), null, null), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
+	@GetMapping("/buscarMedicoes")
+	@Operation(description = "Busca pelas medição registrada")
+	public ResponseEntity<GenericResponseModel> getMedicao() {
+		try {
+			var entity = medicaoService.findAllMedicaoDTO();
+			return new ResponseEntity<>(MessageResponse.sucessRequest200("Registro feito com Sucesso", null, entity), HttpStatus.OK);
+		} catch (IOException e) {
+			return new ResponseEntity<>(MessageResponse.exceptionRequest400(e.getMessage(), null, null), HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			return new ResponseEntity<>(MessageResponse.exceptionRequest500("Exceção gerada ao executar o registro. " + e.getCause(), null, null), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 
-    @PostMapping("/cadastraMedicao")
-    @Operation(description = "Cadastro de uma nova medição")
-    public ResponseEntity<GenericResponseModel> createMedicao(@Valid @RequestBody MedicaoDTO medicaoDTO) {
-        try {
-            var entity = medicaoService.save(medicaoDTO);
-            return new ResponseEntity<>(MessageResponse.sucessRequest200("Registro feito com Sucesso", null, entity), HttpStatus.OK);
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>(MessageResponse.exceptionRequest400(e.getMessage(), null, null), HttpStatus.BAD_REQUEST);
-        } catch (Exception e) {
-            return new ResponseEntity<>(MessageResponse.exceptionRequest500("Exceção gerada ao executar o registro. " + e.getCause(), null, null), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
+	@PostMapping("/cadastraMedicao")
+	@Operation(description = "Cadastro de uma nova medição")
+	public ResponseEntity<GenericResponseModel> createMedicao(@Valid @RequestBody MedicaoDTO medicaoDTO) {
+		try {
+			var entity = medicaoService.save(medicaoDTO);
+			return new ResponseEntity<>(MessageResponse.sucessRequest200("Registro feito com Sucesso", null, entity), HttpStatus.OK);
+		} catch (RuntimeException e) {
+			return new ResponseEntity<>(MessageResponse.exceptionRequest400(e.getMessage(), null, null), HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			return new ResponseEntity<>(MessageResponse.exceptionRequest500("Exceção gerada ao executar o registro. " + e.getCause(), null, null), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 
-    @PutMapping("/atualizaMedicao")
-    @Operation(description = "Atualização de uma medição")
-    public ResponseEntity<GenericResponseModel> updateMedicao(@Valid @RequestBody MedicaoDTO medicaoDTO) {
-        try {
-            var entity = medicaoService.update(medicaoDTO);
-            return new ResponseEntity<>(MessageResponse.sucessRequest200("Registro feito com Sucesso", null, entity), HttpStatus.OK);
-        } catch (IOException e) {
-            return new ResponseEntity<>(MessageResponse.exceptionRequest400(e.getMessage(), null, null), HttpStatus.BAD_REQUEST);
-        } catch (Exception e) {
-            return new ResponseEntity<>(MessageResponse.exceptionRequest500("Exceção gerada ao executar o registro. " + e.getCause(), null, null), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
+	@PutMapping("/atualizaMedicao")
+	@Operation(description = "Atualização de uma medição")
+	public ResponseEntity<GenericResponseModel> updateMedicao(@Valid @RequestBody MedicaoDTO medicaoDTO) {
+		try {
+			var entity = medicaoService.update(medicaoDTO);
+			return new ResponseEntity<>(MessageResponse.sucessRequest200("Registro feito com Sucesso", null, entity), HttpStatus.OK);
+		} catch (IOException e) {
+			return new ResponseEntity<>(MessageResponse.exceptionRequest400(e.getMessage(), null, null), HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			return new ResponseEntity<>(MessageResponse.exceptionRequest500("Exceção gerada ao executar o registro. " + e.getCause(), null, null), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 
-    @DeleteMapping("/deletarMedicao/{dataMedicao}")
-    @Operation(description = "Deletar uma medição")
-    public ResponseEntity<GenericResponseModel> deleteMedicao(@Valid @PathVariable("dataMedicao") Date dataMedicao) {
-        try {
-            medicaoService.deleteByMsidth(dataMedicao);
-            return new ResponseEntity<>(MessageResponse.sucessRequest200("Registro feito com Sucesso", null, null), HttpStatus.OK);
-        } catch (IOException e) {
-            return new ResponseEntity<>(MessageResponse.exceptionRequest400(e.getMessage(), null, null), HttpStatus.BAD_REQUEST);
-        } catch (Exception e) {
-            return new ResponseEntity<>(MessageResponse.exceptionRequest500("Exceção gerada ao executar o registro. " + e.getCause(), null, null), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
+	@DeleteMapping("/deletarMedicao/{dataMedicao}")
+	@Operation(description = "Deletar uma medição")
+	public ResponseEntity<GenericResponseModel> deleteMedicao(@Valid @PathVariable("dataMedicao") Date dataMedicao) {
+		try {
+			medicaoService.deleteByMsidth(dataMedicao);
+			return new ResponseEntity<>(MessageResponse.sucessRequest200("Registro feito com Sucesso", null, null), HttpStatus.OK);
+		} catch (IOException e) {
+			return new ResponseEntity<>(MessageResponse.exceptionRequest400(e.getMessage(), null, null), HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			return new ResponseEntity<>(MessageResponse.exceptionRequest500("Exceção gerada ao executar o registro. " + e.getCause(), null, null), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 
 }

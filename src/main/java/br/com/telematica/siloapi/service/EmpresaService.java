@@ -44,10 +44,10 @@ public class EmpresaService {
 			empresaRepository.removeByEmpcod(codigo);
 
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Não foi possível encontrar a empresa com o ID fornecido. Error: " +  e.getCause());
+			logger.error("Não foi possível encontrar a empresa com o ID fornecido. Error: " + e.getCause());
 			throw new IOException("Não foi possível encontrar a empresa com o ID fornecido.", e);
 		} catch (Exception e) {
-			logger.error("Ocorreu um erro ao excluir a empresa. Error: " +  e.getCause());
+			logger.error("Ocorreu um erro ao excluir a empresa. Error: " + e.getCause());
 			throw new IOException("Ocorreu um erro ao excluir a empresa.", e.getCause());
 		}
 	}

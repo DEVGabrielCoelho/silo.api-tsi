@@ -24,21 +24,20 @@ public class PlantaService {
 
 	public PlantaDTO save(PlantaDTO planta) throws RuntimeException {
 		try {
-			
-		
-		if (planta == null) {
-			logger.error("Planta está nula.");
-			throw new RuntimeException("Planta está nula.");
-		}
-		var entity = new PlantaEntity(planta.getCodigo(), planta.getNome(), planta.getCodigoEmpresa());
-		var result = plantaRepository.save(entity);
 
-		logger.info("Planta salva com sucesso." + result);
-		return new PlantaDTO(result.getPlacod(), result.getPlanom(), result.getEmpcod());
-	} catch (Exception e) {
-		logger.error("Ocorreu um erro ao salvar a planta. Error: " +  e.getCause());
-		throw new RuntimeException("Exceção:" + e.getCause());
-	}
+			if (planta == null) {
+				logger.error("Planta está nula.");
+				throw new RuntimeException("Planta está nula.");
+			}
+			var entity = new PlantaEntity(planta.getCodigo(), planta.getNome(), planta.getCodigoEmpresa());
+			var result = plantaRepository.save(entity);
+
+			logger.info("Planta salva com sucesso." + result);
+			return new PlantaDTO(result.getPlacod(), result.getPlanom(), result.getEmpcod());
+		} catch (Exception e) {
+			logger.error("Ocorreu um erro ao salvar a planta. Error: " + e.getCause());
+			throw new RuntimeException("Exceção:" + e.getCause());
+		}
 	}
 
 	@Transactional
@@ -51,10 +50,10 @@ public class PlantaService {
 			plantaRepository.removeByPlacod(codigo);
 
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Não foi possível encontrar a planta com o ID fornecido. Error: " +  e.getCause());
+			logger.error("Não foi possível encontrar a planta com o ID fornecido. Error: " + e.getCause());
 			throw new IOException("Não foi possível encontrar a planta com o ID fornecido.", e);
 		} catch (Exception e) {
-			logger.error("Ocorreu um erro ao excluir a planta. Error: " +  e.getCause());
+			logger.error("Ocorreu um erro ao excluir a planta. Error: " + e.getCause());
 			throw new IOException("Ocorreu um erro ao excluir a planta.", e.getCause());
 		}
 	}
@@ -89,11 +88,10 @@ public class PlantaService {
 			logger.error("Planta não encontrada.");
 			throw new EmptyResultDataAccessException("Planta não encontrada.", 1);
 		}
-        return new PlantaDTO(result.getPlacod(), result.getPlanom(), result.getEmpcod());
+		return new PlantaDTO(result.getPlacod(), result.getPlanom(), result.getEmpcod());
 	}
 
 	private PlantaDTO convertToPlantaDTO(PlantaEntity plantaEntity) {
 		return new PlantaDTO(plantaEntity);
 	}
 }
-

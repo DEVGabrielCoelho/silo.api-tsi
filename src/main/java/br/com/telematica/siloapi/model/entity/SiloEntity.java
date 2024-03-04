@@ -79,8 +79,4 @@ public class SiloEntity {
 		return builder.toString();
 	}
 
-
-
-	
-
 }
