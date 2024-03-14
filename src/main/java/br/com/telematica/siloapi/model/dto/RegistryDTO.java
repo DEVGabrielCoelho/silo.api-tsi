@@ -10,6 +10,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Schema(description = "RegistryDTO")
 public class RegistryDTO {
 
+	@Schema(description = "Codigo", example = "1")
+	private Long code;
 	@Schema(description = "Login", example = "user")
 	private String user;
 	@Schema(description = "Password", example = "password")
@@ -24,7 +26,8 @@ public class RegistryDTO {
 	public RegistryDTO() {
 	}
 
-	public RegistryDTO(String user, String password, String name, String email, RoleColectionEnum role) {
+	public RegistryDTO(Long code, String user, String password, String name, String email, RoleColectionEnum role) {
+		this.code = code;
 		this.user = user;
 		this.password = password;
 		this.name = name;
@@ -33,6 +36,7 @@ public class RegistryDTO {
 	}
 
 	public RegistryDTO(UsuarioEntity user) {
+		this.code = Long.valueOf(user.getUsucod());
 		this.user = user.getUsulog();
 		this.password = user.getPassword();
 		this.name = user.getUsunom();
@@ -41,6 +45,14 @@ public class RegistryDTO {
 	}
 
 	// getters and setters
+
+	public Long getCode() {
+		return code;
+	}
+
+	public void setCode(Long code) {
+		this.code = code;
+	}
 
 	public String getUser() {
 		return user;
@@ -84,7 +96,21 @@ public class RegistryDTO {
 
 	@Override
 	public String toString() {
-		return "RegistryDTO [user=" + user + ", password=" + password + ", name=" + name + ", email=" + email + ", role=" + role + "]";
+		StringBuilder builder = new StringBuilder();
+		builder.append("RegistryDTO [code=");
+		builder.append(code);
+		builder.append(", user=");
+		builder.append(user);
+		builder.append(", password=");
+		builder.append(password);
+		builder.append(", name=");
+		builder.append(name);
+		builder.append(", email=");
+		builder.append(email);
+		builder.append(", role=");
+		builder.append(role);
+		builder.append("]");
+		return builder.toString();
 	}
 
 }

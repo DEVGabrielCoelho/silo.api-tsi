@@ -38,16 +38,23 @@ public class UsuarioServices {
 		userRepository.save(user);
 		RoleColectionEnum role = user.getUsurol();
 
-		return new RegistryDTO(user.getUsulog(), user.getUsusen(), user.getUsunom(), user.getUsuema(), role);
+		return new RegistryDTO(Long.valueOf(user.getUsucod()) ,user.getUsulog(), user.getUsusen(), user.getUsunom(), user.getUsuema(), role);
 	}
 
-	public void deleteById(Integer id) throws IOException {
+	public boolean deleteByCode(Integer id) throws IOException { 
 		if (id == null) {
 			logger.error("Id está nulo.");
 			throw new IOException("Id está nulo.");
 		}
-		userRepository.deleteById(id);
+		try {
+			userRepository.deleteByUsucod(id);
+			return true;
+		} catch (Exception e) {
+			logger.error("Error deleting user: ", e);
+			return false; 
+		}
 	}
+	
 
 	public UsuarioEntity update(UsuarioEntity usuario) throws IOException {
 		if (usuario == null) {

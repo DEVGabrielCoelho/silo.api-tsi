@@ -7,8 +7,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,6 +38,7 @@ import jakarta.validation.Valid;
 @ApiResponse(responseCode = "200", description = "Ok", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = GenericResponseModel.class)) })
 @ApiResponse(responseCode = "400", description = "Dados inválidos", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = GenericResponseModel.class)) })
 @ApiResponse(responseCode = "403", description = "Não Autorizado", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = GenericResponseModel.class)) })
+@ApiResponse(responseCode = "404", description = "Não Encontrado", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = GenericResponseModel.class)) })
 @ApiResponse(responseCode = "500", description = "Erro no servidor", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = GenericResponseModel.class)) })
 public class AuthenticationController {
 
@@ -67,6 +71,7 @@ public class AuthenticationController {
 			var userService = userServices.saveUserEncodePassword(user);
 
 			return new ResponseEntity<>(MessageResponse.sucessRequest200("Registro feito com Sucesso", null, userService), HttpStatus.OK);
+		
 		} catch (RuntimeException e) {
 			return new ResponseEntity<>(MessageResponse.exceptionRequest400(e.getMessage(), null, null), HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
@@ -76,7 +81,7 @@ public class AuthenticationController {
 
 	@GetMapping("/listUsers")
 	@Operation(description = "List registered users", security = { @SecurityRequirement(name = "bearerAuth") })
-	public ResponseEntity<GenericResponseModel> getUser() {
+	public ResponseEntity<GenericResponseModel> getListUsers() {
 		try {
 			var userList = userServices.findAllRegistryDTO();
 
@@ -88,4 +93,38 @@ public class AuthenticationController {
 		}
 	}
 
+	@PutMapping("/updateUser")
+	@Operation(description = "Register a User"/* , security = { @SecurityRequirement(name = "bearerAuth") } */)
+	public ResponseEntity<GenericResponseModel> updateUser(@Valid @RequestBody RegistryDTO entity) {
+		try {
+			UsuarioEntity user = new UsuarioEntity(entity.getUser(), entity.getPassword(), entity.getName(), entity.getEmail(), entity.getRole());
+
+			var userService = userServices.update(user);
+
+			return new ResponseEntity<>(MessageResponse.sucessRequest200("Registro atualizado com Sucesso", null, userService), HttpStatus.OK);
+		
+		} catch (RuntimeException e) {
+			return new ResponseEntity<>(MessageResponse.exceptionRequest400(e.getMessage(), null, null), HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			return new ResponseEntity<>(MessageResponse.exceptionRequest500("Exceção gerada ao executar o registro. " + e.getCause(), null, null), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@DeleteMapping("/deleteUser/{code}")
+	@Operation(description = "Register a User"/* , security = { @SecurityRequirement(name = "bearerAuth") } */)
+	public ResponseEntity<GenericResponseModel> deleteUser(@Valid @PathVariable Integer code) {
+		try {
+
+			var userService = userServices.deleteByCode(code);
+
+			if ( userService == true)
+				return new ResponseEntity<>(MessageResponse.sucessRequest200("Registro feito com Sucesso", null, userService), HttpStatus.OK);
+			else 
+				return new ResponseEntity<>(MessageResponse.exceptionRequest400("Erro ao deletar esse Usuário", null, userService), HttpStatus.BAD_REQUEST);
+		} catch (RuntimeException e) {
+			return new ResponseEntity<>(MessageResponse.exceptionRequest400(e.getMessage(), null, null), HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			return new ResponseEntity<>(MessageResponse.exceptionRequest500("Exceção gerada ao executar o registro. " + e.getCause(), null, null), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 }

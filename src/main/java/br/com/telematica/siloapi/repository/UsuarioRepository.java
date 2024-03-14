@@ -9,4 +9,6 @@ import br.com.telematica.siloapi.model.entity.UsuarioEntity;
 public interface UsuarioRepository extends JpaRepository<UsuarioEntity, Integer> {
 	UsuarioEntity findByUsulog(String login);
 
+	UsuarioEntity deleteByUsucod(Integer code);
+
 }

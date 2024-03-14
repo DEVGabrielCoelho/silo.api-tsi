@@ -1,29 +1,29 @@
 package br.com.telematica.siloapi.model.enums;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 public enum RoleColectionEnum {
 
-	USER(Collections.emptySet()), ADMIN(Collections.emptySet());
+	USER("USER"), ADMIN("ADMIN");
 
-	private final Set<Permission> permission;
+	private final String permission;
 
-	RoleColectionEnum(Set<Permission> permissions) {
-		this.permission = permissions;
+	RoleColectionEnum(String permission) {
+		this.permission = permission;
 	}
 
-	public Set<Permission> getPermission() {
+	public String getPermission() {
 		return permission;
 	}
 
 	public List<SimpleGrantedAuthority> getAuthorities() {
-		var authorities = getPermission().stream().map(permission -> new SimpleGrantedAuthority(permission.getPermission())).collect(Collectors.toList());
-		authorities.add(new SimpleGrantedAuthority("ROLE_" + this.name()));
+		List<SimpleGrantedAuthority> authorities = Stream.of(permission).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+
+		authorities.add(new SimpleGrantedAuthority(this.name()));
 		return authorities;
 	}
 }
