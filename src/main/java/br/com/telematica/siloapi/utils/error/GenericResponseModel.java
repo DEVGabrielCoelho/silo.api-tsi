@@ -1,7 +1,5 @@
 package br.com.telematica.siloapi.utils.error;
 
-import java.util.Date;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 
 public class GenericResponseModel {
@@ -11,7 +9,7 @@ public class GenericResponseModel {
 	@Schema(name = "description", type = "String", description = "Request description.", example = "Description")
 	private String desc;
 	@Schema(name = "date", type = "Date", description = "Request date.", example = "200")
-	private Date date;
+	private String date;
 	@Schema(name = "resultListSize", type = "Integer", description = "Request result list size.", example = "200")
 	private Integer listSize;
 	@Schema(name = "resultObject", type = "Integer", description = "Request result object.")
@@ -22,7 +20,7 @@ public class GenericResponseModel {
 		// TODO Auto-generated constructor stub
 	}
 
-	public GenericResponseModel(Integer code, String desc, Date date, Integer listSize, Object object) {
+	public GenericResponseModel(Integer code, String desc, String date, Integer listSize, Object object) {
 		super();
 		this.code = code;
 		this.desc = desc;
@@ -47,11 +45,11 @@ public class GenericResponseModel {
 		this.desc = desc;
 	}
 
-	public Date getDate() {
+	public String getDate() {
 		return date;
 	}
 
-	public void setDate(Date date) {
+	public void setDate(String date) {
 		this.date = date;
 	}
 

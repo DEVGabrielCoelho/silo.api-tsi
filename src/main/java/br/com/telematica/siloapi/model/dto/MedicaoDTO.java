@@ -1,15 +1,14 @@
 package br.com.telematica.siloapi.model.dto;
 
-import java.util.Date;
-
 import br.com.telematica.siloapi.model.entity.MedicaoEntity;
+import br.com.telematica.siloapi.util.Utils;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "Medicão")
 public class MedicaoDTO {
 
 	@Schema(description = "Data", example = "2021-08-01T00:00:00.000Z", required = true)
-	private Date dataMedicao;
+	private String dataMedicao;
 	@Schema(description = "Código", example = "1", required = true)
 	private Integer codigoSilo;
 	@Schema(description = "Umidade", example = "1.0", required = false)
@@ -26,7 +25,7 @@ public class MedicaoDTO {
 	public MedicaoDTO() {
 	}
 
-	public MedicaoDTO(Date dataMedicao, Integer codigoSilo, Double umidade, Double ana, Double barometro, Double temperatura, Double distancia) {
+	public MedicaoDTO(String dataMedicao, Integer codigoSilo, Double umidade, Double ana, Double barometro, Double temperatura, Double distancia) {
 		this.dataMedicao = dataMedicao;
 		this.codigoSilo = codigoSilo;
 		this.umidade = umidade;
@@ -36,21 +35,21 @@ public class MedicaoDTO {
 		this.distancia = distancia;
 	}
 
-	public MedicaoDTO(MedicaoEntity medicaoEntity) {
-		this.dataMedicao = medicaoEntity.getMsidth();
-		this.codigoSilo = medicaoEntity.getSilcod();
-		this.umidade = medicaoEntity.getMsiumi();
-		this.ana = medicaoEntity.getMsiana();
-		this.barometro = medicaoEntity.getMsibar();
-		this.temperatura = medicaoEntity.getMsitem();
-		this.distancia = medicaoEntity.getMsidis();
+	public MedicaoDTO(MedicaoEntity medEntity) {
+		this.dataMedicao = Utils.sdfDateforString(medEntity.getMsidth());
+		this.codigoSilo = medEntity.getSilcod();
+		this.umidade = medEntity.getMsiumi();
+		this.ana = medEntity.getMsiana();
+		this.barometro = medEntity.getMsibar();
+		this.temperatura = medEntity.getMsitem();
+		this.distancia = medEntity.getMsidis();
 	}
 
-	public Date getDataMedicao() {
+	public String getDataMedicao() {
 		return dataMedicao;
 	}
 
-	public void setDataMedicao(Date dataMedicao) {
+	public void setDataMedicao(String dataMedicao) {
 		this.dataMedicao = dataMedicao;
 	}
 

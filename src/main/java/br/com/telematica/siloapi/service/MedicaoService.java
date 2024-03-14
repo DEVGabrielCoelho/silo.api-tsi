@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import br.com.telematica.siloapi.model.dto.MedicaoDTO;
 import br.com.telematica.siloapi.model.entity.MedicaoEntity;
 import br.com.telematica.siloapi.repository.MedicaoRepository;
+import br.com.telematica.siloapi.util.Utils;
 import ch.qos.logback.classic.Logger;
 import jakarta.transaction.Transactional;
 
@@ -30,11 +31,13 @@ public class MedicaoService {
 				logger.error("Medição está nula.");
 				throw new RuntimeException("Medição está nula.");
 			}
-			var entity = new MedicaoEntity(medicaoDTO.getDataMedicao(), medicaoDTO.getCodigoSilo(), medicaoDTO.getUmidade(), medicaoDTO.getAna(), medicaoDTO.getBarometro(), medicaoDTO.getTemperatura(), medicaoDTO.getDistancia());
+			Date dateMedicao = Utils.sdfStringforDate(medicaoDTO.getDataMedicao());
+			var entity = new MedicaoEntity(dateMedicao, medicaoDTO.getCodigoSilo(), medicaoDTO.getUmidade(), medicaoDTO.getAna(), medicaoDTO.getBarometro(), medicaoDTO.getTemperatura(), medicaoDTO.getDistancia());
 			var result = medicaoRepository.save(entity);
 
 			logger.info("Medição salva com sucesso." + result);
-			return new MedicaoDTO(result.getMsidth(), result.getSilcod(), result.getMsiumi(), result.getMsiana(), result.getMsibar(), result.getMsitem(), result.getMsidis());
+			var stringDateMedi = Utils.sdfDateforString(result.getMsidth());
+			return new MedicaoDTO(stringDateMedi, result.getSilcod(), result.getMsiumi(), result.getMsiana(), result.getMsibar(), result.getMsitem(), result.getMsidis());
 		} catch (Exception e) {
 			logger.error("Ocorreu um erro ao salvar a Medição. Error: " + e.getCause());
 			throw new RuntimeException("Exceção:" + e.getCause());
@@ -42,32 +45,35 @@ public class MedicaoService {
 	}
 
 	@Transactional
-	public void deleteByMsidth(Date msidth) throws IOException {
+	public void deleteByMsidth(String msidth) throws Exception {
 		if (msidth == null) {
 			logger.error("O ID da Medição está nulo.");
 			throw new IOException("O ID da Medição está nulo.");
 		}
 		try {
-			medicaoRepository.deleteByMsidth(msidth);
+
+			medicaoRepository.deleteByMsidth(Utils.sdfStringforDate(msidth));
 
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Não foi possível encontrar a Medição com o ID fornecido. Error: " + e.getCause());
+			logger.error("Não foi possível encontrar a Medição com o ID fornecido. Error: ", e);
 			throw new IOException("Não foi possível encontrar a Medição com o ID fornecido.", e);
 		} catch (Exception e) {
-			logger.error("Ocorreu um erro ao excluir a Medição. Error: " + e.getCause());
-			throw new IOException("Ocorreu um erro ao excluir a Medição.", e.getCause());
+			logger.error("Ocorreu um erro ao excluir a Medição. Error: ", e);
+			throw new Exception("Ocorreu um erro ao excluir a Medição.", e.fillInStackTrace());
 		}
 	}
 
-	public MedicaoDTO update(MedicaoDTO medicaoDTO) throws IOException {
+	public MedicaoDTO update(MedicaoDTO medicaoDTO) throws IOException, Exception {
 		if (medicaoDTO == null) {
 			logger.error("Medição está nula.");
 			throw new RuntimeException("Medição está nulo.");
 		}
-		var entity = new MedicaoEntity(medicaoDTO.getDataMedicao(), medicaoDTO.getCodigoSilo(), medicaoDTO.getUmidade(), medicaoDTO.getAna(), medicaoDTO.getBarometro(), medicaoDTO.getTemperatura(), medicaoDTO.getDistancia());
+		Date dateMedicao = Utils.sdfStringforDate(medicaoDTO.getDataMedicao());
+		var entity = new MedicaoEntity(dateMedicao, medicaoDTO.getCodigoSilo(), medicaoDTO.getUmidade(), medicaoDTO.getAna(), medicaoDTO.getBarometro(), medicaoDTO.getTemperatura(), medicaoDTO.getDistancia());
 		var result = medicaoRepository.save(entity);
 		logger.info("Medição atualizado com sucesso." + result);
-		return new MedicaoDTO(result.getMsidth(), result.getSilcod(), result.getMsiumi(), result.getMsiana(), result.getMsibar(), result.getMsitem(), result.getMsidis());
+		var stringDateMedi = Utils.sdfDateforString(result.getMsidth());
+		return new MedicaoDTO(stringDateMedi, result.getSilcod(), result.getMsiumi(), result.getMsiana(), result.getMsibar(), result.getMsitem(), result.getMsidis());
 	}
 
 	public List<MedicaoEntity> findAll() throws IOException {
@@ -89,7 +95,8 @@ public class MedicaoService {
 			logger.error("Medição não encontrada.");
 			throw new EmptyResultDataAccessException("Medição não encontrada.", 1);
 		}
-		return new MedicaoDTO(result.getMsidth(), result.getSilcod(), result.getMsiumi(), result.getMsiana(), result.getMsibar(), result.getMsitem(), result.getMsidis());
+		var stringDateMedi = Utils.sdfDateforString(result.getMsidth());
+		return new MedicaoDTO(stringDateMedi, result.getSilcod(), result.getMsiumi(), result.getMsiana(), result.getMsibar(), result.getMsitem(), result.getMsidis());
 	}
 
 	private MedicaoDTO convertToMedicaoDTO(MedicaoEntity medicaoDTOEntity) {

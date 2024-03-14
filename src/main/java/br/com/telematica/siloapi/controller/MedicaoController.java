@@ -1,7 +1,6 @@
 package br.com.telematica.siloapi.controller;
 
 import java.io.IOException;
-import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -73,7 +72,7 @@ public class MedicaoController implements SecurityRestController {
 
 	@DeleteMapping("/deletarMedicao/{dataMedicao}")
 	@Operation(description = "Deletar uma medição")
-	public ResponseEntity<GenericResponseModel> deleteMedicao(@Valid @PathVariable("dataMedicao") Date dataMedicao) {
+	public ResponseEntity<GenericResponseModel> deleteMedicao(@Valid @PathVariable("dataMedicao") String dataMedicao) {
 		try {
 			medicaoService.deleteByMsidth(dataMedicao);
 			return new ResponseEntity<>(MessageResponse.sucessRequest200("Registro feito com Sucesso", null, null), HttpStatus.OK);

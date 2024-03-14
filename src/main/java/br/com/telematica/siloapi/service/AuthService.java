@@ -14,6 +14,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 
+import br.com.telematica.siloapi.config.ConfigProperties;
 import br.com.telematica.siloapi.model.dto.AuthenticationDTO;
 import br.com.telematica.siloapi.model.entity.UsuarioEntity;
 import br.com.telematica.siloapi.repository.AuthenticationRepository;
@@ -22,6 +23,8 @@ import br.com.telematica.siloapi.repository.UsuarioRepository;
 @Service
 public class AuthService implements AuthenticationRepository {
 
+	@Autowired
+	private ConfigProperties confProp;
 	@Autowired
 	private UsuarioRepository userRepository;
 
@@ -65,7 +68,7 @@ public class AuthService implements AuthenticationRepository {
 	}
 
 	private Instant genExpirationDate() {
-		return LocalDateTime.now().plusHours(1).toInstant(ZoneOffset.of("-03:00"));
+		return LocalDateTime.now().plusMinutes(confProp.AUTH_TIME_MIN()).toInstant(ZoneOffset.of("-03:00"));
 	}
 
 }

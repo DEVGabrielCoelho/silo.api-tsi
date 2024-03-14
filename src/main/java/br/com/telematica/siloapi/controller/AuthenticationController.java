@@ -1,12 +1,17 @@
 package br.com.telematica.siloapi.controller;
 
-import java.util.Date;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,6 +33,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -35,11 +41,10 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/api/v1/management")
 @Tag(name = "Management", description = "Management Controller")
-@ApiResponse(responseCode = "200", description = "Ok", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = GenericResponseModel.class)) })
-@ApiResponse(responseCode = "400", description = "Dados inválidos", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = GenericResponseModel.class)) })
-@ApiResponse(responseCode = "403", description = "Não Autorizado", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = GenericResponseModel.class)) })
-@ApiResponse(responseCode = "404", description = "Não Encontrado", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = GenericResponseModel.class)) })
-@ApiResponse(responseCode = "500", description = "Erro no servidor", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = GenericResponseModel.class)) })
+@ApiResponses(value = { @ApiResponse(responseCode = "400", description = "Dados inválidos", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = GenericResponseModel.class)) }),
+		@ApiResponse(responseCode = "403", description = "Não Autorizado", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = GenericResponseModel.class)) }),
+		@ApiResponse(responseCode = "404", description = "Não Encontrado", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = GenericResponseModel.class)) }),
+		@ApiResponse(responseCode = "500", description = "Erro no servidor", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = GenericResponseModel.class)) }) })
 public class AuthenticationController {
 
 	@Autowired
@@ -55,11 +60,18 @@ public class AuthenticationController {
 
 		var userAutheticationToken = new UsernamePasswordAuthenticationToken(entity.getLogin(), entity.getPassword());
 
-		String role = userAutheticationToken.getAuthorities().toString();
+		// Authenticate first!
+		Authentication authentication = authenticationManager.authenticate(userAutheticationToken);
 
-		authenticationManager.authenticate(userAutheticationToken);
+		// Now get user details and roles
+		UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+		Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
 
-		return new ResponseAuthenticationDTO(authService.getToken(entity), role, new Date());
+		List<String> roles = authorities.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
+
+		String role = roles.get(0);
+
+		return new ResponseAuthenticationDTO(authService.getToken(entity), role, null);
 	}
 
 	@PostMapping("/register")
@@ -71,7 +83,7 @@ public class AuthenticationController {
 			var userService = userServices.saveUserEncodePassword(user);
 
 			return new ResponseEntity<>(MessageResponse.sucessRequest200("Registro feito com Sucesso", null, userService), HttpStatus.OK);
-		
+
 		} catch (RuntimeException e) {
 			return new ResponseEntity<>(MessageResponse.exceptionRequest400(e.getMessage(), null, null), HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
@@ -87,14 +99,13 @@ public class AuthenticationController {
 
 			return new ResponseEntity<GenericResponseModel>(MessageResponse.sucessRequest200("Registro feito com Sucesso", null, userList), HttpStatus.OK);
 		} catch (Exception e) {
-			e.printStackTrace();
 			System.err.println("Error: " + e.getMessage());
 			return new ResponseEntity<GenericResponseModel>(MessageResponse.exceptionRequest400(e.getMessage(), null, null), HttpStatus.BAD_REQUEST);
 		}
 	}
 
 	@PutMapping("/updateUser")
-	@Operation(description = "Register a User"/* , security = { @SecurityRequirement(name = "bearerAuth") } */)
+	@Operation(description = "Register a User", security = { @SecurityRequirement(name = "bearerAuth") })
 	public ResponseEntity<GenericResponseModel> updateUser(@Valid @RequestBody RegistryDTO entity) {
 		try {
 			UsuarioEntity user = new UsuarioEntity(entity.getUser(), entity.getPassword(), entity.getName(), entity.getEmail(), entity.getRole());
@@ -102,24 +113,24 @@ public class AuthenticationController {
 			var userService = userServices.update(user);
 
 			return new ResponseEntity<>(MessageResponse.sucessRequest200("Registro atualizado com Sucesso", null, userService), HttpStatus.OK);
-		
+
 		} catch (RuntimeException e) {
 			return new ResponseEntity<>(MessageResponse.exceptionRequest400(e.getMessage(), null, null), HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
 			return new ResponseEntity<>(MessageResponse.exceptionRequest500("Exceção gerada ao executar o registro. " + e.getCause(), null, null), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
+
 	@DeleteMapping("/deleteUser/{code}")
-	@Operation(description = "Register a User"/* , security = { @SecurityRequirement(name = "bearerAuth") } */)
+	@Operation(description = "Register a User", security = { @SecurityRequirement(name = "bearerAuth") })
 	public ResponseEntity<GenericResponseModel> deleteUser(@Valid @PathVariable Integer code) {
 		try {
 
 			var userService = userServices.deleteByCode(code);
 
-			if ( userService == true)
+			if (userService == true)
 				return new ResponseEntity<>(MessageResponse.sucessRequest200("Registro feito com Sucesso", null, userService), HttpStatus.OK);
-			else 
+			else
 				return new ResponseEntity<>(MessageResponse.exceptionRequest400("Erro ao deletar esse Usuário", null, userService), HttpStatus.BAD_REQUEST);
 		} catch (RuntimeException e) {
 			return new ResponseEntity<>(MessageResponse.exceptionRequest400(e.getMessage(), null, null), HttpStatus.BAD_REQUEST);

@@ -2,10 +2,12 @@ package br.com.telematica.siloapi.model.dto;
 
 import java.util.Date;
 
+import br.com.telematica.siloapi.util.Utils;
+
 public class ResponseAuthenticationDTO {
 	private String token;
 	private String role;
-	private Date dateRequest;
+	private String dateRequest;
 
 	public ResponseAuthenticationDTO() {
 	}
@@ -13,7 +15,8 @@ public class ResponseAuthenticationDTO {
 	public ResponseAuthenticationDTO(String token, String role, Date date) {
 		this.token = token;
 		this.role = role;
-		this.dateRequest = date;
+		this.dateRequest = date == null ? Utils.sdfBaseDateforString() : Utils.sdfDateforString(date);
+		;
 	}
 
 	public String getToken() {
@@ -32,11 +35,11 @@ public class ResponseAuthenticationDTO {
 		this.role = role;
 	}
 
-	public Date getDateRequest() {
+	public String getDateRequest() {
 		return dateRequest;
 	}
 
-	public void setDateRequest(Date dateRequest) {
+	public void setDateRequest(String dateRequest) {
 		this.dateRequest = dateRequest;
 	}
 
