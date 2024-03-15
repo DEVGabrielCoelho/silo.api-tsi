@@ -1,4 +1,4 @@
-package br.com.telematica.siloapi.util;
+package br.com.telematica.siloapi.utils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

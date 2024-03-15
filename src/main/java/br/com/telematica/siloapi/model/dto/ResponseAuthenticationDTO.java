@@ -2,7 +2,7 @@ package br.com.telematica.siloapi.model.dto;
 
 import java.util.Date;
 
-import br.com.telematica.siloapi.util.Utils;
+import br.com.telematica.siloapi.utils.Utils;
 
 public class ResponseAuthenticationDTO {
 	private String token;

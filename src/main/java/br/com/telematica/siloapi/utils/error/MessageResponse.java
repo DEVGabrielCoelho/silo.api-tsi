@@ -1,6 +1,6 @@
 package br.com.telematica.siloapi.utils.error;
 
-import br.com.telematica.siloapi.util.Utils;
+import br.com.telematica.siloapi.utils.Utils;
 
 public class MessageResponse {
 

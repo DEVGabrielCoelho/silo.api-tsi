@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import br.com.telematica.siloapi.model.dto.MedicaoDTO;
 import br.com.telematica.siloapi.model.entity.MedicaoEntity;
 import br.com.telematica.siloapi.repository.MedicaoRepository;
-import br.com.telematica.siloapi.util.Utils;
+import br.com.telematica.siloapi.utils.Utils;
 import ch.qos.logback.classic.Logger;
 import jakarta.transaction.Transactional;
 

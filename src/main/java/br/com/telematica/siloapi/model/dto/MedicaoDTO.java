@@ -1,7 +1,7 @@
 package br.com.telematica.siloapi.model.dto;
 
 import br.com.telematica.siloapi.model.entity.MedicaoEntity;
-import br.com.telematica.siloapi.util.Utils;
+import br.com.telematica.siloapi.utils.Utils;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "Medicão")
