@@ -1,35 +1,34 @@
 package br.com.telematica.siloapi.config;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 
 import com.nimbusds.jose.shaded.gson.Gson;
 
 import jakarta.annotation.PostConstruct;
 
 @Configuration
-@PropertySource("classpath:config.properties")
 public class ConfigProperties {
 
 	private static Logger logger = LoggerFactory.getLogger(ConfigProperties.class);
 
-	@Value("${authenticationList}")
-	private String[] AUTHENTICATION_LIST_URL;
-	@Value("${authPost}")
-	private String[] AUTH_POST;
-	@Value("${authGets}")
-	private String[] AUTH_GET;
-	@Value("${authPuts}")
-	private String[] AUTH_PUT;
-	@Value("${authDels}")
-	private String[] AUTH_DEL;
-	@Value("${auth.time.min}")
-	private Long AUTH_TIME_MIN;
+	@Value("${application.authenticationList}")
+	private Optional<String[]> AUTHENTICATION_LIST_URL;
+	@Value("${application.authPost}")
+	private Optional<String[]> AUTH_POST;
+	@Value("${application.authGets}")
+	private Optional<String[]> AUTH_GET;
+	@Value("${application.authPuts}")
+	private Optional<String[]> AUTH_PUT;
+	@Value("${application.authDels}")
+	private Optional<String[]> AUTH_DEL;
+	@Value("${application.auth.time.min}")
+	private Optional<Long> AUTH_TIME_MIN;
 
 	@PostConstruct
 	public void validateProperties() {
@@ -38,29 +37,25 @@ public class ConfigProperties {
 		checkProperty("AUTH_GET", AUTH_GET);
 		checkProperty("AUTH_PUT", AUTH_PUT);
 		checkProperty("AUTH_DEL", AUTH_DEL);
-		checkProperty("AUTH_TIME_MIN", AUTH_TIME_MIN);
+		checkPropertyLong("AUTH_TIME_MIN", AUTH_TIME_MIN);
 	}
 
-	private void checkProperty(String propertyName, String[] propertyValue) {
-		if (propertyValue == null) {
-			throw new IllegalStateException("Configuration error: Property '" + propertyName + "' is not defined in config.properties");
-		}
+	private void checkProperty(String propertyName, Optional<String[]> propertyValue) {
+		propertyValue.orElseThrow(() -> new IllegalStateException("Configuration error: Property '" + propertyName + "' is not defined in config.properties"));
 	}
 
-	private void checkProperty(String propertyName, Long propertyValue) {
-		if (propertyValue == null) {
-			throw new IllegalStateException("Configuration error: Property '" + propertyName + "' is not defined in config.properties");
-		}
+	private void checkPropertyLong(String propertyName, Optional<Long> propertyValue) {
+		propertyValue.orElseThrow(() -> new IllegalStateException("Configuration error: Property '" + propertyName + "' is not defined in config.properties"));
 	}
 
 	@PostConstruct
-	public Long AUTH_TIME_MIN() {
+	public Optional<Long> AUTH_TIME_MIN() {
 		logger.debug("AUTH_TIME_MIN: " + new Gson().toJson(AUTH_TIME_MIN));
 		return AUTH_TIME_MIN;
 	}
 
 	@PostConstruct
-	public String[] AUTHENTICATION_LIST_URL() {
+	public Optional<String[]> AUTHENTICATION_LIST_URL() {
 		logger.debug("AUTHENTICATION_LIST_URL: " + new Gson().toJson(AUTHENTICATION_LIST_URL));
 		return AUTHENTICATION_LIST_URL;
 	}
@@ -93,24 +88,24 @@ public class ConfigProperties {
 		return formatString;
 	}
 
-	public static String[] addStringToArray(String[] originalArray) {
+	public static String[] addStringToArray(Optional<String[]> string) {
 		String admin = "admin";
 
-		validateInput(originalArray, admin);
+		validateInput(string, admin);
 
-		int newArrayLength = originalArray.length + 1;
+		int newArrayLength = string.get().length + 1;
 
 		String[] newArray = new String[newArrayLength];
 
-		System.arraycopy(originalArray, 0, newArray, 0, originalArray.length);
+		System.arraycopy(string, 0, newArray, 0, string.get().length);
 
 		newArray[newArrayLength - 1] = admin;
 
 		return Arrays.stream(newArray).map(String::toUpperCase).toArray(String[]::new);
 	}
 
-	private static void validateInput(String[] originalArray, String newString) {
-		if (originalArray == null) {
+	private static void validateInput(Optional<String[]> aUTH_DEL2, String newString) {
+		if (aUTH_DEL2 == null) {
 			throw new NullPointerException("Original array cannot be null");
 		}
 

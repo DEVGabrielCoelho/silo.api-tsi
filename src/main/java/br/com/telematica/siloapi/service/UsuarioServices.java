@@ -2,6 +2,7 @@ package br.com.telematica.siloapi.service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.slf4j.LoggerFactory;
@@ -12,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import br.com.telematica.siloapi.model.dto.RegistryDTO;
 import br.com.telematica.siloapi.model.entity.UsuarioEntity;
-import br.com.telematica.siloapi.model.enums.RoleColectionEnum;
 import br.com.telematica.siloapi.repository.UsuarioRepository;
 import ch.qos.logback.classic.Logger;
 
@@ -26,22 +26,21 @@ public class UsuarioServices {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
-	public RegistryDTO saveUserEncodePassword(UsuarioEntity user) throws RuntimeException {
+	public RegistryDTO saveUserEncodePassword(UsuarioEntity user) {
+		Optional<UsuarioEntity> existingUser = Optional.ofNullable(userRepository.findByUsulog(user.getUsulog()));
 
-		var userEntity = userRepository.findByUsulog(user.getUsulog());
-		if (userEntity != null) {
+		if (existingUser.isPresent()) {
 			logger.error("Usuário já existe!");
 			throw new RuntimeException("Usuário já existe!");
 		}
 
-		user.setUsusen(this.passwordEncoder.encode(user.getPassword()));
-		userRepository.save(user);
-		RoleColectionEnum role = user.getUsurol();
+		user.setUsusen(passwordEncoder.encode(user.getPassword()));
+		UsuarioEntity savedUser = userRepository.save(user);
 
-		return new RegistryDTO(Long.valueOf(user.getUsucod()) ,user.getUsulog(), user.getUsusen(), user.getUsunom(), user.getUsuema(), role);
+		return convertToRegistryDTO(savedUser); // Assumindo que você tem uma função para isso
 	}
 
-	public boolean deleteByCode(Integer id) throws IOException { 
+	public boolean deleteByCode(Integer id) throws IOException {
 		if (id == null) {
 			logger.error("Id está nulo.");
 			throw new IOException("Id está nulo.");
@@ -51,10 +50,9 @@ public class UsuarioServices {
 			return true;
 		} catch (Exception e) {
 			logger.error("Error deleting user: ", e);
-			return false; 
+			return false;
 		}
 	}
-	
 
 	public UsuarioEntity update(UsuarioEntity usuario) throws IOException {
 		if (usuario == null) {
@@ -69,7 +67,8 @@ public class UsuarioServices {
 	}
 
 	public List<RegistryDTO> findAllRegistryDTO() throws IOException {
-		return userRepository.findAll().stream().map(this::convertToRegistryDTO).collect(Collectors.toList());
+
+		return userRepository.findAll().stream().map(user -> Optional.ofNullable(convertToRegistryDTO(user))).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
 	}
 
 	public UsuarioEntity findLogin(String login) throws IOException {
@@ -78,10 +77,9 @@ public class UsuarioServices {
 
 	public UsuarioEntity findById(Integer id) throws IOException, EmptyResultDataAccessException {
 		if (id == null) {
-			logger.error("Id está nulo.");
-			throw new IOException("Id está nulo.");
+			throw new IllegalArgumentException("Id não pode ser nulo");
 		}
-		return userRepository.findById(id).orElse(null);
+		return userRepository.findById(id).orElseThrow(() -> new EmptyResultDataAccessException("Usuário não encontrado", 1));
 	}
 
 	private RegistryDTO convertToRegistryDTO(UsuarioEntity userEntity) {

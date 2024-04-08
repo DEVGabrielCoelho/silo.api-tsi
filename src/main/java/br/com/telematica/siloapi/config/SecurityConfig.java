@@ -36,18 +36,18 @@ public class SecurityConfig {
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		var authUrlList = confProp.AUTHENTICATION_LIST_URL();
+		var authUrlListOpt = confProp.AUTHENTICATION_LIST_URL();
+		String[] authUrlList = authUrlListOpt.orElse(new String[0]);
+		System.out.println(authUrlList);
 
-		return http.csrf(csrf -> csrf.disable())
-				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+		return http.csrf(csrf -> csrf.disable()).sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.exceptionHandling(ex -> ex.accessDeniedHandler(new CustomAccessDeniedHandler()))
-				.authorizeHttpRequests(requests -> requests
-						.requestMatchers(WHITE_LIST_URL).permitAll()
-						.requestMatchers(HttpMethod.POST, authUrlList).hasAnyAuthority(confProp.AUTH_POST())
-						.requestMatchers(HttpMethod.GET, authUrlList).hasAnyAuthority(confProp.AUTH_GET())
-						.requestMatchers(HttpMethod.PUT, authUrlList).hasAnyAuthority(confProp.AUTH_PUT())
-						.requestMatchers(HttpMethod.DELETE, authUrlList).hasAnyAuthority(confProp.AUTH_DEL())
-						.anyRequest().hasAuthority("ADMIN"))
+				.authorizeHttpRequests(requests -> requests.requestMatchers(WHITE_LIST_URL).permitAll()
+					.requestMatchers(HttpMethod.POST, authUrlList).hasAnyAuthority(confProp.AUTH_POST())
+					.requestMatchers(HttpMethod.GET, authUrlList).hasAnyAuthority(confProp.AUTH_GET())
+					.requestMatchers(HttpMethod.PUT, authUrlList).hasAnyAuthority(confProp.AUTH_PUT())
+					.requestMatchers(HttpMethod.DELETE, authUrlList).hasAnyAuthority(confProp.AUTH_DEL())
+					.anyRequest().hasAuthority("ADMIN"))
 				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class).build();
 	}
 

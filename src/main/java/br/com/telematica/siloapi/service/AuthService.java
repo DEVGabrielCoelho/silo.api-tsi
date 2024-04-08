@@ -68,7 +68,9 @@ public class AuthService implements AuthenticationRepository {
 	}
 
 	private Instant genExpirationDate() {
-		return LocalDateTime.now().plusMinutes(confProp.AUTH_TIME_MIN()).toInstant(ZoneOffset.of("-03:00"));
+		Long time = confProp.AUTH_TIME_MIN().get();
+
+		return LocalDateTime.now().plusMinutes(time).toInstant(ZoneOffset.of("-03:00"));
 	}
 
 }
