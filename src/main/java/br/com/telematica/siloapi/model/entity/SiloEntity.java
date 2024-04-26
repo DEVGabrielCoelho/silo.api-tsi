@@ -14,37 +14,37 @@ public class SiloEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(nullable = false)
-	private Integer silcod;
+	private Long silcod;
 	@Column(nullable = false)
-	private Integer tsicod;
+	private Long tsicod;
 	@Column(length = 100, nullable = false)
 	private String silnom;
 	@Column(nullable = false)
-	private Integer placod;
+	private Long placod;
 
 	public SiloEntity() {
 	}
 
-	public SiloEntity(Integer silcod, Integer tsicod, String silnom, Integer placod) {
+	public SiloEntity(Long silcod, Long tsicod, String silnom, Long placod) {
 		this.silcod = silcod;
 		this.tsicod = tsicod;
 		this.silnom = silnom;
 		this.placod = placod;
 	}
 
-	public Integer getSilcod() {
+	public Long getSilcod() {
 		return silcod;
 	}
 
-	public void setSilcod(Integer silcod) {
+	public void setSilcod(Long silcod) {
 		this.silcod = silcod;
 	}
 
-	public Integer getTsicod() {
+	public Long getTsicod() {
 		return tsicod;
 	}
 
-	public void setTsicod(Integer tsicod) {
+	public void setTsicod(Long tsicod) {
 		this.tsicod = tsicod;
 	}
 
@@ -56,11 +56,11 @@ public class SiloEntity {
 		this.silnom = silnom;
 	}
 
-	public Integer getPlacod() {
+	public Long getPlacod() {
 		return placod;
 	}
 
-	public void setPlacod(Integer placod) {
+	public void setPlacod(Long placod) {
 		this.placod = placod;
 	}
 

@@ -4,43 +4,34 @@ import br.com.telematica.siloapi.model.entity.PlantaEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(name = "PlantaDTO", description = "Objeto de transferência de dados de Planta")
-public class PlantaDTO {
+public class PlantaDTO extends Codigo {
 
-	@Schema(description = "Código da planta", example = "1", nullable = false)
-	private Integer codigo;
 	@Schema(description = "Código da empresa", example = "1", nullable = false)
-	private Integer codigoEmpresa;
+	private Long codigoEmpresa;
 	@Schema(description = "Nome da planta", example = "Planta 1", nullable = false)
 	private String nome;
 
 	public PlantaDTO() {
 	}
 
-	public PlantaDTO(Integer codigo, String nome, Integer codigoEmpresa) {
-		this.codigo = codigo;
+	public PlantaDTO(Long codigo, Long codigoEmpresa, String nome) {
+		super(codigo);
 		this.codigoEmpresa = codigoEmpresa;
 		this.nome = nome;
 	}
 
 	public PlantaDTO(PlantaEntity entity) {
-		this.codigo = entity.getPlacod();
+		super();
+		this.setCodigo(entity.getPlacod());
 		this.codigoEmpresa = entity.getEmpcod();
 		this.nome = entity.getPlanom();
 	}
 
-	public Integer getCodigo() {
-		return codigo;
-	}
-
-	public void setCodigo(Integer codigo) {
-		this.codigo = codigo;
-	}
-
-	public Integer getCodigoEmpresa() {
+	public Long getCodigoEmpresa() {
 		return codigoEmpresa;
 	}
 
-	public void setCodigoEmpresa(Integer codigoEmpresa) {
+	public void setCodigoEmpresa(Long codigoEmpresa) {
 		this.codigoEmpresa = codigoEmpresa;
 	}
 
@@ -56,7 +47,7 @@ public class PlantaDTO {
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("PlantaDTO [codigo=");
-		builder.append(codigo);
+		builder.append(getCodigo());
 		builder.append(", codigoEmpresa=");
 		builder.append(codigoEmpresa);
 		builder.append(", nome=");

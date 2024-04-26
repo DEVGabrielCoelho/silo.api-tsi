@@ -4,43 +4,33 @@ import br.com.telematica.siloapi.model.entity.TipoSiloEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "Tipo Silo")
-public class TipoSiloDTO {
+public class TipoSiloDTO extends Codigo {
 
-	@Schema(description = "Código", example = "1", required = true)
-	private Integer codigo;
 	@Schema(description = "Código da Empresa", example = "1", required = true)
-	private Integer empresa;
+	private Long empresa;
 	@Schema(description = "Descrição", example = "Tipo 1", required = true)
 	private String descricao;
 
 	public TipoSiloDTO() {
 	}
 
-	public TipoSiloDTO(Integer codigo, Integer empresa, String descricao) {
-		this.codigo = codigo;
+	public TipoSiloDTO(Long codigo, Long empresa, String descricao) {
+		super(codigo);
 		this.empresa = empresa;
 		this.descricao = descricao;
 	}
 
 	public TipoSiloDTO(TipoSiloEntity entity) {
-		this.codigo = entity.getTsicod();
+		this.setCodigo(entity.getTsicod());
 		this.empresa = entity.getEmpcod();
 		this.descricao = entity.getTsides();
 	}
 
-	public Integer getCodigo() {
-		return codigo;
-	}
-
-	public void setCodigo(Integer codigo) {
-		this.codigo = codigo;
-	}
-
-	public Integer getEmpresa() {
+	public Long getEmpresa() {
 		return empresa;
 	}
 
-	public void setEmpresa(Integer empresa) {
+	public void setEmpresa(Long empresa) {
 		this.empresa = empresa;
 	}
 
@@ -56,8 +46,8 @@ public class TipoSiloDTO {
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("TipoSiloDTO [codigo=");
-		builder.append(codigo);
-		builder.append(", empresa=");
+		builder.append(getCodigo());
+		builder.append("empresa=");
 		builder.append(empresa);
 		builder.append(", descricao=");
 		builder.append(descricao);

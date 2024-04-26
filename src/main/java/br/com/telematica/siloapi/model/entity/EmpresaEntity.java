@@ -14,7 +14,7 @@ public class EmpresaEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(unique = true, nullable = false)
-	private Integer empcod;
+	private Long empcod;
 	@Column(length = 150, nullable = false)
 	private String empnom;
 	@Column(length = 150, nullable = false)
@@ -23,17 +23,17 @@ public class EmpresaEntity {
 	public EmpresaEntity() {
 	}
 
-	public EmpresaEntity(Integer empcod, String empnom, Long empcnpl) {
+	public EmpresaEntity(Long empcod, String empnom, Long empcnpl) {
 		this.empcod = empcod;
 		this.empnom = empnom;
 		this.empcnp = empcnpl;
 	}
 
-	public Integer getEmpcod() {
+	public Long getEmpcod() {
 		return empcod;
 	}
 
-	public void setEmpcod(Integer empcod) {
+	public void setEmpcod(Long empcod) {
 		this.empcod = empcod;
 	}
 

@@ -1,7 +1,9 @@
 package br.com.telematica.siloapi.controller;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +23,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.telematica.siloapi.model.dto.AuthenticationDTO;
-import br.com.telematica.siloapi.model.dto.RegistryDTO;
+import br.com.telematica.siloapi.model.AuthModel;
+import br.com.telematica.siloapi.model.UsuarioModel;
 import br.com.telematica.siloapi.model.dto.ResponseAuthenticationDTO;
-import br.com.telematica.siloapi.model.entity.UsuarioEntity;
-import br.com.telematica.siloapi.repository.AuthenticationRepository;
-import br.com.telematica.siloapi.service.UsuarioServices;
+import br.com.telematica.siloapi.repository.AuthRepository;
+import br.com.telematica.siloapi.service.UsuarioServiceImpl;
 import br.com.telematica.siloapi.utils.error.GenericResponseModel;
 import br.com.telematica.siloapi.utils.error.MessageResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,7 +35,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
@@ -50,15 +50,15 @@ public class AuthenticationController {
 	@Autowired
 	private AuthenticationManager authenticationManager;
 	@Autowired
-	private AuthenticationRepository authService;
+	private AuthRepository authService;
 	@Autowired
-	private UsuarioServices userServices;
+	private UsuarioServiceImpl userServices;
 
 	@PostMapping("/authenticate")
 	@Operation(description = "User Authentication")
-	public ResponseAuthenticationDTO postMethodName(@RequestBody AuthenticationDTO entity) {
+	public ResponseAuthenticationDTO postMethodName(@RequestBody AuthModel entity) throws IOException {
 
-		var userAutheticationToken = new UsernamePasswordAuthenticationToken(entity.getLogin(), entity.getPassword());
+		var userAutheticationToken = new UsernamePasswordAuthenticationToken(entity.getLogin(), entity.getSenha());
 
 		// Authenticate first!
 		Authentication authentication = authenticationManager.authenticate(userAutheticationToken);
@@ -71,16 +71,14 @@ public class AuthenticationController {
 
 		String role = roles.get(0);
 
-		return new ResponseAuthenticationDTO(authService.getToken(entity), role, null);
+		return new ResponseAuthenticationDTO(authService.generateToken(entity), role, null);
 	}
 
 	@PostMapping("/register")
 	@Operation(description = "Register a User"/* , security = { @SecurityRequirement(name = "bearerAuth") } */)
-	public ResponseEntity<GenericResponseModel> postRegister(@Valid @RequestBody RegistryDTO entity) {
+	public ResponseEntity<GenericResponseModel> postRegister(@Valid @RequestBody UsuarioModel entity) {
 		try {
-			UsuarioEntity user = new UsuarioEntity(entity.getUser(), entity.getPassword(), entity.getName(), entity.getEmail(), entity.getRole());
-
-			var userService = userServices.saveUserEncodePassword(user);
+			var userService = userServices.saveUserEncodePassword(Optional.of(entity));
 
 			return new ResponseEntity<>(MessageResponse.sucessRequest200("Registro feito com Sucesso", null, userService), HttpStatus.OK);
 
@@ -92,10 +90,10 @@ public class AuthenticationController {
 	}
 
 	@GetMapping("/listUsers")
-	@Operation(description = "List registered users", security = { @SecurityRequirement(name = "bearerAuth") })
+//	@Operation(description = "List registered users", security = { @SecurityRequirement(name = "bearerAuth") })
 	public ResponseEntity<GenericResponseModel> getListUsers() {
 		try {
-			var userList = userServices.findAllRegistryDTO();
+			var userList = userServices.findUserPermiAll();
 
 			return new ResponseEntity<GenericResponseModel>(MessageResponse.sucessRequest200("Registro feito com Sucesso", null, userList), HttpStatus.OK);
 		} catch (Exception e) {
@@ -105,12 +103,11 @@ public class AuthenticationController {
 	}
 
 	@PutMapping("/updateUser")
-	@Operation(description = "Register a User", security = { @SecurityRequirement(name = "bearerAuth") })
-	public ResponseEntity<GenericResponseModel> updateUser(@Valid @RequestBody RegistryDTO entity) {
+//	@Operation(description = "Register a User", security = { @SecurityRequirement(name = "bearerAuth") })
+	public ResponseEntity<GenericResponseModel> updateUser(@Valid @PathVariable Long codigo, @Valid @RequestBody UsuarioModel entity) {
 		try {
-			UsuarioEntity user = new UsuarioEntity(entity.getUser(), entity.getPassword(), entity.getName(), entity.getEmail(), entity.getRole());
 
-			var userService = userServices.update(user);
+			var userService = userServices.update(codigo, Optional.ofNullable(entity));
 
 			return new ResponseEntity<>(MessageResponse.sucessRequest200("Registro atualizado com Sucesso", null, userService), HttpStatus.OK);
 
@@ -122,16 +119,11 @@ public class AuthenticationController {
 	}
 
 	@DeleteMapping("/deleteUser/{code}")
-	@Operation(description = "Register a User", security = { @SecurityRequirement(name = "bearerAuth") })
-	public ResponseEntity<GenericResponseModel> deleteUser(@Valid @PathVariable Integer code) {
+//	@Operation(description = "Register a User", security = { @SecurityRequirement(name = "bearerAuth") })
+	public ResponseEntity<GenericResponseModel> deleteUser(@Valid @PathVariable Long code) {
 		try {
 
-			var userService = userServices.deleteByCode(code);
-
-			if (userService == true)
-				return new ResponseEntity<>(MessageResponse.sucessRequest200("Registro feito com Sucesso", null, userService), HttpStatus.OK);
-			else
-				return new ResponseEntity<>(MessageResponse.exceptionRequest400("Erro ao deletar esse Usuário", null, userService), HttpStatus.BAD_REQUEST);
+			return userServices.deleteByCode(code);
 		} catch (RuntimeException e) {
 			return new ResponseEntity<>(MessageResponse.exceptionRequest400(e.getMessage(), null, null), HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {

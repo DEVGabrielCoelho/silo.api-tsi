@@ -14,26 +14,26 @@ public class PlantaEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(nullable = false)
-	private Integer placod;
+	private Long placod;
 	@Column(length = 100, nullable = false)
 	private String planom;
 	@Column(nullable = false)
-	private Integer empcod;
+	private Long empcod;
 
 	public PlantaEntity() {
 	}
 
-	public PlantaEntity(Integer placod, String planom, Integer empcod) {
+	public PlantaEntity(Long placod, String planom, Long empcod) {
 		this.placod = placod;
 		this.planom = planom;
 		this.empcod = empcod;
 	}
 
-	public Integer getPlacod() {
+	public Long getPlacod() {
 		return placod;
 	}
 
-	public void setPlacod(Integer placod) {
+	public void setPlacod(Long placod) {
 		this.placod = placod;
 	}
 
@@ -45,11 +45,11 @@ public class PlantaEntity {
 		this.planom = planom;
 	}
 
-	public Integer getEmpcod() {
+	public Long getEmpcod() {
 		return empcod;
 	}
 
-	public void setEmpcod(Integer empcod) {
+	public void setEmpcod(Long empcod) {
 		this.empcod = empcod;
 	}
 

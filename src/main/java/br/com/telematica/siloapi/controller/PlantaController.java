@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.telematica.siloapi.model.dto.PlantaDTO;
-import br.com.telematica.siloapi.model.interfaces.SecurityRestController;
 import br.com.telematica.siloapi.service.PlantaService;
 import br.com.telematica.siloapi.utils.error.GenericResponseModel;
 import br.com.telematica.siloapi.utils.error.MessageResponse;
@@ -26,7 +25,7 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/api/v1/planta")
 @Tag(name = "Planta", description = "Planta API")
-public class PlantaController implements SecurityRestController {
+public class PlantaController extends SecurityRestController {
 
 	@Autowired
 	private PlantaService plantaService;

@@ -14,34 +14,34 @@ public class TipoSiloEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(nullable = false)
-	private Integer tsicod;
+	private Long tsicod;
 	@Column(nullable = false)
-	private Integer empcod;
+	private Long empcod;
 	@Column(length = 50, nullable = false)
 	private String tsides;
 
 	public TipoSiloEntity() {
 	}
 
-	public TipoSiloEntity(Integer tsicod, Integer empcod, String tsides) {
+	public TipoSiloEntity(Long tsicod, Long empcod, String tsides) {
 		this.tsicod = tsicod;
 		this.empcod = empcod;
 		this.tsides = tsides;
 	}
 
-	public Integer getTsicod() {
+	public Long getTsicod() {
 		return tsicod;
 	}
 
-	public void setTsicod(Integer tsicod) {
+	public void setTsicod(Long tsicod) {
 		this.tsicod = tsicod;
 	}
 
-	public Integer getEmpcod() {
+	public Long getEmpcod() {
 		return empcod;
 	}
 
-	public void setEmpcod(Integer empcod) {
+	public void setEmpcod(Long empcod) {
 		this.empcod = empcod;
 	}
 

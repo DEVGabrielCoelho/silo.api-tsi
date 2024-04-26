@@ -1,76 +1,55 @@
 package br.com.telematica.siloapi.service;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.io.IOException;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTCreationException;
-import com.auth0.jwt.exceptions.JWTVerificationException;
-
-import br.com.telematica.siloapi.config.ConfigProperties;
-import br.com.telematica.siloapi.model.dto.AuthenticationDTO;
+import br.com.telematica.siloapi.model.AuthModel;
 import br.com.telematica.siloapi.model.entity.UsuarioEntity;
-import br.com.telematica.siloapi.repository.AuthenticationRepository;
+import br.com.telematica.siloapi.repository.AuthRepository;
 import br.com.telematica.siloapi.repository.UsuarioRepository;
+import br.com.telematica.siloapi.utils.JWTUtil;
 
 @Service
-public class AuthService implements AuthenticationRepository {
+public class AuthService implements AuthRepository {
 
 	@Autowired
-	private ConfigProperties confProp;
+	private JWTUtil jwtUtil;
+
 	@Autowired
 	private UsuarioRepository userRepository;
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		return userRepository.findByUsulog(username);
+		if (username == null)
+			throw new UsernameNotFoundException("O nome do Usuário está vazio.");
+		Optional<UsuarioEntity> usuario = userRepository.findByUsulog(username);
+		if (usuario.isEmpty())
+			throw new UsernameNotFoundException("Usuário não encontrado: " + username);
+		return (UserDetails) new UsuarioEntity(usuario.get());
+
 	}
 
 	@Override
-	public String getToken(AuthenticationDTO authToken) {
-		UsuarioEntity user = userRepository.findByUsulog(authToken.getLogin());
-		return generateToken(user);
+	public String generateToken(AuthModel authToken) throws IOException {
+		String loginToken = authToken.getLogin();
+		if (loginToken == null)
+			throw new UsernameNotFoundException("O Token de autenticação está vazio.");
+		UsuarioEntity user = userRepository.findByUsulog(loginToken).get();
+		return jwtUtil.generateToken(user);
 	}
 
 	@Override
-	public String validToken(String token) {
+	public String validateToken(String token) {
 		try {
-			return validateToken(token);
+			return jwtUtil.validateToken(token);
 		} catch (Exception e) {
 			throw new UnsupportedOperationException("Unimplemented method 'validToken'");
 		}
-	}
-
-	public String generateToken(UsuarioEntity user) {
-		try {
-			Algorithm algorithm = Algorithm.HMAC256("my-secret");
-			String token = JWT.create().withIssuer("auth-api").withSubject(user.getUsulog()).withExpiresAt(genExpirationDate()).sign(algorithm);
-			return token;
-		} catch (JWTCreationException exception) {
-			throw new RuntimeException("Error while generating token", exception);
-		}
-	}
-
-	public String validateToken(String token) {
-		try {
-			Algorithm algorithm = Algorithm.HMAC256("my-secret");
-			return JWT.require(algorithm).withIssuer("auth-api").build().verify(token).getSubject();
-		} catch (JWTVerificationException exception) {
-			return "";
-		}
-	}
-
-	private Instant genExpirationDate() {
-		Long time = confProp.AUTH_TIME_MIN().get();
-
-		return LocalDateTime.now().plusMinutes(time).toInstant(ZoneOffset.of("-03:00"));
 	}
 
 }

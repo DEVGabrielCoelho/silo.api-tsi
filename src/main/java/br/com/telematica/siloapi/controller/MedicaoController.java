@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.telematica.siloapi.model.dto.MedicaoDTO;
-import br.com.telematica.siloapi.model.interfaces.SecurityRestController;
 import br.com.telematica.siloapi.service.MedicaoService;
 import br.com.telematica.siloapi.utils.error.GenericResponseModel;
 import br.com.telematica.siloapi.utils.error.MessageResponse;
@@ -26,7 +25,7 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/api/v1/medicao")
 @Tag(name = "Medições", description = "Medições API")
-public class MedicaoController implements SecurityRestController {
+public class MedicaoController extends SecurityRestController {
 
 	@Autowired
 	private MedicaoService medicaoService;
