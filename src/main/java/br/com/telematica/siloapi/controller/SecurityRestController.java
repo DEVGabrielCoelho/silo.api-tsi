@@ -1,6 +1,8 @@
 package br.com.telematica.siloapi.controller;
 
-//@SecurityRequirement(name = "bearerAuth")
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
+@SecurityRequirement(name = "bearerAuth")
 public class SecurityRestController {
 
 }

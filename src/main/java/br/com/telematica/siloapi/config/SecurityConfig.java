@@ -15,10 +15,13 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import br.com.telematica.siloapi.utils.message.CustomAccessDeniedHandler;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
 
 @Configuration
 @EnableWebSecurity
-//@SecurityScheme(name = "bearerAuth", description = "JWT Authentication", type = SecuritySchemeType.HTTP, scheme = "bearer", bearerFormat = "JWT", in = SecuritySchemeIn.HEADER)
+@SecurityScheme(name = "bearerAuth", description = "JWT Authentication", type = SecuritySchemeType.HTTP, scheme = "bearer", bearerFormat = "JWT", in = SecuritySchemeIn.HEADER)
 public class SecurityConfig {
 
 	@Autowired
@@ -35,7 +38,7 @@ public class SecurityConfig {
 			.exceptionHandling(ex -> ex.accessDeniedHandler(new CustomAccessDeniedHandler()))
 			.authorizeHttpRequests(requests -> requests
 				.requestMatchers(WHITE_LIST_URL).permitAll()
-				.anyRequest().permitAll())
+				.anyRequest().authenticated())
 			.addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();

@@ -3,7 +3,6 @@ package br.com.telematica.siloapi.config;
 import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.info.BuildProperties;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.lang.NonNull;
 import org.springframework.security.access.AccessDeniedException;
@@ -36,8 +35,7 @@ public class JWTAuthFilter extends OncePerRequestFilter {
 	@Autowired
 	@Lazy
 	private PermissaoService permissionService;
-	@Autowired
-	BuildProperties env;
+
 	private AccessDeniedHandler accessDeniedHandler = new CustomAccessDeniedHandler();
 
 	@Override
@@ -53,7 +51,7 @@ public class JWTAuthFilter extends OncePerRequestFilter {
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
 			if (authentication == null || !authentication.isAuthenticated()) {
-				filterChain.doFilter(request, response);
+				accessDeniedHandler.handle(request, response, new AccessDeniedException("Access Denied"));
 				return;
 			}
 
@@ -61,7 +59,7 @@ public class JWTAuthFilter extends OncePerRequestFilter {
 
 			if (role != null) {
 				UrlPermissoesDTO permissions = permissionService.getPermissionsForRole(role);
-				if (permissions != null && !hasPermission1(permissions, request)) {
+				if (permissions != null && !hasPermission(permissions, request)) {
 					accessDeniedHandler.handle(request, response, new AccessDeniedException("Access Denied"));
 					return;
 				}
@@ -78,7 +76,7 @@ public class JWTAuthFilter extends OncePerRequestFilter {
 		return authHeader.replace("Bearer ", "");
 	}
 
-	private boolean hasPermission1(UrlPermissoesDTO permissions, HttpServletRequest request) {
+	private boolean hasPermission(UrlPermissoesDTO permissions, HttpServletRequest request) {
 		String path = request.getRequestURI();
 		String method = request.getMethod();
 

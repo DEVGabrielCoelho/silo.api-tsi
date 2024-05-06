@@ -115,7 +115,7 @@ public class UsuarioService {
 	}
 
 	@Transactional
-	public UsuarioDTO saveUserEncodePassword(Optional<UsuarioModel> userCadastro) {
+	public ResponseEntity<GenericResponseModel> saveUserEncodePassword(Optional<UsuarioModel> userCadastro) {
 		validateUserCadastro(userCadastro);
 		if (!userCadastro.isPresent()) {
 			throw new RuntimeException("Os dados do Usuário está vazio.");
@@ -141,7 +141,7 @@ public class UsuarioService {
 
 		criarPermisao(codigoUsuario, perfil.getPercod(), userCadastro.get().getPermissao());
 
-		return new UsuarioDTO(savedUser);
+		return MessageResponse.sucess(new UsuarioDTO(savedUser));
 	}
 
 	private void validateUserCadastro(Optional<UsuarioModel> userCadastro) {
