@@ -1,4 +1,4 @@
-package br.com.telematica.siloapi.utils.error;
+package br.com.telematica.siloapi.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -10,22 +10,18 @@ public class GenericResponseModel {
 	private String desc;
 	@Schema(name = "date", type = "Date", description = "Request date.", example = "200")
 	private String date;
-	@Schema(name = "resultListSize", type = "Integer", description = "Request result list size.", example = "200")
-	private Integer listSize;
 	@Schema(name = "resultObject", type = "Integer", description = "Request result object.")
 	private Object object;
-
+	
 	public GenericResponseModel() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
-	public GenericResponseModel(Integer code, String desc, String date, Integer listSize, Object object) {
+	public GenericResponseModel(Integer code, String desc, String date, Object object) {
 		super();
 		this.code = code;
 		this.desc = desc;
 		this.date = date;
-		this.listSize = listSize;
 		this.object = object;
 	}
 
@@ -53,14 +49,6 @@ public class GenericResponseModel {
 		this.date = date;
 	}
 
-	public Integer getListSize() {
-		return listSize;
-	}
-
-	public void setListSize(Integer listSize) {
-		this.listSize = listSize;
-	}
-
 	public Object getObject() {
 		return object;
 	}
@@ -78,8 +66,6 @@ public class GenericResponseModel {
 		builder.append(desc);
 		builder.append(", date=");
 		builder.append(date);
-		builder.append(", listSize=");
-		builder.append(listSize);
 		builder.append(", object=");
 		builder.append(object);
 		builder.append("]");

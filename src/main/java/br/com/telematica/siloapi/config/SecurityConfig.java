@@ -14,10 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import br.com.telematica.siloapi.utils.error.CustomAccessDeniedHandler;
-import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
-import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
-import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import br.com.telematica.siloapi.utils.message.CustomAccessDeniedHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -32,8 +29,14 @@ public class SecurityConfig {
 
 	@Bean
 	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		http.csrf(csrf -> csrf.disable()).sessionManagement(session -> session.sessionCreationPolicy(STATELESS)).exceptionHandling(ex -> ex.accessDeniedHandler(new CustomAccessDeniedHandler()))
-				.authorizeHttpRequests(requests -> requests.requestMatchers(WHITE_LIST_URL).permitAll().anyRequest().permitAll()).addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class);
+		http
+			.csrf(csrf -> csrf.disable())
+			.sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
+			.exceptionHandling(ex -> ex.accessDeniedHandler(new CustomAccessDeniedHandler()))
+			.authorizeHttpRequests(requests -> requests
+				.requestMatchers(WHITE_LIST_URL).permitAll()
+				.anyRequest().permitAll())
+			.addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();
 	}

@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,6 +22,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import br.com.telematica.siloapi.model.GenericResponseModel;
 import br.com.telematica.siloapi.model.PermissaoModel;
 import br.com.telematica.siloapi.model.UsuarioModel;
 import br.com.telematica.siloapi.model.dto.PermissaoDTO;
@@ -33,8 +33,7 @@ import br.com.telematica.siloapi.model.entity.PerfilEntity;
 import br.com.telematica.siloapi.model.entity.UsuarioEntity;
 import br.com.telematica.siloapi.model.enums.MapaURLEnum;
 import br.com.telematica.siloapi.repository.UsuarioRepository;
-import br.com.telematica.siloapi.utils.error.GenericResponseModel;
-import br.com.telematica.siloapi.utils.error.MessageResponse;
+import br.com.telematica.siloapi.utils.message.MessageResponse;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
@@ -213,9 +212,9 @@ public class UsuarioService {
 			}, () -> {
 				throw new EntityNotFoundException("Usuário não encontrado");
 			});
-			return new ResponseEntity<>(MessageResponse.sucessRequest200("Registro deletado com Sucesso", null, null), HttpStatus.OK);
+			return MessageResponse.sucess(null);
 		} catch (Exception e) {
-			return new ResponseEntity<>(MessageResponse.exceptionRequest400(e.getMessage(), null, null), HttpStatus.BAD_REQUEST);
+			return MessageResponse.badRequest(e.getMessage());
 		}
 	}
 

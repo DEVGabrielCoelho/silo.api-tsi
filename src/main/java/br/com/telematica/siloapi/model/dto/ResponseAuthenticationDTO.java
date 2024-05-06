@@ -16,7 +16,6 @@ public class ResponseAuthenticationDTO {
 		this.token = token;
 		this.role = role;
 		this.dateRequest = date == null ? Utils.sdfBaseDateforString() : Utils.sdfDateforString(date);
-		;
 	}
 
 	public String getToken() {

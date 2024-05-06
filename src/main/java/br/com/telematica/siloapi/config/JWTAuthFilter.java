@@ -20,7 +20,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import br.com.telematica.siloapi.model.dto.UrlPermissoesDTO;
 import br.com.telematica.siloapi.repository.AuthRepository;
 import br.com.telematica.siloapi.service.PermissaoService;
-import br.com.telematica.siloapi.utils.error.CustomAccessDeniedHandler;
+import br.com.telematica.siloapi.utils.message.CustomAccessDeniedHandler;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

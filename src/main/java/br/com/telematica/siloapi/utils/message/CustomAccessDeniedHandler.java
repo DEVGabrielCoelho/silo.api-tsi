@@ -1,4 +1,4 @@
-package br.com.telematica.siloapi.utils.error;
+package br.com.telematica.siloapi.utils.message;
 
 import java.io.IOException;
 
