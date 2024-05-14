@@ -1,4 +1,4 @@
-package br.com.telematica.siloapi.service;
+package br.com.telematica.siloapi.services.impl;
 
 import java.io.IOException;
 import java.util.List;
@@ -14,17 +14,18 @@ import br.com.telematica.siloapi.model.GenericResponseModel;
 import br.com.telematica.siloapi.model.dto.TipoSiloDTO;
 import br.com.telematica.siloapi.model.entity.TipoSiloEntity;
 import br.com.telematica.siloapi.repository.TipoSiloRepository;
+import br.com.telematica.siloapi.services.TipoSiloInterface;
 import br.com.telematica.siloapi.utils.message.MessageResponse;
 import ch.qos.logback.classic.Logger;
-import jakarta.transaction.Transactional;
 
 @Service
-public class TipoSiloService {
+public class TipoSiloServiceImpl implements TipoSiloInterface {
 
-	private static Logger logger = (Logger) LoggerFactory.getLogger(TipoSiloService.class);
+	private static Logger logger = (Logger) LoggerFactory.getLogger(TipoSiloServiceImpl.class);
 	@Autowired
 	private TipoSiloRepository tipoSiloRepository;
 
+	@Override
 	public ResponseEntity<GenericResponseModel> save(TipoSiloDTO tipoSiloDTO) throws RuntimeException {
 		try {
 
@@ -42,7 +43,7 @@ public class TipoSiloService {
 		}
 	}
 
-	@Transactional
+	@Override
 	public ResponseEntity<GenericResponseModel> deleteByTsicod(Integer codigo) throws IOException {
 		if (codigo == null) {
 			logger.error("O ID do tipo silo está nulo.");
@@ -59,6 +60,7 @@ public class TipoSiloService {
 		}
 	}
 
+	@Override
 	public ResponseEntity<GenericResponseModel> update(TipoSiloDTO tipoSiloDTO) throws IOException {
 		if (tipoSiloDTO == null) {
 			logger.error("Tipo Silo está nula.");
@@ -74,10 +76,12 @@ public class TipoSiloService {
 		}
 	}
 
+	@Override
 	public List<TipoSiloEntity> findAll() throws IOException {
 		return tipoSiloRepository.findAll();
 	}
 
+	@Override
 	public ResponseEntity<GenericResponseModel> findAllTipoSiloDTO() throws IOException {
 		try {
 			return MessageResponse.sucess(tipoSiloRepository.findAll().stream().map(this::convertToTipoSiloDTO).collect(Collectors.toList()));
@@ -86,6 +90,7 @@ public class TipoSiloService {
 		}
 	}
 
+	@Override
 	public TipoSiloDTO findById(Integer id) throws IOException, EmptyResultDataAccessException {
 		if (id == null) {
 			logger.error("Id está nulo.");

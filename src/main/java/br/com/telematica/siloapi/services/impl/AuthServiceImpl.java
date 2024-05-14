@@ -1,4 +1,4 @@
-package br.com.telematica.siloapi.service;
+package br.com.telematica.siloapi.services.impl;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -10,12 +10,12 @@ import org.springframework.stereotype.Service;
 
 import br.com.telematica.siloapi.model.AuthModel;
 import br.com.telematica.siloapi.model.entity.UsuarioEntity;
-import br.com.telematica.siloapi.repository.AuthRepository;
 import br.com.telematica.siloapi.repository.UsuarioRepository;
+import br.com.telematica.siloapi.services.AuthInterface;
 import br.com.telematica.siloapi.utils.JWTUtil;
 
 @Service
-public class AuthService implements AuthRepository {
+public class AuthServiceImpl implements AuthInterface {
 
 	@Autowired
 	private JWTUtil jwtUtil;

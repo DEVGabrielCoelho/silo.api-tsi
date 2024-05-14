@@ -1,4 +1,4 @@
-package br.com.telematica.siloapi.service;
+package br.com.telematica.siloapi.services.impl;
 
 import java.io.IOException;
 import java.util.List;
@@ -14,17 +14,18 @@ import br.com.telematica.siloapi.model.GenericResponseModel;
 import br.com.telematica.siloapi.model.dto.SiloDTO;
 import br.com.telematica.siloapi.model.entity.SiloEntity;
 import br.com.telematica.siloapi.repository.SiloRepository;
+import br.com.telematica.siloapi.services.SiloInterface;
 import br.com.telematica.siloapi.utils.message.MessageResponse;
 import ch.qos.logback.classic.Logger;
-import jakarta.transaction.Transactional;
 
 @Service
-public class SiloService {
+public class SiloServiceImpl implements SiloInterface {
 
-	private static Logger logger = (Logger) LoggerFactory.getLogger(SiloService.class);
+	private static Logger logger = (Logger) LoggerFactory.getLogger(SiloServiceImpl.class);
 	@Autowired
 	private SiloRepository siloRepository;
 
+	@Override
 	public ResponseEntity<GenericResponseModel> save(SiloDTO siloDTO) throws RuntimeException {
 		try {
 
@@ -43,7 +44,7 @@ public class SiloService {
 		}
 	}
 
-	@Transactional
+	@Override
 	public ResponseEntity<GenericResponseModel> deleteByPlacod(Integer codigo) throws IOException {
 		if (codigo == null) {
 			logger.error("O ID do silo está nulo.");
@@ -60,6 +61,7 @@ public class SiloService {
 		}
 	}
 
+	@Override
 	public ResponseEntity<GenericResponseModel> update(SiloDTO siloDTO) throws IOException {
 		if (siloDTO == null) {
 			logger.error("Silo está nula.");
@@ -75,10 +77,12 @@ public class SiloService {
 		}
 	}
 
+	@Override
 	public List<SiloEntity> findAll() throws IOException {
 		return siloRepository.findAll();
 	}
 
+	@Override
 	public ResponseEntity<GenericResponseModel> findAllSiloDTO() throws IOException {
 		try {
 			return MessageResponse.sucess(siloRepository.findAll().stream().map(this::convertToSiloDTO).collect(Collectors.toList()));
@@ -87,6 +91,7 @@ public class SiloService {
 		}
 	}
 
+	@Override
 	public ResponseEntity<GenericResponseModel> findById(Integer id) throws IOException, EmptyResultDataAccessException {
 		if (id == null) {
 			logger.error("Id está nulo.");

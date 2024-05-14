@@ -15,44 +15,42 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.telematica.siloapi.model.GenericResponseModel;
 import br.com.telematica.siloapi.model.dto.PlantaDTO;
-import br.com.telematica.siloapi.service.PlantaService;
+import br.com.telematica.siloapi.services.PlantaInterface;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/v1/planta")
+@RequestMapping("/api/planta")
 @Tag(name = "Planta", description = "Planta API")
 public class PlantaController extends SecurityRestController {
 
 	@Autowired
-	private PlantaService plantaService;
+	private PlantaInterface planta;
 
-	@GetMapping("/listaPlantas")
+	@GetMapping("/v1/listaPlantas")
 	@Operation(description = "Busca pelas plantas cadastradas")
 	public ResponseEntity<GenericResponseModel> getPlanta() throws IOException {
-		return plantaService.findAllPlantaDTO();
+		return planta.findAllPlantaDTO();
 
 	}
 
-	@PostMapping("/cadastraPlanta")
+	@PostMapping("/v1/cadastraPlanta")
 	@Operation(description = "Cadastro de uma nova planta")
-	public ResponseEntity<GenericResponseModel> createPlanta(@Valid @RequestBody PlantaDTO planta) {
-
-		return plantaService.save(planta);
-
+	public ResponseEntity<GenericResponseModel> createPlanta(@Valid @RequestBody PlantaDTO plantaDto) {
+		return planta.save(plantaDto);
 	}
 
-	@PutMapping("/atualizaPlanta")
+	@PutMapping("/v1/atualizaPlanta")
 	@Operation(description = "Atualização de uma planta")
-	public ResponseEntity<GenericResponseModel> updatePlanta(@Valid PlantaDTO planta) throws IOException {
-		return plantaService.update(planta);
+	public ResponseEntity<GenericResponseModel> updatePlanta(@Valid PlantaDTO plantaDto) throws IOException {
+		return planta.update(plantaDto);
 
 	}
 
-	@DeleteMapping("/deletaPlanta/{codigo}")
+	@DeleteMapping("/v1/deletaPlanta/{codigo}")
 	@Operation(description = "Deletar uma planta")
 	public ResponseEntity<GenericResponseModel> deletePlanta(@Valid @PathVariable Integer codigo) throws IOException {
-		return plantaService.deleteByPlacod(codigo);
+		return planta.deleteByPlacod(codigo);
 	}
 }

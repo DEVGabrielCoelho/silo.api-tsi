@@ -1,4 +1,4 @@
-package br.com.telematica.siloapi.service;
+package br.com.telematica.siloapi.services.impl;
 
 import java.io.IOException;
 import java.util.List;
@@ -14,17 +14,18 @@ import br.com.telematica.siloapi.model.GenericResponseModel;
 import br.com.telematica.siloapi.model.dto.EmpresaDTO;
 import br.com.telematica.siloapi.model.entity.EmpresaEntity;
 import br.com.telematica.siloapi.repository.EmpresaRepository;
+import br.com.telematica.siloapi.services.EmpresaInterface;
 import br.com.telematica.siloapi.utils.message.MessageResponse;
 import ch.qos.logback.classic.Logger;
-import jakarta.transaction.Transactional;
 
 @Service
-public class EmpresaService {
+public class EmpresaServiceImpl implements EmpresaInterface {
 
-	private static Logger logger = (Logger) LoggerFactory.getLogger(EmpresaService.class);
+	private static Logger logger = (Logger) LoggerFactory.getLogger(EmpresaServiceImpl.class);
 	@Autowired
 	private EmpresaRepository empresaRepository;
 
+	@Override
 	public ResponseEntity<GenericResponseModel> salvar(EmpresaDTO empresa) throws RuntimeException {
 		try {
 			if (empresa == null) {
@@ -42,7 +43,7 @@ public class EmpresaService {
 		}
 	}
 
-	@Transactional
+	@Override
 	public ResponseEntity<GenericResponseModel> deleteByEmpcod(Integer codigo) throws IOException {
 		try {
 			if (codigo == null) {
@@ -62,6 +63,7 @@ public class EmpresaService {
 		}
 	}
 
+	@Override
 	public ResponseEntity<GenericResponseModel> update(EmpresaDTO empresa) throws IOException {
 		try {
 
@@ -79,11 +81,13 @@ public class EmpresaService {
 		}
 	}
 
+	@Override
 	public List<EmpresaEntity> findAll() throws IOException {
 		return empresaRepository.findAll();
 	}
 
-	public ResponseEntity<GenericResponseModel> findAllEmpresaDTO() throws IOException {
+	@Override
+	public ResponseEntity<GenericResponseModel> findAllEmpresaDTO() {
 		try {
 
 			return MessageResponse.sucess(empresaRepository.findAll().stream().map(this::convertToEmpresaDTO).collect(Collectors.toList()));
@@ -93,6 +97,7 @@ public class EmpresaService {
 
 	}
 
+	@Override
 	public EmpresaDTO findById(Integer id) throws IOException, EmptyResultDataAccessException {
 		if (id == null) {
 			logger.error("Id está nulo.");

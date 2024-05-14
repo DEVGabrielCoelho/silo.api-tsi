@@ -2,7 +2,6 @@ package br.com.telematica.siloapi.controller;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,69 +22,65 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.telematica.siloapi.model.GenericResponseModel;
 import br.com.telematica.siloapi.model.UsuarioModel;
 import br.com.telematica.siloapi.model.dto.UsuarioDTO;
-import br.com.telematica.siloapi.model.dto.UsuarioDetailsDTO;
-import br.com.telematica.siloapi.service.UsuarioServiceImpl;
+import br.com.telematica.siloapi.services.UsuarioInterface;
 import br.com.telematica.siloapi.utils.Utils;
+import br.com.telematica.siloapi.utils.message.MessageResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/api/usuario/v1")
+@RequestMapping("/api/usuario")
 @Tag(name = "Usuário", description = "Api para Controle de Usuários")
 public class UsuarioController extends SecurityRestController {
 
 	@Autowired
-	private UsuarioServiceImpl userServImpl;
+	private UsuarioInterface user;
 
 	@PostMapping
 	public ResponseEntity<GenericResponseModel> cadastrarUsuario(@RequestBody Optional<UsuarioModel> cadastro) {
-		return userServImpl.saveUserEncodePassword(cadastro);
+		return user.saveUserEncodePassword(cadastro);
 	}
 
-	@GetMapping("{codigo}")
-	public ResponseEntity<UsuarioDTO> buscarUsuarioPorCodigo(@PathVariable Long codigo) throws ParseException {
-		var userList = userServImpl.findById(codigo);
-		return ResponseEntity.ok(userList);
+	@GetMapping("/v1{codigo}")
+	public ResponseEntity<GenericResponseModel> buscarUsuarioPorCodigo(@PathVariable Long codigo) throws ParseException {
+		return user.findById(codigo);
 	}
 
-	@GetMapping
-	public ResponseEntity<List<UsuarioDTO>> buscarListarUsuario() throws ParseException {
-		var userList = userServImpl.findAll();
-		return ResponseEntity.ok(userList);
+	@GetMapping("/v1")
+	public ResponseEntity<GenericResponseModel> buscarListarUsuario() throws ParseException {
+		return user.findAll();
 	}
 
-	@GetMapping("/permissao")
-	public ResponseEntity<List<UsuarioDetailsDTO>> buscarListarPermissao() throws ParseException {
-		var userList = userServImpl.findUserPermiAll();
-		return ResponseEntity.ok(userList);
+	@GetMapping("/v1/permissao")
+	public ResponseEntity<GenericResponseModel> buscarListarPermissao() throws ParseException {
+		return user.findUserPermiAll();
 	}
 
-	@GetMapping("/permissao/{codigo}")
-	public ResponseEntity<UsuarioDetailsDTO> buscarIdUsuarioPermissao(@PathVariable Long codigo) throws ParseException {
-		var userList = userServImpl.findUserPermiById(codigo);
-		return ResponseEntity.ok(userList);
+	@GetMapping("/v1/permissao/{codigo}")
+	public ResponseEntity<GenericResponseModel> buscarIdUsuarioPermissao(@PathVariable Long codigo) throws ParseException {
+		return user.findUserPermiById(codigo);
 	}
 
-	@GetMapping("paginado")
+	@GetMapping("/v1/paginado")
 	public ResponseEntity<Page<UsuarioDTO>> buscarUsuarioPaginado(@RequestParam(value = "pagina", defaultValue = "0") @NonNull Integer pagina, @RequestParam(value = "tamanho", defaultValue = "10") @NonNull Integer tamanho, @RequestParam(value = "nome", required = false) String nome,
 			@RequestParam(value = "ordenarPor", defaultValue = "codigo") String ordenarPor, @RequestParam(value = "direcao", defaultValue = "ASC", required = false) @NonNull String direcao) {
 		String ordenarEntity = UsuarioDTO.consultaPagable(ordenarPor);
 		if (ordenarEntity == null) {
 			return ResponseEntity.badRequest().body(Page.empty());
 		}
-		return ResponseEntity.ok(userServImpl.usuarioFindAllPaginado(nome, Utils.consultaPage(ordenarEntity, direcao, pagina, tamanho)));
+		return MessageResponse.page(user.usuarioFindAllPaginado(nome, Utils.consultaPage(ordenarEntity, direcao, pagina, tamanho)));
+
 	}
 
-	@PutMapping("/{codigo}")
-	public ResponseEntity<UsuarioDTO> atualizarUsuario(@Valid @PathVariable Long codigo, @Valid @RequestBody UsuarioModel entity) throws ParseException {
-		var userService = userServImpl.update(codigo, Optional.ofNullable(entity));
-		return ResponseEntity.ok(userService);
+	@PutMapping("/v1/{codigo}")
+	public ResponseEntity<GenericResponseModel> atualizarUsuario(@Valid @PathVariable Long codigo, @Valid @RequestBody UsuarioModel entity) throws ParseException {
+		return user.update(codigo, Optional.ofNullable(entity));
 	}
 
-	@DeleteMapping("/{codigo}")
+	@DeleteMapping("/v1/{codigo}")
 	public ResponseEntity<GenericResponseModel> deletarUsuario(@Valid @PathVariable Long codigo) throws IOException {
-		return userServImpl.deleteByCode(codigo);
+		return user.deleteByCode(codigo);
 	}
 
 }

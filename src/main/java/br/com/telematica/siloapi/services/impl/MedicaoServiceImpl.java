@@ -1,4 +1,4 @@
-package br.com.telematica.siloapi.service;
+package br.com.telematica.siloapi.services.impl;
 
 import java.io.IOException;
 import java.util.Date;
@@ -15,18 +15,19 @@ import br.com.telematica.siloapi.model.GenericResponseModel;
 import br.com.telematica.siloapi.model.dto.MedicaoDTO;
 import br.com.telematica.siloapi.model.entity.MedicaoEntity;
 import br.com.telematica.siloapi.repository.MedicaoRepository;
+import br.com.telematica.siloapi.services.MedicaoInterface;
 import br.com.telematica.siloapi.utils.Utils;
 import br.com.telematica.siloapi.utils.message.MessageResponse;
 import ch.qos.logback.classic.Logger;
-import jakarta.transaction.Transactional;
 
 @Service
-public class MedicaoService {
+public class MedicaoServiceImpl implements MedicaoInterface {
 
-	private static Logger logger = (Logger) LoggerFactory.getLogger(MedicaoService.class);
+	private static Logger logger = (Logger) LoggerFactory.getLogger(MedicaoServiceImpl.class);
 	@Autowired
 	private MedicaoRepository medicaoRepository;
 
+	@Override
 	public ResponseEntity<GenericResponseModel> save(MedicaoDTO medicaoDTO) throws RuntimeException {
 		try {
 
@@ -47,7 +48,7 @@ public class MedicaoService {
 		}
 	}
 
-	@Transactional
+	@Override
 	public ResponseEntity<GenericResponseModel> deleteByMsidth(String msidth) throws Exception {
 		try {
 			if (msidth == null) {
@@ -65,6 +66,7 @@ public class MedicaoService {
 		}
 	}
 
+	@Override
 	public ResponseEntity<GenericResponseModel> update(MedicaoDTO medicaoDTO) throws IOException, Exception {
 		try {
 			if (medicaoDTO == null) {
@@ -83,10 +85,12 @@ public class MedicaoService {
 		}
 	}
 
+	@Override
 	public List<MedicaoEntity> findAll() throws IOException {
 		return medicaoRepository.findAll();
 	}
 
+	@Override
 	public ResponseEntity<GenericResponseModel> findAllMedicaoDTO() throws IOException {
 		try {
 
@@ -97,7 +101,8 @@ public class MedicaoService {
 
 	}
 
-	public MedicaoDTO findByData(Date date) throws IOException, EmptyResultDataAccessException {
+	@Override
+	public MedicaoDTO findByData(Date date) throws IOException, EmptyResultDataAccessException{
 		if (date == null) {
 			logger.error("Data está nula.");
 			throw new IOException("Data está nulo.");

@@ -9,24 +9,23 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.telematica.siloapi.model.AuthModel;
-import br.com.telematica.siloapi.model.dto.ResponseAuthDTO;
-import br.com.telematica.siloapi.service.UsuarioServiceImpl;
+import br.com.telematica.siloapi.model.GenericResponseModel;
+import br.com.telematica.siloapi.services.UsuarioInterface;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/api/autenticacao/v1")
+@RequestMapping("/api/autenticacao")
 @Tag(name = "Autenticação", description = "Api para Controle de Autenticação")
 public class AuthenticationController {
 
 	@Autowired
-	private UsuarioServiceImpl userServImpl;
+	private UsuarioInterface user;
 
-	@PostMapping("/auth")
-	public ResponseEntity<ResponseAuthDTO> postAuth(@Valid @RequestBody AuthModel auth) throws Exception {
-		var login = userServImpl.authLogin(auth);
-		return ResponseEntity.ok(login);
+	@PostMapping("/v1/auth")
+	public ResponseEntity<GenericResponseModel> postAuth(@Valid @RequestBody AuthModel auth) throws Exception {
+		return user.authLogin(auth);
 	}
 
 }

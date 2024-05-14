@@ -15,43 +15,43 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.telematica.siloapi.model.GenericResponseModel;
 import br.com.telematica.siloapi.model.dto.SiloDTO;
-import br.com.telematica.siloapi.service.SiloService;
+import br.com.telematica.siloapi.services.SiloInterface;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/v1/silo")
+@RequestMapping("/api/silo")
 @Tag(name = "Silo", description = "Silo API")
 public class SiloController extends SecurityRestController {
 
 	@Autowired
-	private SiloService siloService;
+	private SiloInterface silo;
 
-	@GetMapping("/buscarSilo")
+	@GetMapping("/v1/buscarSilo")
 	@Operation(description = "Busca pelos silos cadastrados")
 	public ResponseEntity<GenericResponseModel> getSilo() throws IOException {
-		return siloService.findAllSiloDTO();
+		return silo.findAllSiloDTO();
 
 	}
 
-	@PostMapping("/cadastraSilo")
+	@PostMapping("/v1/cadastraSilo")
 	@Operation(description = "Cadastro de um novo silo")
 	public ResponseEntity<GenericResponseModel> createSilo(@Valid @RequestBody SiloDTO siloDTO) {
-		return siloService.save(siloDTO);
+		return silo.save(siloDTO);
 	}
 
-	@PutMapping("/atualizaSilo")
+	@PutMapping("/v1/atualizaSilo")
 	@Operation(description = "Atualização de um silo")
 	public ResponseEntity<GenericResponseModel> updateSilo(@Valid @RequestBody SiloDTO siloDTO) throws IOException {
-		return siloService.update(siloDTO);
+		return silo.update(siloDTO);
 
 	}
 
-	@DeleteMapping("/deletarSilo/{codigo}")
+	@DeleteMapping("/v1/deletarSilo/{codigo}")
 	@Operation(description = "Deletar um silo")
 	public ResponseEntity<GenericResponseModel> deleteSilo(@Valid @PathVariable("codigo") Integer codigo) throws IOException {
-		return siloService.deleteByPlacod(codigo);
+		return silo.deleteByPlacod(codigo);
 
 	}
 

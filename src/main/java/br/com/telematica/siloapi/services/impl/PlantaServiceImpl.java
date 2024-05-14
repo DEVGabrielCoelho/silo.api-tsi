@@ -1,4 +1,4 @@
-package br.com.telematica.siloapi.service;
+package br.com.telematica.siloapi.services.impl;
 
 import java.io.IOException;
 import java.util.List;
@@ -14,17 +14,18 @@ import br.com.telematica.siloapi.model.GenericResponseModel;
 import br.com.telematica.siloapi.model.dto.PlantaDTO;
 import br.com.telematica.siloapi.model.entity.PlantaEntity;
 import br.com.telematica.siloapi.repository.PlantaRepository;
+import br.com.telematica.siloapi.services.PlantaInterface;
 import br.com.telematica.siloapi.utils.message.MessageResponse;
 import ch.qos.logback.classic.Logger;
-import jakarta.transaction.Transactional;
 
 @Service
-public class PlantaService {
+public class PlantaServiceImpl implements PlantaInterface {
 
-	private static Logger logger = (Logger) LoggerFactory.getLogger(PlantaService.class);
+	private static Logger logger = (Logger) LoggerFactory.getLogger(PlantaServiceImpl.class);
 	@Autowired
 	private PlantaRepository plantaRepository;
 
+	@Override
 	public ResponseEntity<GenericResponseModel> save(PlantaDTO planta) throws RuntimeException {
 		try {
 
@@ -42,7 +43,7 @@ public class PlantaService {
 		}
 	}
 
-	@Transactional
+	@Override
 	public ResponseEntity<GenericResponseModel> deleteByPlacod(Integer codigo) throws IOException {
 		if (codigo == null) {
 			logger.error("O ID da planta está nulo.");
@@ -60,6 +61,7 @@ public class PlantaService {
 		}
 	}
 
+	@Override
 	public ResponseEntity<GenericResponseModel> update(PlantaDTO planta) throws IOException {
 		try {
 			if (planta == null) {
@@ -76,10 +78,12 @@ public class PlantaService {
 		}
 	}
 
+	@Override
 	public List<PlantaEntity> findAll() throws IOException {
 		return plantaRepository.findAll();
 	}
 
+	@Override
 	public ResponseEntity<GenericResponseModel> findAllPlantaDTO() throws IOException {
 		try {
 
@@ -89,6 +93,7 @@ public class PlantaService {
 		}
 	}
 
+	@Override
 	public ResponseEntity<GenericResponseModel> findById(Integer id) throws IOException, EmptyResultDataAccessException {
 		try {
 			if (id == null) {

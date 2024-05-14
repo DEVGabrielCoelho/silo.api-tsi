@@ -15,41 +15,41 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.telematica.siloapi.model.GenericResponseModel;
 import br.com.telematica.siloapi.model.dto.EmpresaDTO;
-import br.com.telematica.siloapi.service.EmpresaService;
+import br.com.telematica.siloapi.services.EmpresaInterface;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/v1/empresa")
+@RequestMapping("/api/empresa")
 @Tag(name = "Empresa", description = "Empresa API")
 public class EmpresaController extends SecurityRestController {
 
 	@Autowired
-	private EmpresaService empServ;
+	private EmpresaInterface emp;
 
-	@GetMapping("/listaEmpresa")
+	@GetMapping("/v1/listaEmpresa")
 	@Operation(description = "Busca pelas empresas cadastradas")
 	public ResponseEntity<GenericResponseModel> getEmpresa() throws IOException {
-		return empServ.findAllEmpresaDTO();
+		return emp.findAllEmpresaDTO();
 	}
 
-	@PostMapping("/cadastraEmpresa")
+	@PostMapping("/v1/cadastraEmpresa")
 	@Operation(description = "Cadastro de uma nova empresa")
 	public ResponseEntity<GenericResponseModel> createEmpresa(@Valid @RequestBody EmpresaDTO empresa) {
-		return empServ.salvar(empresa);
+		return emp.salvar(empresa);
 	}
 
-	@PutMapping("/atualizaEmpresa")
+	@PutMapping("/v1/atualizaEmpresa")
 	@Operation(description = "Atualização de uma empresa")
 	public ResponseEntity<GenericResponseModel> updateEmpresa(@Valid @RequestBody EmpresaDTO empresa) throws IOException {
-		return empServ.update(empresa);
+		return emp.update(empresa);
 	}
 
-	@DeleteMapping("/deletaEmpresa/{codigo}")
+	@DeleteMapping("/v1/deletaEmpresa/{codigo}")
 	@Operation(description = "Deletar uma empresa")
 	public ResponseEntity<GenericResponseModel> deleteEmpresa(@Valid @PathVariable Integer codigo) throws IOException {
-		return empServ.deleteByEmpcod(codigo);
+		return emp.deleteByEmpcod(codigo);
 	}
 
 }

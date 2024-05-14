@@ -1,4 +1,4 @@
-package br.com.telematica.siloapi.service;
+package br.com.telematica.siloapi.services.impl;
 
 import java.text.ParseException;
 import java.util.HashMap;
@@ -22,11 +22,12 @@ import br.com.telematica.siloapi.model.entity.PermissaoEntity;
 import br.com.telematica.siloapi.model.enums.MapaURLEnum;
 import br.com.telematica.siloapi.repository.PerfilRepository;
 import br.com.telematica.siloapi.repository.PermissaoRepository;
+import br.com.telematica.siloapi.services.PermissaoInterface;
 
 @Service
-public class PermissaoService {
+public class PermissaoServiceImpl implements PermissaoInterface {
 
-	private static Logger logger = LoggerFactory.getLogger(PermissaoService.class);
+	private static Logger logger = LoggerFactory.getLogger(PermissaoServiceImpl.class);
 
 	private Map<String, UrlPermissoesDTO> permissionsByRole = new HashMap<>();
 
@@ -37,6 +38,51 @@ public class PermissaoService {
 	private UsuarioServiceImpl userImpleService;
 	@Autowired
 	private PerfilRepository perRepository;
+
+	@Override
+	public List<PermissaoDTO> findByUsucod(Long cod, Long perfil) throws ParseException {
+		List<PermissaoEntity> result = permRepository.findByUsucodAndPercod(cod, perfil);
+		return result.stream().map(permissao -> new PermissaoDTO(permissao)).collect(Collectors.toList());
+	}
+
+	@Override
+	public PermissaoDTO save(Long codiUser, Long codiPerfil, PermissaoModel dto) {
+		return new PermissaoDTO(permRepository.save(new PermissaoEntity(codiUser, codiPerfil, null, dto.getDescricao().toString(), dto.getGet(), dto.getPost(), dto.getPut(), dto.getDelete(), 1)));
+	}
+
+	@Override
+	public List<PermissaoDTO> getAll() {
+
+		var permiAll = permRepository.findAll();
+		return permiAll.stream().map(map -> new PermissaoDTO(map)).collect(Collectors.toList());
+	}
+
+	@Override
+	public List<Permissao_UsuarioDTO> getAllPermissao_UsuarioDTO(Long cod) {
+
+		var permiAll = permRepository.findByUsucod(cod);
+		return permiAll.stream().map(map -> new Permissao_UsuarioDTO(map)).collect(Collectors.toList());
+	}
+
+	@Override
+	public boolean delete(List<PermissaoDTO> perm) {
+		try {
+			perm.forEach(permissao -> {
+				Long cod = permissao.getCodigo();
+				Objects.requireNonNull(cod, "Código da Permissão não encontrado.");
+				permRepository.deleteById(cod);
+			});
+
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	@Override
+	public UrlPermissoesDTO getPermissionsForRole(String role) {
+		return permissionsByRole.get(role);
+	}
 
 	@Autowired
 	public void checkPermission() {
@@ -96,44 +142,4 @@ public class PermissaoService {
 			return null;
 		}
 	}
-
-	public List<PermissaoDTO> findByUsucod(Long cod, Long perfil) throws ParseException {
-		List<PermissaoEntity> result = permRepository.findByUsucodAndPercod(cod, perfil);
-		return result.stream().map(permissao -> new PermissaoDTO(permissao)).collect(Collectors.toList());
-	}
-
-	public PermissaoDTO save(Long codiUser, Long codiPerfil, PermissaoModel dto) {
-		return new PermissaoDTO(permRepository.save(new PermissaoEntity(codiUser, codiPerfil, null, dto.getDescricao().toString(), dto.getGet(), dto.getPost(), dto.getPut(), dto.getDelete(), 1)));
-	}
-
-	public List<PermissaoDTO> getAll() {
-
-		var permiAll = permRepository.findAll();
-		return permiAll.stream().map(map -> new PermissaoDTO(map)).collect(Collectors.toList());
-	}
-
-	public List<Permissao_UsuarioDTO> getAllPermissao_UsuarioDTO(Long cod) {
-
-		var permiAll = permRepository.findByUsucod(cod);
-		return permiAll.stream().map(map -> new Permissao_UsuarioDTO(map)).collect(Collectors.toList());
-	}
-
-	public boolean delete(List<PermissaoDTO> perm) {
-		try {
-			perm.forEach(permissao -> {
-				Long cod = permissao.getCodigo();
-				Objects.requireNonNull(cod, "Código da Permissão não encontrado.");
-				permRepository.deleteById(cod);
-			});
-
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
-	}
-
-	public UrlPermissoesDTO getPermissionsForRole(String role) {
-		return permissionsByRole.get(role);
-	}
-
 }

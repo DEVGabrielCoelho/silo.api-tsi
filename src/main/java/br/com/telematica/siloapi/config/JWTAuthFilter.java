@@ -17,8 +17,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import br.com.telematica.siloapi.model.dto.UrlPermissoesDTO;
-import br.com.telematica.siloapi.repository.AuthRepository;
-import br.com.telematica.siloapi.service.PermissaoService;
+import br.com.telematica.siloapi.services.AuthInterface;
+import br.com.telematica.siloapi.services.impl.PermissaoServiceImpl;
 import br.com.telematica.siloapi.utils.message.CustomAccessDeniedHandler;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -29,12 +29,12 @@ import jakarta.servlet.http.HttpServletResponse;
 public class JWTAuthFilter extends OncePerRequestFilter {
 
 	@Autowired
-	private AuthRepository authRepository;
+	private AuthInterface authRepository;
 	@Autowired
 	private UserDetailsService userDetailsService;
 	@Autowired
 	@Lazy
-	private PermissaoService permissionService;
+	private PermissaoServiceImpl permissionService;
 
 	private AccessDeniedHandler accessDeniedHandler = new CustomAccessDeniedHandler();
 

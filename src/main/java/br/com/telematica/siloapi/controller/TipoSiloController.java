@@ -15,44 +15,44 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.telematica.siloapi.model.GenericResponseModel;
 import br.com.telematica.siloapi.model.dto.TipoSiloDTO;
-import br.com.telematica.siloapi.service.TipoSiloService;
+import br.com.telematica.siloapi.services.TipoSiloInterface;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/v1/tipo-silo")
+@RequestMapping("/api/tipo-silo")
 @Tag(name = "Tipo Silo", description = "Tipo de Silo API")
 public class TipoSiloController extends SecurityRestController {
 
 	@Autowired
-	private TipoSiloService tipoSiloService;
+	private TipoSiloInterface tipoSilo;
 
-	@GetMapping("/buscarTiposSilos")
+	@GetMapping("/v1/buscarTiposSilos")
 	@Operation(description = "Busca pelos tipos silos cadastrados")
 	public ResponseEntity<GenericResponseModel> getSilo() throws IOException {
-		return tipoSiloService.findAllTipoSiloDTO();
+		return tipoSilo.findAllTipoSiloDTO();
 
 	}
 
-	@PostMapping("/cadastraTipoSilo")
+	@PostMapping("/v1/cadastraTipoSilo")
 	@Operation(description = "Cadastro de um novo tipo de silo")
 	public ResponseEntity<GenericResponseModel> createSilo(@Valid @RequestBody TipoSiloDTO tipoSiloDTO) {
-		return tipoSiloService.save(tipoSiloDTO);
+		return tipoSilo.save(tipoSiloDTO);
 
 	}
 
-	@PutMapping("/atualizaSilo")
+	@PutMapping("/v1/atualizaSilo")
 	@Operation(description = "Atualização de um tipo de silo")
 	public ResponseEntity<GenericResponseModel> updateSilo(@Valid @RequestBody TipoSiloDTO tipoSiloDTO) throws IOException {
-		return tipoSiloService.update(tipoSiloDTO);
+		return tipoSilo.update(tipoSiloDTO);
 
 	}
 
-	@DeleteMapping("/deletarTipoSilo/{codigo}")
+	@DeleteMapping("/v1/deletarTipoSilo/{codigo}")
 	@Operation(description = "Deletar um Tipo de Silo")
 	public ResponseEntity<GenericResponseModel> deleteSilo(@Valid @PathVariable("codigo") Integer codigo) throws IOException {
-		return tipoSiloService.deleteByTsicod(codigo);
+		return tipoSilo.deleteByTsicod(codigo);
 	}
 
 }

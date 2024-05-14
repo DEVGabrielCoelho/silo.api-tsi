@@ -1,9 +1,11 @@
 package br.com.telematica.siloapi.model.dto;
 
 import br.com.telematica.siloapi.model.entity.PerfilEntity;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 public class PerfilDTO extends Codigo {
 
+	@Schema(description = "descricao", example = "Descrição", required = true)
 	private String descricao;
 
 	public String getDescricao() {
