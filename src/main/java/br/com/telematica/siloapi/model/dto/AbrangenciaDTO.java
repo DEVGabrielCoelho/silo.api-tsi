@@ -1,0 +1,65 @@
+package br.com.telematica.siloapi.model.dto;
+
+import br.com.telematica.siloapi.model.entity.Abrangencia;
+
+public class AbrangenciaDTO extends Codigo {
+
+	private String nome;
+
+	private String descricao;
+
+	public String getNome() {
+		return nome;
+	}
+
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+
+	public String getDescricao() {
+		return descricao;
+	}
+
+	public void setDescricao(String descricao) {
+		this.descricao = descricao;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("AbrangenciaDTO [");
+		if (nome != null) {
+			builder.append("nome=").append(nome).append(", ");
+		}
+		if (descricao != null) {
+			builder.append("descricao=").append(descricao).append(", ");
+		}
+		builder.append("]");
+		return builder.toString();
+	}
+
+	public AbrangenciaDTO(Abrangencia abr) {
+		super();
+		this.setCodigo(abr.getAbrcod());
+		this.nome = abr.getAbrnom();
+		this.descricao = abr.getAbrdes();
+
+	}
+
+	public AbrangenciaDTO(Long codigo, String nome, String descricao) {
+		super(codigo);
+		this.nome = nome;
+		this.descricao = descricao;
+	}
+
+	public AbrangenciaDTO() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public AbrangenciaDTO(Long codigo) {
+		super(codigo);
+		// TODO Auto-generated constructor stub
+	}
+
+}

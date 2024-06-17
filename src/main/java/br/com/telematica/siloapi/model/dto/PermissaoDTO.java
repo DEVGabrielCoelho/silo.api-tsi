@@ -1,130 +1,113 @@
 package br.com.telematica.siloapi.model.dto;
 
-import br.com.telematica.siloapi.model.entity.PermissaoEntity;
-import br.com.telematica.siloapi.model.enums.MapaURLEnum;
+import br.com.telematica.siloapi.model.entity.Permissao;
 
-public class PermissaoDTO extends Codigo {
-	private Long usuario;
-	private Long perfil;
-	private MapaURLEnum descricao;
-	private Integer get;
-	private Integer post;
-	private Integer put;
-	private Integer delete;
+public class PermissaoDTO {
 
-	public Long getUsuario() {
-		return usuario;
+	private String recurso;
+	private Integer listar;
+	private Integer buscar;
+	private Integer criar;
+	private Integer editar;
+	private Integer deletar;
+
+	public String getRecurso() {
+		return recurso;
 	}
 
-	public void setUsuario(Long usuario) {
-		this.usuario = usuario;
+	public void setRecurso(String recurso) {
+		this.recurso = recurso;
 	}
 
-	public Long getPerfil() {
-		return perfil;
+	public Integer getListar() {
+		return listar;
 	}
 
-	public void setPerfil(Long perfil) {
-		this.perfil = perfil;
+	public void setListar(Integer listar) {
+		this.listar = listar;
 	}
 
-	public MapaURLEnum getDescricao() {
-		return descricao;
+	public Integer getBuscar() {
+		return buscar;
 	}
 
-	public void setDescricao(MapaURLEnum descricao) {
-		this.descricao = descricao;
+	public void setBuscar(Integer buscar) {
+		this.buscar = buscar;
 	}
 
-	public Integer getGet() {
-		return get;
+	public Integer getCriar() {
+		return criar;
 	}
 
-	public void setGet(Integer get) {
-		this.get = get;
+	public void setCriar(Integer criar) {
+		this.criar = criar;
 	}
 
-	public Integer getPost() {
-		return post;
+	public Integer getEditar() {
+		return editar;
 	}
 
-	public void setPost(Integer post) {
-		this.post = post;
+	public void setEditar(Integer editar) {
+		this.editar = editar;
 	}
 
-	public Integer getPut() {
-		return put;
+	public Integer getDeletar() {
+		return deletar;
 	}
 
-	public void setPut(Integer put) {
-		this.put = put;
-	}
-
-	public Integer getDelete() {
-		return delete;
-	}
-
-	public void setDelete(Integer delete) {
-		this.delete = delete;
+	public void setDeletar(Integer delete) {
+		this.deletar = delete;
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("PermissaoDTO [");
-		if (usuario != null) {
-			builder.append("usuario=").append(usuario).append(", ");
+		if (recurso != null) {
+			builder.append("recurso=").append(recurso).append(", ");
 		}
-		if (perfil != null) {
-			builder.append("perfil=").append(perfil).append(", ");
+		if (listar != null) {
+			builder.append("listar=").append(listar).append(", ");
 		}
-		if (descricao != null) {
-			builder.append("descricao=").append(descricao).append(", ");
+		if (buscar != null) {
+			builder.append("buscar=").append(buscar).append(", ");
 		}
-		if (get != null) {
-			builder.append("get=").append(get).append(", ");
+		if (criar != null) {
+			builder.append("criar=").append(criar).append(", ");
 		}
-		if (post != null) {
-			builder.append("post=").append(post).append(", ");
+		if (editar != null) {
+			builder.append("editar=").append(editar).append(", ");
 		}
-		if (put != null) {
-			builder.append("put=").append(put).append(", ");
-		}
-		if (delete != null) {
-			builder.append("delete=").append(delete);
+		if (deletar != null) {
+			builder.append("deletar=").append(deletar);
 		}
 		builder.append("]");
 		return builder.toString();
 	}
 
-	public PermissaoDTO(Long codigo, Long usuario, Long perfil, MapaURLEnum descricao, Integer get, Integer post, Integer put, Integer delete) {
-		super(codigo);
-		this.usuario = usuario;
-		this.perfil = perfil;
-		this.descricao = descricao;
-		this.get = get;
-		this.post = post;
-		this.put = put;
-		this.delete = delete;
+	public PermissaoDTO(String recurso, Integer listar, Integer buscar, Integer criar, Integer editar, Integer delete) {
+		super();
+		this.recurso = recurso;
+		this.listar = listar;
+		this.buscar = buscar;
+		this.criar = criar;
+		this.editar = editar;
+		this.deletar = delete;
 	}
 
-	public PermissaoDTO(PermissaoEntity perm) {
+	public PermissaoDTO(Permissao permissao) {
 		super();
-
-		MapaURLEnum enumURL = MapaURLEnum.valueOf(perm.getPemdes());
-
-		this.setCodigo(perm.getPemcod());
-		this.usuario = perm.getUsucod();
-		this.perfil = perm.getPercod();
-		this.descricao = enumURL;
-		this.get = perm.getPemget();
-		this.post = perm.getPempos();
-		this.put = perm.getPemput();
-		this.delete = perm.getPemdlt();
+		this.recurso = permissao.getRecurso().getRecnom();
+		this.listar = permissao.getPemlis();
+		this.buscar = permissao.getPembus();
+		this.criar = permissao.getPemcri();
+		this.editar = permissao.getPemedi();
+		this.deletar = permissao.getPemdel();
 	}
 
 	public PermissaoDTO() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
+
 }

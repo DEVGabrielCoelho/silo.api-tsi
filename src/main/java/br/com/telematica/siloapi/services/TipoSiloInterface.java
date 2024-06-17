@@ -11,7 +11,6 @@ import br.com.telematica.siloapi.model.dto.TipoSiloDTO;
 import br.com.telematica.siloapi.model.entity.TipoSiloEntity;
 import jakarta.transaction.Transactional;
 
-
 public interface TipoSiloInterface {
 
 	public ResponseEntity<GenericResponseModel> save(TipoSiloDTO tipoSiloDTO) throws RuntimeException;

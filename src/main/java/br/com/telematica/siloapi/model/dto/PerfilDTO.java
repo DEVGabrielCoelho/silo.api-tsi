@@ -1,12 +1,20 @@
 package br.com.telematica.siloapi.model.dto;
 
-import br.com.telematica.siloapi.model.entity.PerfilEntity;
-import io.swagger.v3.oas.annotations.media.Schema;
+import br.com.telematica.siloapi.model.entity.Perfil;
 
 public class PerfilDTO extends Codigo {
 
-	@Schema(description = "descricao", example = "Descrição", required = true)
+	private String nome;
+
 	private String descricao;
+
+	public String getNome() {
+		return nome;
+	}
+
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
 
 	public String getDescricao() {
 		return descricao;
@@ -20,29 +28,38 @@ public class PerfilDTO extends Codigo {
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("PerfilDTO [");
-		if (getCodigo() != null) {
-			builder.append("codigo=").append(getCodigo());
+		if (nome != null) {
+			builder.append("nome=").append(nome).append(", ");
 		}
 		if (descricao != null) {
-			builder.append("descricao=").append(descricao).append(", ");
+			builder.append("descricao=").append(descricao);
 		}
 		builder.append("]");
 		return builder.toString();
 	}
 
-	public PerfilDTO(Long codigo, String descricao) {
-		super(codigo);
-		this.descricao = descricao;
+	public PerfilDTO(Perfil per) {
+		super();
+		this.setCodigo(per.getPercod());
+		this.setNome(per.getPernom());
+		this.setDescricao(per.getPerdes());
+
 	}
 
-	public PerfilDTO(PerfilEntity perfil) {
-		super();
-		this.setCodigo(perfil.getPercod());
-		this.descricao = perfil.getPerdes();
+	public PerfilDTO(Long codigo, String nome, String descricao) {
+		super(codigo);
+		this.nome = nome;
+		this.descricao = descricao;
 	}
 
 	public PerfilDTO() {
 		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public PerfilDTO(Long codigo) {
+		super(codigo);
+		// TODO Auto-generated constructor stub
 	}
 
 }

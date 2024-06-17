@@ -1,21 +1,58 @@
 package br.com.telematica.siloapi.model;
 
-import java.util.List;
-
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
 
-@Schema(description = "MOdelo de Usuário.")
+@Schema(description = "Modelo de Usuário.")
 public class UsuarioModel {
-	@Schema(name = "login", description = "Cadastro do login.", example = "admin", format = "String", nullable = false)
+
+	@NotBlank
+	@Schema(name = "nome", description = "Cadastro do nome do usuário.", example = "Administrador", format = "String")
+	private String nome;
+
+	@NotBlank
+	@Schema(name = "cpf", description = "Cadastro do CPF do usuário. (Somente números)", example = "12332123212", format = "Long")
+	private Long cpf;
+
+	@NotBlank
+	@Schema(name = "login", description = "Cadastro do login do usuário.", example = "admin", format = "String")
 	private String login;
-	@Schema(name = "senha", description = "Cadastro da senha.", example = "admin", format = "String", nullable = false)
+
+	@NotBlank
+	@Schema(name = "senha", description = "Cadastro do senha do usuário.", example = "admin", format = "String")
 	private String senha;
-	@Schema(name = "email", description = "Cadastro do email.", example = "email@email.com", format = "String", nullable = false)
+
+	@NotBlank
+	@Schema(name = "email", description = "Cadastro do email do usuário.", example = "admin@admin.com", format = "String")
 	private String email;
-	@Schema(name = "nivelAcesso", description = "Descrição do Nivel de Acesso", example = "ADMIN", format = "String", nullable = false)
-	private String nivelAcesso;
-	@Schema(name = "permissao", description = "Lista dos níveis de permissão. Permissões: BARRAGEM, CANAL, EMPRESA, PENDENCIA, FIRMWARE, LOGGER, MEDICAO, AUDIO, SIRENE, MODULO, USUARIO", example = "[{\"descricao\": \"BARRAGEM\",\"get\": 1,\"post\": 1,\"put\": 1,\"delete\": 1},{\"descricao\": \"CANAL\",\"get\": 1,\"post\": 1,\"put\": 1,\"delete\": 1},{\"descricao\": \"EMPRESA\",\"get\": 1,\"post\": 1,\"put\": 1,\"delete\": 1},{\"descricao\": \"MEDICAO\",\"get\": 1,\"post\": 1,\"put\": 1,\"delete\": 1},{\"descricao\": \"AUDIO\",\"get\": 1,\"post\": 1,\"put\": 1,\"delete\": 1},{\"descricao\": \"SIRENE\",\"get\": 1,\"post\": 1,\"put\": 1,\"delete\": 1},{\"descricao\": \"MODULO\",\"get\": 1,\"post\": 1,\"put\": 1,\"delete\": 1},{\"descricao\": \"USUARIO\",\"get\": 1,\"post\": 1,\"put\": 1,\"delete\": 1},{\"descricao\": \"LOGGER\",\"get\": 1,\"post\": 1,\"put\": 1,\"delete\": 1},{\"descricao\": \"PENDENCIA\",\"get\": 1,\"post\": 1,\"put\": 1,\"delete\": 1},{\"descricao\": \"FIRMWARE\",\"get\": 1,\"post\": 1,\"put\": 1,\"delete\": 1}]", nullable = false)
-	private List<PermissaoModel> permissao;
+
+	@NotBlank
+	@Schema(name = "empresa", description = "Código da empresa do usuário.", example = "1", format = "Long")
+	private Long empresa;
+
+	@NotBlank
+	@Schema(name = "perfil", description = "Código do perfil do usuário.", example = "1", format = "Long")
+	private Long perfil;
+
+	@NotBlank
+	@Schema(name = "abrangencia", description = "Código do abrangência do usuário.", example = "1", format = "Long")
+	private Long abrangencia;
+
+	public String getNome() {
+		return nome;
+	}
+
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+
+	public Long getCpf() {
+		return cpf;
+	}
+
+	public void setCpf(Long cpf) {
+		this.cpf = cpf;
+	}
 
 	public String getLogin() {
 		return login;
@@ -41,26 +78,40 @@ public class UsuarioModel {
 		this.email = email;
 	}
 
-	public String getNivelAcesso() {
-		return nivelAcesso;
+	public Long getEmpresa() {
+		return empresa;
 	}
 
-	public void setNivelAcesso(String nivelAcesso) {
-		this.nivelAcesso = nivelAcesso;
+	public void setEmpresa(Long empresa) {
+		this.empresa = empresa;
 	}
 
-	public List<PermissaoModel> getPermissao() {
-		return permissao;
+	public Long getPerfil() {
+		return perfil;
 	}
 
-	public void setPermissao(List<PermissaoModel> permissao) {
-		this.permissao = permissao;
+	public void setPerfil(Long perfil) {
+		this.perfil = perfil;
+	}
+
+	public Long getAbrangencia() {
+		return abrangencia;
+	}
+
+	public void setAbrangencia(Long abrangencia) {
+		this.abrangencia = abrangencia;
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("CadastroModel [");
+		builder.append("Usuario [");
+		if (nome != null) {
+			builder.append("nome=").append(nome).append(", ");
+		}
+		if (cpf != null) {
+			builder.append("cpf=").append(cpf).append(", ");
+		}
 		if (login != null) {
 			builder.append("login=").append(login).append(", ");
 		}
@@ -70,23 +121,29 @@ public class UsuarioModel {
 		if (email != null) {
 			builder.append("email=").append(email).append(", ");
 		}
-		if (nivelAcesso != null) {
-			builder.append("nivelAcesso=").append(nivelAcesso).append(", ");
+		if (empresa != null) {
+			builder.append("empresa=").append(empresa).append(", ");
 		}
-		if (permissao != null) {
-			builder.append("permissao=").append(permissao);
+		if (perfil != null) {
+			builder.append("perfil=").append(perfil).append(", ");
+		}
+		if (abrangencia != null) {
+			builder.append("abrangencia=").append(abrangencia);
 		}
 		builder.append("]");
 		return builder.toString();
 	}
 
-	public UsuarioModel(String login, String senha, String email, String nivelAcesso, List<PermissaoModel> permissao) {
+	public UsuarioModel(String nome, Long cpf, String login, String senha, String email, Long empresa, Long perfil, Long abrangencia) {
 		super();
+		this.nome = nome;
+		this.cpf = cpf;
 		this.login = login;
 		this.senha = senha;
 		this.email = email;
-		this.nivelAcesso = nivelAcesso;
-		this.permissao = permissao;
+		this.empresa = empresa;
+		this.perfil = perfil;
+		this.abrangencia = abrangencia;
 	}
 
 	public UsuarioModel() {

@@ -1,15 +1,33 @@
 package br.com.telematica.siloapi.repository;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import br.com.telematica.siloapi.model.entity.PermissaoEntity;
+import br.com.telematica.siloapi.model.entity.Permissao;
+import jakarta.transaction.Transactional;
 
-public interface PermissaoRepository extends JpaRepository<PermissaoEntity, Long> {
-	List<PermissaoEntity> findByUsucodAndPercod(Long usucod, Long percod);
+public interface PermissaoRepository extends JpaRepository<Permissao, Long> {
 
-	List<PermissaoEntity> findByUsucod(Long usucod);
+	@Transactional
+	void deleteByPerfil_Percod(Long percod);
 
-	List<PermissaoEntity> findByPercod(Long percod);
+	Optional<List<Permissao>> findByPerfil_percod(Long codigo);
+
+	Optional<List<Permissao>> findByPerfil_PercodAndPemcodIn(Long codigo, Collection<Long> list);
+
+	Optional<Permissao> findByPerfil_percodAndRecurso_recnom(Long codigo, String recurso);
+
+	List<Permissao> findByPemcodIn(Collection<Long> list);
+
+	Page<Permissao> findByPemcodIn(Pageable page, Collection<Long> list);
+
+	Page<Permissao> findByRecurso_RecnomLike(String nome, Pageable page);
+
+	Page<Permissao> findByRecurso_RecnomLikeAndPemcodIn(String nome, Pageable page, Collection<Long> list);
+
 }

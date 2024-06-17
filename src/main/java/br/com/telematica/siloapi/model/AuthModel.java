@@ -1,12 +1,15 @@
 package br.com.telematica.siloapi.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
 
 @Schema(description = "Modelo de Autorização")
 public class AuthModel {
 
+	@NotBlank
 	@Schema(name = "login", description = "Login", example = "admin")
 	private String login;
+	@NotBlank
 	@Schema(name = "senha", description = "Senha", example = "admin")
 	private String senha;
 

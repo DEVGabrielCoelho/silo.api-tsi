@@ -102,7 +102,7 @@ public class MedicaoServiceImpl implements MedicaoInterface {
 	}
 
 	@Override
-	public MedicaoDTO findByData(Date date) throws IOException, EmptyResultDataAccessException{
+	public MedicaoDTO findByData(Date date) throws IOException, EmptyResultDataAccessException {
 		if (date == null) {
 			logger.error("Data está nula.");
 			throw new IOException("Data está nulo.");

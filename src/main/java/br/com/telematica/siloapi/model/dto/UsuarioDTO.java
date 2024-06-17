@@ -1,13 +1,35 @@
 package br.com.telematica.siloapi.model.dto;
 
-import br.com.telematica.siloapi.model.entity.UsuarioEntity;
+import br.com.telematica.siloapi.model.entity.Empresa;
+import br.com.telematica.siloapi.model.entity.Perfil;
+import br.com.telematica.siloapi.model.entity.Usuario;
 
 public class UsuarioDTO extends Codigo {
 
+	private String nome;
+	private Long cpf;
 	private String login;
 	private String senha;
 	private String email;
+	private EmpresaDTO empresa;
 	private PerfilDTO perfil;
+	private AbrangenciaDTO abrangencia;
+
+	public String getNome() {
+		return nome;
+	}
+
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+
+	public Long getCpf() {
+		return cpf;
+	}
+
+	public void setCpf(Long cpf) {
+		this.cpf = cpf;
+	}
 
 	public String getLogin() {
 		return login;
@@ -33,6 +55,14 @@ public class UsuarioDTO extends Codigo {
 		this.email = email;
 	}
 
+	public EmpresaDTO getEmpresa() {
+		return empresa;
+	}
+
+	public void setEmpresa(EmpresaDTO empresa) {
+		this.empresa = empresa;
+	}
+
 	public PerfilDTO getPerfil() {
 		return perfil;
 	}
@@ -41,10 +71,22 @@ public class UsuarioDTO extends Codigo {
 		this.perfil = perfil;
 	}
 
+	public AbrangenciaDTO getAbrangencia() {
+		return abrangencia;
+	}
+
+	public void setAbrangencia(AbrangenciaDTO abrangencia) {
+		this.abrangencia = abrangencia;
+	}
+
 	public static String consultaPagable(String value) {
 		switch (value) {
 		case "codigo":
 			return "usucod";
+		case "nome":
+			return "usunom";
+		case "cpf":
+			return "usucpf";
 		case "login":
 			return "usulog";
 		case "senha":
@@ -60,6 +102,12 @@ public class UsuarioDTO extends Codigo {
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("UsuarioDTO [");
+		if (nome != null) {
+			builder.append("nome=").append(nome).append(", ");
+		}
+		if (cpf != null) {
+			builder.append("cpf=").append(cpf).append(", ");
+		}
 		if (login != null) {
 			builder.append("login=").append(login).append(", ");
 		}
@@ -69,41 +117,63 @@ public class UsuarioDTO extends Codigo {
 		if (email != null) {
 			builder.append("email=").append(email).append(", ");
 		}
+		if (empresa != null) {
+			builder.append("empresa=").append(empresa).append(", ");
+		}
 		if (perfil != null) {
 			builder.append("perfil=").append(perfil).append(", ");
 		}
-		if (getCodigo() != null) {
-			builder.append("getCodigo()=").append(getCodigo());
+		if (abrangencia != null) {
+			builder.append("abrangencia=").append(abrangencia);
 		}
 		builder.append("]");
 		return builder.toString();
 	}
 
-	public UsuarioDTO(Long codigo, String login, String senha, String email, PerfilDTO perfil) {
+	public UsuarioDTO(Long codigo, String nome, Long cpf, String login, String senha, String email, EmpresaDTO empresa, PerfilDTO perfil, AbrangenciaDTO abrangencia) {
 		super(codigo);
+		this.nome = nome;
+		this.cpf = cpf;
 		this.login = login;
 		this.senha = senha;
 		this.email = email;
+		this.empresa = empresa;
 		this.perfil = perfil;
+		this.abrangencia = abrangencia;
 	}
 
-	public UsuarioDTO(UsuarioEntity user) {
+	public UsuarioDTO(Usuario user, EmpresaDTO empresa, Perfil perfil, AbrangenciaDTO abrangencia) {
 		super();
 		this.setCodigo(user.getUsucod());
+		this.nome = user.getUsunom();
+		this.cpf = user.getUsucpf();
 		this.login = user.getUsulog();
 		this.senha = user.getUsusen();
 		this.email = user.getUsuema();
-		this.perfil = new PerfilDTO(user.getPerfil());
+		this.empresa = empresa;
+		this.perfil = new PerfilDTO(perfil);
+		this.abrangencia = abrangencia;
+	}
+
+	public UsuarioDTO(Usuario user, Empresa empresa, Perfil perfil, AbrangenciaDTO abrangencia) {
+		super();
+		this.setCodigo(user.getUsucod());
+		this.nome = user.getUsunom();
+		this.cpf = user.getUsucpf();
+		this.login = user.getUsulog();
+		this.senha = user.getUsusen();
+		this.email = user.getUsuema();
+		this.empresa = new EmpresaDTO(empresa);
+		this.perfil = new PerfilDTO(perfil);
+		this.abrangencia = abrangencia;
 	}
 
 	public UsuarioDTO() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public UsuarioDTO(Long codigo) {
 		super(codigo);
-		// TODO Auto-generated constructor stub
 	}
 
 }

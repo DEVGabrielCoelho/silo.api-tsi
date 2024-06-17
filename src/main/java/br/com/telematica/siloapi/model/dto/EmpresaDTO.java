@@ -1,30 +1,19 @@
 package br.com.telematica.siloapi.model.dto;
 
-import br.com.telematica.siloapi.model.entity.EmpresaEntity;
-import io.swagger.v3.oas.annotations.media.Schema;
+import br.com.telematica.siloapi.model.entity.Empresa;
 
-@Schema(description = "Empresa")
 public class EmpresaDTO extends Codigo {
-
-	@Schema(description = "Nome", example = "Empresa 1", nullable = true)
-	private String nome;
-	@Schema(description = "CNPJ", example = "12345678901234", nullable = true)
 	private Long cnpj;
+	private String nome;
+	private String nomeFantasia;
+	private String telefone;
 
-	public EmpresaDTO() {
+	public Long getCnpj() {
+		return cnpj;
 	}
 
-	public EmpresaDTO(Long codigo, String nome, Long cnpj) {
-		super(codigo);
-		this.nome = nome;
+	public void setCnpj(Long cnpj) {
 		this.cnpj = cnpj;
-	}
-
-	public EmpresaDTO(EmpresaEntity empresa) {
-		super();
-		this.setCodigo(empresa.getEmpcod());
-		this.nome = empresa.getEmpnom();
-		this.cnpj = empresa.getEmpcnp();
 	}
 
 	public String getNome() {
@@ -35,25 +24,75 @@ public class EmpresaDTO extends Codigo {
 		this.nome = nome;
 	}
 
-	public Long getCnpj() {
-		return cnpj;
+	public String getNomeFantasia() {
+		return nomeFantasia;
 	}
 
-	public void setCnpj(Long cnpj) {
-		this.cnpj = cnpj;
+	public void setNomeFantasia(String nomeFantasia) {
+		this.nomeFantasia = nomeFantasia;
+	}
+
+	public String getTelefone() {
+		return telefone;
+	}
+
+	public void setTelefone(String telefone) {
+		this.telefone = telefone;
+	}
+
+	public static String consultaPagable(String value) {
+		switch (value) {
+		case "codigo":
+			return "empcod";
+		case "cnpj":
+			return "empcnp";
+		case "nome":
+			return "empnom";
+		case "nomeFantasia":
+			return "empfan";
+		case "telefone":
+			return "emptel";
+		default:
+			throw new IllegalArgumentException("Unexpected value: " + value);
+		}
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("EmpresaDTO  codigo=");
+		builder.append("EmpresaDto [codigo=");
 		builder.append(getCodigo());
-		builder.append("[ nome=");
-		builder.append(nome);
 		builder.append(", cnpj=");
 		builder.append(cnpj);
+		builder.append(", nome=");
+		builder.append(nome);
+		builder.append(", nomeFantasia=");
+		builder.append(nomeFantasia);
+		builder.append(", telefone=");
+		builder.append(telefone);
 		builder.append("]");
 		return builder.toString();
+	}
+
+	public EmpresaDTO(Long codigo, Long cnpj, String nome, String nomeFantasia, String telefone) {
+		super(codigo);
+		this.cnpj = cnpj;
+		this.nome = nome;
+		this.nomeFantasia = nomeFantasia;
+		this.telefone = telefone;
+	}
+
+	public EmpresaDTO(Empresa emp) {
+		super();
+		this.setCodigo(emp.getEmpcod());
+		this.cnpj = emp.getEmpcnp();
+		this.nome = emp.getEmpnom();
+		this.nomeFantasia = emp.getEmpfan();
+		this.telefone = emp.getEmptel();
+	}
+
+	public EmpresaDTO() {
+		super();
 	}
 
 }

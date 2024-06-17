@@ -18,50 +18,32 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.lang.NonNull;
 
+import br.com.telematica.siloapi.exception.ResponseGlobalModel;
+
 public class Utils {
-
-	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	private static SimpleDateFormat sdfbase = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-
-	public static String sdfBaseDateforString() {
-		var date = new Date();
-		return sdfbase.format(date);
-	}
-
-	public static String sdfDateforString(Date date) {
-		return sdf.format(date);
-	}
-
-	public static Date sdfStringforDate(String date) throws Exception {
-		try {
-			return sdf.parse(date);
-		} catch (Exception e) {
-			throw new Exception("Error parsing date: " + e.getMessage());
-		}
-	}
-
-	public static Date sdfDateTimeZone(String msidth) throws ParseException {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-		sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-
-		try {
-			Date date = sdf.parse(msidth);
-			System.out.println("Date: " + date);
-			return date;
-		} catch (ParseException e) {
-			throw new ParseException("Error parsing date: " + e.getMessage(), 0);
-		}
-	}
 
 	private static final DateTimeFormatter dtfEditado = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS");
 	private static final DateTimeFormatter dtfPadrao = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
-	public static String addGmtToDateTime(Integer gmt) {
+	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	private static SimpleDateFormat sdfbase = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+
+	public static String convertDateToString() {
+		LocalDateTime localDateTime = LocalDateTime.ofInstant(new Date().toInstant(), ZoneId.systemDefault());
+		return dtfPadrao.format(localDateTime);
+	}
+
+	public static Date addGmtToDateTime(Integer gmt) {
 		ZoneOffset offsetGMT = ZoneOffset.ofHours(gmt / 60);
 		OffsetDateTime offsetDateTime = OffsetDateTime.parse(getDataHoraGMT0(), DateTimeFormatter.ISO_OFFSET_DATE_TIME);
 		OffsetDateTime offsetDateTimeGMT = offsetDateTime.withOffsetSameInstant(offsetGMT);
-		String formattedDateTime = offsetDateTimeGMT.format(dtfEditado);
-		return formattedDateTime;
+		return Date.from(offsetDateTimeGMT.toInstant());
+	}
+
+	public static String addGmtToDateTimeSendString(Date date) {
+		Objects.requireNonNull(date, "A Data de entrada para conversão de Date para String está nula.");
+		LocalDateTime localDateTime = LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
+		return dtfEditado.format(localDateTime);
 	}
 
 	public static String removeGmtToDateTime(String horarioComGMT, Integer gmtEmMinutos) {
@@ -102,13 +84,58 @@ public class Utils {
 		return Base64.getDecoder().decode(base64String);
 	}
 
-	public static Pageable consultaPage(@NonNull String ordenarEntity, @NonNull String direcao, @NonNull Integer pagina, @NonNull Integer tamanho) {
+	public static String encode(String input) {
+		return Base64.getEncoder().encodeToString(input.getBytes());
+	}
 
+	public static String decode(String base64Input) {
+		byte[] decodedBytes = Base64.getDecoder().decode(base64Input);
+		return new String(decodedBytes);
+	}
+
+	public static Pageable consultaPage(String ordenarEntity, @NonNull String direcao, Integer pagina, Integer tamanho) {
 		Sort.Direction sortDirection = Sort.Direction.fromString(direcao);
 		Sort sort = Sort.by(sortDirection, ordenarEntity);
-
 		Pageable pageable = PageRequest.of(pagina, tamanho, sort);
 		return pageable;
+	}
+
+	public static ResponseGlobalModel responseMessageError(String message) {
+		return new ResponseGlobalModel(true, message, Utils.convertDateToString());
+	}
+
+	public static ResponseGlobalModel responseMessageSucess(String message) {
+		return new ResponseGlobalModel(false, message, Utils.convertDateToString());
+	}
+
+	public static String sdfBaseDateforString() {
+		var date = new Date();
+		return sdfbase.format(date);
+	}
+
+	public static String sdfDateforString(Date date) {
+		return sdf.format(date);
+	}
+
+	public static Date sdfStringforDate(String date) throws Exception {
+		try {
+			return sdf.parse(date);
+		} catch (Exception e) {
+			throw new Exception("Error parsing date: " + e.getMessage());
+		}
+	}
+
+	public static Date sdfDateTimeZone(String msidth) throws ParseException {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+		sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+		try {
+			Date date = sdf.parse(msidth);
+			System.out.println("Date: " + date);
+			return date;
+		} catch (ParseException e) {
+			throw new ParseException("Error parsing date: " + e.getMessage(), 0);
+		}
 	}
 
 }

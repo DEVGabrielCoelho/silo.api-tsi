@@ -1,21 +1,24 @@
 package br.com.telematica.siloapi.repository;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.lang.NonNull;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-import br.com.telematica.siloapi.model.entity.UsuarioEntity;
+import br.com.telematica.siloapi.model.entity.Usuario;
 
-public interface UsuarioRepository extends JpaRepository<UsuarioEntity, Long> {
-	@NonNull
-	Page<UsuarioEntity> findAll(@NonNull Pageable pageable);
+public interface UsuarioRepository extends JpaRepository<Usuario, Long>, JpaSpecificationExecutor<Usuario> {
+	List<Usuario> findByUsucodIn(Collection<Long> list);
 
-	@NonNull
-	Page<UsuarioEntity> findByUsulogLike(@NonNull String usulog, @NonNull Pageable pageable);
+	Page<Usuario> findByUsucodIn(Pageable pageable, Collection<Long> list);
 
-	@NonNull
-	Optional<UsuarioEntity> findByUsulog(@NonNull String usulog);
+	Page<Usuario> findByUsulogLike(String usulog, Pageable pageable);
+
+	Page<Usuario> findByUsulogLikeAndUsucodIn(String usulog, Pageable pageable, Collection<Long> list);
+
+	Optional<Usuario> findByUsulog(String usulog);
 }

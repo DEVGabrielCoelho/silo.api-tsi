@@ -1,9 +1,6 @@
 package br.com.telematica.siloapi.services.impl;
 
 import java.io.IOException;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -12,313 +9,237 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.lang.NonNull;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import br.com.telematica.siloapi.model.AuthModel;
-import br.com.telematica.siloapi.model.GenericResponseModel;
-import br.com.telematica.siloapi.model.PermissaoModel;
+import br.com.telematica.siloapi.exception.ResponseGlobalModel;
 import br.com.telematica.siloapi.model.UsuarioModel;
-import br.com.telematica.siloapi.model.dto.PermissaoDTO;
-import br.com.telematica.siloapi.model.dto.Permissao_UsuarioDTO;
-import br.com.telematica.siloapi.model.dto.ResponseAuthDTO;
+import br.com.telematica.siloapi.model.dto.EmpresaDTO;
 import br.com.telematica.siloapi.model.dto.UsuarioDTO;
-import br.com.telematica.siloapi.model.dto.UsuarioDetailsDTO;
-import br.com.telematica.siloapi.model.entity.PerfilEntity;
-import br.com.telematica.siloapi.model.entity.UsuarioEntity;
-import br.com.telematica.siloapi.model.enums.MapaURLEnum;
+import br.com.telematica.siloapi.model.dto.UsuarioPermissaoDTO;
+import br.com.telematica.siloapi.model.entity.Abrangencia;
+import br.com.telematica.siloapi.model.entity.Empresa;
+import br.com.telematica.siloapi.model.entity.Perfil;
+import br.com.telematica.siloapi.model.entity.Usuario;
 import br.com.telematica.siloapi.repository.UsuarioRepository;
-import br.com.telematica.siloapi.services.UsuarioInterface;
+import br.com.telematica.siloapi.services.UsuarioServiceInterface;
 import br.com.telematica.siloapi.utils.Utils;
-import br.com.telematica.siloapi.utils.message.MessageResponse;
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
-public class UsuarioServiceImpl implements UsuarioInterface {
+public class UsuarioServiceImpl implements UsuarioServiceInterface {
 
 	private static Logger logger = LoggerFactory.getLogger(UsuarioServiceImpl.class);
 
 	@Autowired
 	private UsuarioRepository userRepository;
 	@Autowired
-	private PasswordEncoder passwordEncoder;
-	@Autowired
-	private AuthenticationManager authenticationManager;
-	@Autowired
-	private AuthServiceImpl authService;
-	@Autowired
-	private PerfilServiceImpl perfilService;
-	@Autowired
 	@Lazy
-	private PermissaoServiceImpl permissaoService;
+	private PasswordEncoder passwordEncoder;
 
-	public void createUserRolePermission() {
-		List<PermissaoModel> listPermi = new ArrayList<PermissaoModel>();
+	@Autowired
+	private PerfilPermissaoServiceImpl permissaoService;
+	@Autowired
+	private AbrangenciaServiceImpl abrangenciaService;
+	@Autowired
+	private EmpresaServiceImpl empresaService;
 
-		List<String> listString = Arrays.asList("USUARIO");
+	@Value("${spring.jackson.time-zone}")
+	private String configuredTimeZone;
 
-		for (int i = 0; i < listString.size(); i++) {
-			listPermi.add(new PermissaoModel(MapaURLEnum.valueOf(listString.get(i)), 1, 1, 1, 1));
+	public UsuarioDTO findLogin(String login) throws EntityNotFoundException, IOException {
+		var user = userRepository.findByUsulog(login);
+		if (user.isEmpty()) {
+			throw new RuntimeException("Usuário não existe!");
 		}
-
-		Optional<UsuarioModel> userModel = Optional.of(new UsuarioModel("admin", "admin", "admin@admin.com", "ADMIN", listPermi));
-		saveUserEncodePassword(userModel);
-
+		return new UsuarioDTO(user.get(), empresaService.findById(user.get().getEmpresa().getEmpcod()), user.get().getPerfil(), abrangenciaService.findByIdSimples(user.get().getAbrangencia().getAbrcod()));
 	}
 
-	@Override
-	public ResponseEntity<GenericResponseModel> authLogin(AuthModel authReq) throws IOException {
-		try {
-			UsuarioDTO userCheck = findLogin(authReq.getLogin());
-			if (userCheck == null) {
-				throw new RuntimeException("Usuário não existe!");
-			}
-			var userAutheticationToken = new UsernamePasswordAuthenticationToken(authReq.getLogin(), authReq.getSenha());
-			authenticationManager.authenticate(userAutheticationToken);
-
-			var token = authService.generateToken(authReq);
-			// findUsernameAuth(userCheck.getCodigo(), userCheck.getPerfil().getPercod());
-			return MessageResponse.sucess(new ResponseAuthDTO(token, Utils.newDateString()));
-		} catch (AuthenticationException e) {
-			throw new RuntimeException("Erro na autenticação: " + e.getMessage());
+	public Usuario findLoginEntity(String login) {
+		var user = userRepository.findByUsulog(login);
+		if (user.isEmpty()) {
+			throw new RuntimeException("Usuário não existe!");
 		}
+		return user.get();
 	}
 
-	public UsuarioEntity buscarUsuarioAtual() {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String currentUserName = authentication.getName();
-		if (currentUserName == null)
-			throw new RuntimeException("Usuário está vazio!");
-		UsuarioEntity usuario = userRepository.findByUsulog(currentUserName).orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado: " + currentUserName));
-		return usuario;
+	public Page<Usuario> findAllEntity(String nome, @NonNull Pageable pageable) throws EntityNotFoundException, IOException {
+		Objects.requireNonNull(pageable, "Pageable do Usuário está nulo.");
+		Specification<Usuario> spec;
+		spec = Usuario.filterByFields(nome);
+
+		Page<Usuario> result = userRepository.findAll(spec, pageable);
+		return result;
 	}
 
-	@Override
-	public ResponseEntity<GenericResponseModel> findUserPermiAll() {
-		var userAll = userRepository.findAll();
-
-		return MessageResponse.sucess(userAll.stream().map(user -> {
-			List<Permissao_UsuarioDTO> usuPerm = null;
-			try {
-				usuPerm = permissaoService.getAllPermissao_UsuarioDTO(user.getUsucod());
-			} catch (Exception e) {
-				// Log exception here if needed
-				// Logging the exception might help in debugging the issue why permission fetch
-				// failed
-			}
-			return new UsuarioDetailsDTO(user, usuPerm);
-		}).collect(Collectors.toList()));
-
+	public List<Usuario> findAllEntity() throws EntityNotFoundException, IOException {
+		return userRepository.findAll();
 	}
 
-	@Override
-	public ResponseEntity<GenericResponseModel> findUserPermiById(Long cod) {
-		if (cod == null)
-			throw new RuntimeException("Código do Usuário está vazio!");
-		var userAll = userRepository.findById(cod).get();
-		if (userAll == null)
-			throw new EntityNotFoundException("Usuário não encontrado ou deletado.");
+	public Usuario findByIdEntity(String login) {
+		var userAdmin = userRepository.findByUsulog(login);
+		if (userAdmin.isEmpty())
+			return null;
+		return userAdmin.get();
+	}
 
-		List<Permissao_UsuarioDTO> usuPerm = null;
-		try {
-			usuPerm = permissaoService.getAllPermissao_UsuarioDTO(userAll.getUsucod());
-			return MessageResponse.sucess(new UsuarioDetailsDTO(userAll, usuPerm));
-		} catch (Exception e) {
-			return MessageResponse.sucess(new UsuarioDetailsDTO(userAll, usuPerm));
+	public Usuario findByIdEntity(Long cod) throws EntityNotFoundException, IOException {
+		var userAll = userRepository.findById(cod);
+		if (userAll.isEmpty())
+			return null;
+		return userAll.get();
+	}
+
+	public UsuarioDTO findByUsuario(Long codigo) throws EntityNotFoundException, IOException {
+		var user = findByIdEntity(codigo);
+
+		if (user == null)
+			throw new RuntimeException("Sem abrangência permitida para esse Usuário.");
+
+		return new UsuarioDTO(user, empresaService.findById(user.getEmpresa().getEmpcod()), user.getPerfil(), abrangenciaService.findByIdSimples(user.getAbrangencia().getAbrcod()));
+	}
+
+	public Usuario saveUpdateEntity(@NonNull Long codigo, @NonNull UsuarioModel userModel) throws EntityNotFoundException, IOException {
+		Optional<Usuario> existingUser = userRepository.findById(codigo);
+		String login = "admin";
+		if (existingUser.get().getUsulog().toUpperCase().equals(login.toUpperCase())) {
+			logger.info("Usuário " + login.toUpperCase() + " não pode ser alterado " + existingUser.get());
+			throw new RuntimeException("Usuário " + login.toUpperCase() + " não pode ser alterado.");
 		}
+		Objects.requireNonNull(codigo, "Código do Usuário está nulo.");
+		Objects.requireNonNull(userModel.getNome(), "Nome do Usuário está nulo.");
+		Objects.requireNonNull(userModel.getCpf(), "CPF do Usuário está nulo.");
+		Objects.requireNonNull(userModel.getLogin(), "Login do Usuário está nulo.");
+		Objects.requireNonNull(userModel.getSenha(), "Senha do Usuário está nulo.");
+		Objects.requireNonNull(userModel.getEmail(), "Email do Usuário está nulo.");
+		Objects.requireNonNull(userModel.getEmpresa(), "Código da Empresa do Usuário está nulo.");
+		Objects.requireNonNull(userModel.getPerfil(), "Código do Perfil do Usuário está nulo.");
+		Objects.requireNonNull(userModel.getAbrangencia(), "Código da Abrangência do Usuário está nulo.");
 
+		Perfil perfil = permissaoService.findByIdPerfilEntity(userModel.getPerfil());
+		Empresa empresa = empresaService.findByIdEntity(userModel.getEmpresa());
+		Abrangencia abrangencia = abrangenciaService.findByIdEntity(userModel.getAbrangencia());
+
+		existingUser.get().setUsunom(userModel.getNome());
+		existingUser.get().setUsucpf(userModel.getCpf());
+		existingUser.get().setUsulog(userModel.getLogin());
+		existingUser.get().setUsusen(passwordEncoder.encode(userModel.getSenha()));
+		existingUser.get().setUsuema(userModel.getEmail().isEmpty() ? "" : userModel.getEmail());
+		existingUser.get().setPerfil(perfil);
+		existingUser.get().setAbrangencia(abrangencia);
+		existingUser.get().setEmpresa(empresa);
+		return userRepository.save(existingUser.get());
 	}
 
-	public UsuarioDTO findLogin(String loginEntrada) throws IOException {
-		if (loginEntrada == null)
-			throw new RuntimeException("Login está vazio!");
-		String login = loginEntrada;
-		return new UsuarioDTO(userRepository.findByUsulog(login).get());
-	}
-
-	@Override
-	public ResponseEntity<GenericResponseModel> saveUserEncodePassword(Optional<UsuarioModel> userCadastro) {
-		validateUserCadastro(userCadastro);
-		if (!userCadastro.isPresent()) {
-			throw new RuntimeException("Os dados do Usuário está vazio.");
-		}
-		String login = userCadastro.get().getLogin();
-		if (login == null || login.isEmpty()) {
-			throw new RuntimeException("Login está vazio.");
-		}
-		Optional<UsuarioEntity> existingUser = userRepository.findByUsulog(login);
-		if (existingUser.isPresent()) {
+	public Usuario saveUpdateEntity(@NonNull UsuarioModel userModel) throws EntityNotFoundException, IOException {
+		Objects.requireNonNull(userModel.getNome(), "Nome do Usuário está nulo.");
+		Objects.requireNonNull(userModel.getCpf(), "CPF do Usuário está nulo.");
+		Objects.requireNonNull(userModel.getLogin(), "Login do Usuário está nulo.");
+		Objects.requireNonNull(userModel.getSenha(), "Senha do Usuário está nulo.");
+		Objects.requireNonNull(userModel.getEmail(), "Email do Usuário está nulo.");
+		Objects.requireNonNull(userModel.getEmpresa(), "Código da Empresa do Usuário está nulo.");
+		Objects.requireNonNull(userModel.getPerfil(), "Código do Perfil do Usuário está nulo.");
+		Objects.requireNonNull(userModel.getAbrangencia(), "Código da Abrangência do Usuário está nulo.");
+		Usuario userSave = null;
+		Optional<Usuario> existingUser = userRepository.findByUsulog(userModel.getLogin());
+		String login = "admin";
+		if (existingUser.get().getUsulog().toUpperCase().equals(login.toUpperCase())) {
+			userSave = existingUser.get();
+			logger.info("Usuário com o login " + login.toUpperCase() + " já existe: " + userSave);
 			throw new RuntimeException("Usuário já existe!");
 		}
+		Perfil perfil = permissaoService.findByIdPerfilEntity(userModel.getPerfil());
+		Empresa empresa = empresaService.findByIdEntity(userModel.getEmpresa());
+		Abrangencia abrangencia = abrangenciaService.findByIdEntity(userModel.getAbrangencia());
+		existingUser = Optional.ofNullable(new Usuario());
+		existingUser.get().setUsucod(null);
+		existingUser.get().setUsunom(userModel.getNome());
+		existingUser.get().setUsucpf(userModel.getCpf());
+		existingUser.get().setUsulog(userModel.getLogin());
+		existingUser.get().setUsusen(passwordEncoder.encode(userModel.getSenha()));
+		existingUser.get().setUsuema(userModel.getEmail().isEmpty() ? "" : userModel.getEmail());
+		existingUser.get().setPerfil(perfil);
+		existingUser.get().setAbrangencia(abrangencia);
+		existingUser.get().setEmpresa(empresa);
+		userSave = userRepository.save(existingUser.get());
 
-		UsuarioEntity novoUsuario = createUsuario(userCadastro.get());
-		PerfilEntity perfil = criarPerfil(userCadastro.get().getNivelAcesso());
-		novoUsuario.setPerfil(perfil);
-
-		UsuarioEntity savedUser = userRepository.save(novoUsuario);
-		Long codigoUsuario = savedUser.getUsucod();
-		if (codigoUsuario == null) {
-			throw new EntityNotFoundException("Usuário está nulo no banco de dados.");
-		}
-
-		criarPermisao(codigoUsuario, perfil.getPercod(), userCadastro.get().getPermissao());
-
-		return MessageResponse.sucess(new UsuarioDTO(savedUser));
+		return userSave;
 	}
 
-	@Override
-	public ResponseEntity<GenericResponseModel> deleteByCode(Long codigo) {
-		Objects.requireNonNull(codigo, "Código da Usuario está nulo.");
+	public ResponseGlobalModel deleteEntity(@NonNull Long codigo) throws IOException {
 		try {
-
-			userRepository.findById(codigo).ifPresentOrElse(user -> {
-
-				List<PermissaoDTO> permissao;
-				try {
-					Long codPerf = user.getPerfil().getPercod();
-					Objects.requireNonNull(codPerf, "Código não encontrado");
-					var perfil = perfilService.findById(codPerf);
-					permissao = permissaoService.findByUsucod(user.getUsucod(), perfil.getCodigo());
-					if (!permissaoService.delete(permissao)) {
-						throw new RuntimeException("Falha ao excluir as permissões do usuário.");
-					}
-
-					userRepository.delete(user);
-
-					if (!perfilService.delete(codPerf)) {
-						throw new RuntimeException("Falha ao excluir o perfil do usuário.");
-					}
-				} catch (ParseException e) {
-					e.printStackTrace();
-				}
-
-			}, () -> {
-				throw new EntityNotFoundException("Usuário não encontrado");
-			});
-			return MessageResponse.sucess(null);
+			userRepository.deleteById(codigo);
+			return Utils.responseMessageSucess("Apagado com Sucesso.");
 		} catch (Exception e) {
-			return MessageResponse.badRequest(e.getMessage());
+			throw new IOException("Erro ao apagar o item. Mensagem" + e.getMessage());
 		}
 	}
 
 	@Override
-	public Page<UsuarioDTO> usuarioFindAllPaginado(String nome, Pageable pageable) {
-		Objects.requireNonNull(pageable, "Pageable do Usuário está nulo.");
-		Page<UsuarioEntity> result;
-		if (nome == null)
-			result = userRepository.findAll(pageable);
-		else
-			result = userRepository.findByUsulogLike(nome, pageable);
-
-		return result.map(usuario -> new UsuarioDTO(usuario));
-
+	public Page<UsuarioDTO> findAll(String nome, @NonNull Pageable pageable) throws EntityNotFoundException, IOException {
+		return findAllEntity(nome, pageable).map(map -> {
+			EmpresaDTO empresaDTO = null;
+			try {
+				empresaDTO = new EmpresaDTO(empresaService.findById(map.getEmpresa().getEmpcod()));
+				return new UsuarioDTO(map, empresaDTO, map.getPerfil(), abrangenciaService.findByIdSimples(map.getAbrangencia().getAbrcod()));
+			} catch (EntityNotFoundException | IOException e) {
+				return new UsuarioDTO(map, empresaDTO, map.getPerfil(), null);
+			}
+		});
 	}
 
 	@Override
-	public ResponseEntity<GenericResponseModel> findAll() throws ParseException {
-		var result = userRepository.findAll();
-		return MessageResponse.sucess(result.stream().map(barragem -> new UsuarioDTO(barragem)).collect(Collectors.toList()));
+	public List<UsuarioDTO> findAll() throws EntityNotFoundException, IOException {
+		return findAllEntity().stream().map(map -> {
+			EmpresaDTO empresaDTO = null;
+			try {
+				empresaDTO = new EmpresaDTO(empresaService.findById(map.getEmpresa().getEmpcod()));
+				return new UsuarioDTO(map, empresaDTO, map.getPerfil(), abrangenciaService.findByIdSimples(map.getAbrangencia().getAbrcod()));
+			} catch (EntityNotFoundException | IOException e) {
+				return new UsuarioDTO(map, empresaDTO, map.getPerfil(), null);
+			}
+		}).collect(Collectors.toList());
 	}
 
 	@Override
-	public ResponseEntity<GenericResponseModel> findById(Long codigo) throws ParseException {
-		Objects.requireNonNull(codigo, "Código da usuário está nulo.");
-		Optional<UsuarioEntity> emp = userRepository.findById(codigo);
-		if (!emp.isPresent() || emp.get().getUsucod() == 0) {
-			throw new EntityNotFoundException("Usuário não encontrado ou deletado.");
-		}
-		return MessageResponse.sucess(new UsuarioDTO(emp.get()));
+	public UsuarioDTO findById(@NonNull Long codigo) throws EntityNotFoundException, IOException {
+		return findByUsuario(codigo);
 	}
 
 	@Override
-	public ResponseEntity<GenericResponseModel> update(Long codigo, Optional<UsuarioModel> userCadastro) throws ParseException {
-		validateUserCadastro(userCadastro);
-
-		Objects.requireNonNull(codigo, "Código do Usuário não pode ser nulo."); // Use Objects.requireNonNull instead of RuntimeException
-
-		UsuarioEntity existingUser = userRepository.findById(codigo).orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado."));
-
-		if (!existingUser.getUsulog().equals(userCadastro.get().getLogin())) {
-			if (!userCadastro.isPresent()) {
-				throw new RuntimeException("User data is missing.");
-			}
-			String login = userCadastro.get().getLogin();
-			if (login == null || login.isEmpty()) {
-				throw new RuntimeException("Login cannot be empty.");
-			}
-			Optional<UsuarioEntity> usuarioComLogin = userRepository.findByUsulog(login);
-			if (usuarioComLogin.isPresent()) {
-				throw new RuntimeException("Usuário com o mesmo login já existe!");
-			}
-		}
-
-		updateUsuario(existingUser, userCadastro.get());
-
-		UsuarioEntity updatedUser = userRepository.save(existingUser);
-		Long codigoUsuario = updatedUser.getUsucod();
-		if (codigoUsuario == null) {
-			throw new EntityNotFoundException("Usuário está nulo no banco de dados.");
-		}
-
-		criarPermisao(codigoUsuario, existingUser.getPerfil().getPercod(), userCadastro.get().getPermissao());
-
-		return MessageResponse.sucess(new UsuarioDTO(updatedUser));
+	public UsuarioPermissaoDTO findByIdPermission(@NonNull Long codigo) throws EntityNotFoundException, IOException {
+		var user = findByIdEntity(codigo);
+		return new UsuarioPermissaoDTO(user, new EmpresaDTO(empresaService.findById(user.getEmpresa().getEmpcod())), abrangenciaService.findByIdSimples(user.getAbrangencia().getAbrcod()), permissaoService.findByIdPerfil(user.getPerfil().getPercod()));
 	}
 
-	private void updateUsuario(UsuarioEntity existingUser, UsuarioModel userCadastro) {
-		existingUser.setUsulog(userCadastro.getLogin());
-		existingUser.setUsusen(passwordEncoder.encode(userCadastro.getSenha()));
-		existingUser.setUsuema(userCadastro.getEmail().isEmpty() ? "" : userCadastro.getEmail());
-		existingUser.setPerfil(criarPerfil(userCadastro.getNivelAcesso()));
+	@Override
+	public UsuarioDTO saveUpdateEncodePassword(@NonNull UsuarioModel userModel) throws EntityNotFoundException, IOException {
+		return new UsuarioDTO(saveUpdateEntity(userModel), empresaService.findById(userModel.getEmpresa()), permissaoService.findByIdPerfilEntity(userModel.getPerfil()), abrangenciaService.findByIdSimples(userModel.getAbrangencia()));
 	}
 
-	private void validateUserCadastro(Optional<UsuarioModel> userCadastro) {
-		if (userCadastro.isEmpty() || !userCadastro.isPresent()) {
-			throw new RuntimeException("Modelo de cadastro de Usuário está vazio!");
-		}
-
-		if (userCadastro.get().getLogin().isEmpty() || userCadastro.get().getSenha().isEmpty()) {
-			throw new RuntimeException("Login e/ou senha não podem ser vazios!");
-		}
+	@Override
+	public UsuarioDTO saveUpdateEncodePassword(@NonNull Long codigo, @NonNull UsuarioModel userModel) throws EntityNotFoundException, IOException {
+		return new UsuarioDTO(saveUpdateEntity(codigo, userModel), empresaService.findById(userModel.getEmpresa()), permissaoService.findByIdPerfilEntity(userModel.getPerfil()), abrangenciaService.findByIdSimples(userModel.getAbrangencia()));
 	}
 
-	private UsuarioEntity createUsuario(UsuarioModel userCadastro) {
-		UsuarioEntity novoUsuario = new UsuarioEntity();
-		novoUsuario.setUsulog(userCadastro.getLogin());
-		novoUsuario.setUsusen(passwordEncoder.encode(userCadastro.getSenha()));
-		novoUsuario.setUsuema(userCadastro.getEmail().isEmpty() ? "" : userCadastro.getEmail());
-		return novoUsuario;
+	@Override
+	public ResponseGlobalModel delete(@NonNull Long perfil) throws IOException {
+		return deleteEntity(perfil);
 	}
 
-	public PerfilEntity criarPerfil(String desc) {
-		PerfilEntity perfil = perfilService.save(desc);
-		if (perfil == null) {
-			throw new EntityNotFoundException("Perfil não cadastrado.");
-		}
-		return perfil;
-	}
-
-	public String criarPermisao(Long codigoUsuario, Long codigoPerfil, List<PermissaoModel> permissao) {
-
-		try {
-
-			for (PermissaoModel perm : permissao) {
-				permissaoService.save(codigoUsuario, codigoPerfil, perm);
-			}
-			return "Permissão Salva";
-		} catch (Exception e) {
-			logger.debug("Erro Execption: ", e);
-			return null;
-		}
-	}
+	// public Usuario buscarUsuarioAtual() {
+	// Authentication authentication =
+	// SecurityContextHolder.getContext().getAuthentication();
+	// String currentUserName = authentication.getName();
+	// Usuario usuario = userRepository.findByUsulog(currentUserName).orElseThrow(()
+	// -> new UsernameNotFoundException("Usuário não encontrado: " +
+	// currentUserName));
+	// return usuario;
+	// }
 }

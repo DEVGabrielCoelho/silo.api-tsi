@@ -1,8 +1,7 @@
 package br.com.telematica.siloapi.controller;
 
 import java.io.IOException;
-import java.text.ParseException;
-import java.util.Optional;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,13 +18,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.telematica.siloapi.model.GenericResponseModel;
+import br.com.telematica.siloapi.exception.ResponseGlobalModel;
 import br.com.telematica.siloapi.model.UsuarioModel;
 import br.com.telematica.siloapi.model.dto.UsuarioDTO;
-import br.com.telematica.siloapi.services.UsuarioInterface;
+import br.com.telematica.siloapi.model.dto.UsuarioPermissaoDTO;
+import br.com.telematica.siloapi.services.UsuarioServiceInterface;
 import br.com.telematica.siloapi.utils.Utils;
-import br.com.telematica.siloapi.utils.message.MessageResponse;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 
 @CrossOrigin
@@ -35,52 +36,59 @@ import jakarta.validation.Valid;
 public class UsuarioController extends SecurityRestController {
 
 	@Autowired
-	private UsuarioInterface user;
+	private UsuarioServiceInterface userServImpl;
 
-	@PostMapping
-	public ResponseEntity<GenericResponseModel> cadastrarUsuario(@RequestBody Optional<UsuarioModel> cadastro) {
-		return user.saveUserEncodePassword(cadastro);
+	@PostMapping("/v1")
+	@Operation(description = "Cadastrar um usuário")
+	public ResponseEntity<UsuarioDTO> criar(@RequestBody @NonNull UsuarioModel cadastro) throws EntityNotFoundException, IOException {
+		var userService = userServImpl.saveUpdateEncodePassword(cadastro);
+		return ResponseEntity.ok(userService);
 	}
 
-	@GetMapping("/v1{codigo}")
-	public ResponseEntity<GenericResponseModel> buscarUsuarioPorCodigo(@PathVariable Long codigo) throws ParseException {
-		return user.findById(codigo);
-	}
-
-	@GetMapping("/v1")
-	public ResponseEntity<GenericResponseModel> buscarListarUsuario() throws ParseException {
-		return user.findAll();
-	}
-
-	@GetMapping("/v1/permissao")
-	public ResponseEntity<GenericResponseModel> buscarListarPermissao() throws ParseException {
-		return user.findUserPermiAll();
+	@GetMapping("/v1/codigo/{codigo}")
+	@Operation(description = "Buscar um usuario pelo código")
+	public ResponseEntity<UsuarioDTO> buscarPorCodigo(@PathVariable @NonNull Long codigo) throws EntityNotFoundException, IOException {
+		var userList = userServImpl.findById(codigo);
+		return ResponseEntity.ok(userList);
 	}
 
 	@GetMapping("/v1/permissao/{codigo}")
-	public ResponseEntity<GenericResponseModel> buscarIdUsuarioPermissao(@PathVariable Long codigo) throws ParseException {
-		return user.findUserPermiById(codigo);
+	@Operation(description = "Buscar um usuário e suas permissões apartir do código do usuário.")
+	public ResponseEntity<UsuarioPermissaoDTO> buscarPorCodigoPermissaoUsuario(@PathVariable @NonNull Long codigo) throws EntityNotFoundException, IOException {
+		var userList = userServImpl.findByIdPermission(codigo);
+		return ResponseEntity.ok(userList);
+	}
+
+	@GetMapping("/v1")
+	@Operation(description = "Buscar lista de usuário")
+	public ResponseEntity<List<UsuarioDTO>> listar() throws EntityNotFoundException, IOException {
+		var userList = userServImpl.findAll();
+		return ResponseEntity.ok(userList);
 	}
 
 	@GetMapping("/v1/paginado")
-	public ResponseEntity<Page<UsuarioDTO>> buscarUsuarioPaginado(@RequestParam(value = "pagina", defaultValue = "0") @NonNull Integer pagina, @RequestParam(value = "tamanho", defaultValue = "10") @NonNull Integer tamanho, @RequestParam(value = "nome", required = false) String nome,
-			@RequestParam(value = "ordenarPor", defaultValue = "codigo") String ordenarPor, @RequestParam(value = "direcao", defaultValue = "ASC", required = false) @NonNull String direcao) {
+	@Operation(description = "Busca de usuário paginado. Obs: O campo 'ordenarPor' requer os seguintes dados: codigo, nome, cpf, login, senha, email. Consulta por filtro (sem restrição de consulta).")
+	public ResponseEntity<Page<UsuarioDTO>> buscarPaginado(@RequestParam(value = "pagina", defaultValue = "0") Integer pagina, @RequestParam(value = "tamanho", defaultValue = "10") Integer tamanho, @RequestParam(value = "filtro", required = false) String filtro,
+			@RequestParam(value = "ordenarPor", defaultValue = "codigo") String ordenarPor, @RequestParam(value = "direcao", defaultValue = "ASC", required = false) String direcao) throws EntityNotFoundException, IOException {
 		String ordenarEntity = UsuarioDTO.consultaPagable(ordenarPor);
 		if (ordenarEntity == null) {
 			return ResponseEntity.badRequest().body(Page.empty());
 		}
-		return MessageResponse.page(user.usuarioFindAllPaginado(nome, Utils.consultaPage(ordenarEntity, direcao, pagina, tamanho)));
-
+		return ResponseEntity.ok(userServImpl.findAll(filtro, Utils.consultaPage(ordenarEntity, direcao, pagina, tamanho)));
 	}
 
 	@PutMapping("/v1/{codigo}")
-	public ResponseEntity<GenericResponseModel> atualizarUsuario(@Valid @PathVariable Long codigo, @Valid @RequestBody UsuarioModel entity) throws ParseException {
-		return user.update(codigo, Optional.ofNullable(entity));
+	@Operation(description = "Atualizar um usuário")
+	public ResponseEntity<UsuarioDTO> editar(@Valid @PathVariable @NonNull Long codigo, @Valid @RequestBody @NonNull UsuarioModel entity) throws EntityNotFoundException, IOException {
+		var userService = userServImpl.saveUpdateEncodePassword(codigo, entity);
+		return ResponseEntity.ok(userService);
 	}
 
 	@DeleteMapping("/v1/{codigo}")
-	public ResponseEntity<GenericResponseModel> deletarUsuario(@Valid @PathVariable Long codigo) throws IOException {
-		return user.deleteByCode(codigo);
+	@Operation(description = "Deletar um usuário")
+	public ResponseEntity<ResponseGlobalModel> deletar(@Valid @PathVariable @NonNull Long codigo) throws IOException {
+		var userService = userServImpl.delete(codigo);
+		return ResponseEntity.ok(userService);
 	}
 
 }

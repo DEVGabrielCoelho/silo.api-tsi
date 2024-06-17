@@ -1,95 +1,113 @@
 package br.com.telematica.siloapi.model;
 
-import br.com.telematica.siloapi.model.entity.PermissaoEntity;
-import br.com.telematica.siloapi.model.enums.MapaURLEnum;
+import br.com.telematica.siloapi.model.enums.RecursoMapEnum;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
 
+@Schema(description = "Modelo de Permissão")
 public class PermissaoModel {
-	private MapaURLEnum descricao;
-	private Integer get;
-	private Integer post;
-	private Integer put;
-	private Integer delete;
 
-	public MapaURLEnum getDescricao() {
-		return descricao;
+	@NotBlank
+	@Schema(name = "recurso", description = "Lista dos níveis de permissão. Permissões: BARRAGEM, CANAL, EMPRESA, PENDENCIA, FIRMWARE, LOGGER, MEDICAO, AUDIO, SIRENE, MODULO, USUARIO", example = "BARRAGEM")
+	private RecursoMapEnum recurso;
+	@NotBlank
+	@Schema(name = "listar", description = "Acessivel - 1 / Não Acessivel - 0")
+	private Integer listar;
+	@NotBlank
+	@Schema(name = "buscar", description = "Acessivel - 1 / Não Acessivel - 0")
+	private Integer buscar;
+	@NotBlank
+	@Schema(name = "criar", description = "Acessivel - 1 / Não Acessivel - 0")
+	private Integer criar;
+	@NotBlank
+	@Schema(name = "editar", description = "Acessivel - 1 / Não Acessivel - 0")
+	private Integer editar;
+	@NotBlank
+	@Schema(name = "deletar", description = "Acessivel - 1 / Não Acessivel - 0")
+	private Integer deletar;
+
+	public RecursoMapEnum getRecurso() {
+		return recurso;
 	}
 
-	public void setDescricao(MapaURLEnum descricao) {
-		this.descricao = descricao;
+	public void setRecurso(RecursoMapEnum recurso) {
+		this.recurso = recurso;
 	}
 
-	public Integer getGet() {
-		return get;
+	public Integer getListar() {
+		return listar;
 	}
 
-	public void setGet(Integer get) {
-		this.get = get;
+	public void setListar(Integer listar) {
+		this.listar = listar;
 	}
 
-	public Integer getPost() {
-		return post;
+	public Integer getBuscar() {
+		return buscar;
 	}
 
-	public void setPost(Integer post) {
-		this.post = post;
+	public void setBuscar(Integer buscar) {
+		this.buscar = buscar;
 	}
 
-	public Integer getPut() {
-		return put;
+	public Integer getCriar() {
+		return criar;
 	}
 
-	public void setPut(Integer put) {
-		this.put = put;
+	public void setCriar(Integer criar) {
+		this.criar = criar;
 	}
 
-	public Integer getDelete() {
-		return delete;
+	public Integer getEditar() {
+		return editar;
 	}
 
-	public void setDelete(Integer delete) {
-		this.delete = delete;
+	public void setEditar(Integer editar) {
+		this.editar = editar;
+	}
+
+	public Integer getDeletar() {
+		return deletar;
+	}
+
+	public void setDeletar(Integer deletar) {
+		this.deletar = deletar;
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("PermissaoDTO [");
-		if (descricao != null) {
-			builder.append("descricao=").append(descricao).append(", ");
+		builder.append("PermissaoModel [");
+		if (recurso != null) {
+			builder.append("recurso=").append(recurso).append(", ");
 		}
-		if (get != null) {
-			builder.append("get=").append(get).append(", ");
+		if (listar != null) {
+			builder.append("listar=").append(listar).append(", ");
 		}
-		if (post != null) {
-			builder.append("post=").append(post).append(", ");
+		if (buscar != null) {
+			builder.append("buscar=").append(buscar).append(", ");
 		}
-		if (put != null) {
-			builder.append("put=").append(put).append(", ");
+		if (criar != null) {
+			builder.append("criar=").append(criar).append(", ");
 		}
-		if (delete != null) {
-			builder.append("delete=").append(delete);
+		if (editar != null) {
+			builder.append("editar=").append(editar).append(", ");
+		}
+		if (deletar != null) {
+			builder.append("deletar=").append(deletar);
 		}
 		builder.append("]");
 		return builder.toString();
 	}
 
-	public PermissaoModel(MapaURLEnum descricao, Integer get, Integer post, Integer put, Integer delete) {
+	public PermissaoModel(@NotBlank RecursoMapEnum recurso, @NotBlank Integer listar, @NotBlank Integer buscar, @NotBlank Integer criar, @NotBlank Integer editar, @NotBlank Integer deletar) {
 		super();
-		this.descricao = descricao;
-		this.get = get;
-		this.post = post;
-		this.put = put;
-		this.delete = delete;
-	}
-
-	public PermissaoModel(PermissaoEntity perm) {
-		super();
-		MapaURLEnum map = MapaURLEnum.valueOf(perm.getPemdes());
-		this.descricao = map;
-		this.get = perm.getPemget();
-		this.post = perm.getPempos();
-		this.put = perm.getPemput();
-		this.delete = perm.getPemdlt();
+		this.recurso = recurso;
+		this.listar = listar;
+		this.buscar = buscar;
+		this.criar = criar;
+		this.editar = editar;
+		this.deletar = deletar;
 	}
 
 	public PermissaoModel() {

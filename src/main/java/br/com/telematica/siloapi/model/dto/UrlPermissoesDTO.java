@@ -7,51 +7,51 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class UrlPermissoesDTO {
-	List<String> urlGet = new ArrayList<>();
-	List<String> urlDelete = new ArrayList<>();
-	List<String> urlPost = new ArrayList<>();
-	List<String> urlPut = new ArrayList<>();
+	List<String> buscar = new ArrayList<>();
+	List<String> deletar = new ArrayList<>();
+	List<String> criar = new ArrayList<>();
+	List<String> editar = new ArrayList<>();
 	List<String> perfil = new ArrayList<>();
 
 	public void limparPermissao() {
-		urlGet.clear();
-		urlDelete.clear();
-		urlPost.clear();
-		urlPut.clear();
+		buscar.clear();
+		deletar.clear();
+		criar.clear();
+		editar.clear();
 		perfil.clear();
 	}
 
 	public void adicionarPermissao(String metodo, String url) {
 		switch (metodo) {
 		case "GET":
-			urlGet.add(url);
+			buscar.add(url);
 			break;
 		case "DELETE":
-			urlDelete.add(url);
+			deletar.add(url);
 			break;
 		case "POST":
-			urlPost.add(url);
+			criar.add(url);
 			break;
 		case "PUT":
-			urlPut.add(url);
+			editar.add(url);
 			break;
 		}
 	}
 
-	public String[] getUrlGet() {
-		return urlGet.toArray(new String[0]);
+	public String[] getBuscar() {
+		return buscar.toArray(new String[0]);
 	}
 
-	public String[] getUrlDelete() {
-		return urlDelete.toArray(new String[0]);
+	public String[] getDeletar() {
+		return deletar.toArray(new String[0]);
 	}
 
-	public String[] getUrlPost() {
-		return urlPost.toArray(new String[0]);
+	public String[] getCriar() {
+		return criar.toArray(new String[0]);
 	}
 
-	public String[] getUrlPut() {
-		return urlPut.toArray(new String[0]);
+	public String[] getEditar() {
+		return editar.toArray(new String[0]);
 	}
 
 	public String[] getPerfil() {
@@ -78,13 +78,13 @@ public class UrlPermissoesDTO {
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("UrlPermissoesDTO [ \n 	urlGet    =");
-		builder.append(urlGet);
+		builder.append(buscar);
 		builder.append(", \n 	urlDelete =");
-		builder.append(urlDelete);
+		builder.append(deletar);
 		builder.append(",\n 	urlPost   =");
-		builder.append(urlPost);
+		builder.append(criar);
 		builder.append(",\n 	urlPut    =");
-		builder.append(urlPut);
+		builder.append(editar);
 		builder.append(",\n 	perfil	  =");
 		builder.append(perfil);
 		builder.append("\n]");
