@@ -8,7 +8,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.ResponseEntity;
 
 import br.com.telematica.siloapi.model.dto.MedicaoDTO;
-import br.com.telematica.siloapi.model.entity.MedicaoEntity;
+import br.com.telematica.siloapi.model.entity.Medicao;
 import jakarta.transaction.Transactional;
 
 public interface MedicaoServInterface {
@@ -20,7 +20,7 @@ public interface MedicaoServInterface {
 
 	public ResponseEntity<Object> update(MedicaoDTO medicaoDTO) throws IOException, Exception;
 
-	public List<MedicaoEntity> findAll() throws IOException;
+	public List<Medicao> findAll() throws IOException;
 
 	public ResponseEntity<Object> findAllMedicaoDTO() throws IOException;
 

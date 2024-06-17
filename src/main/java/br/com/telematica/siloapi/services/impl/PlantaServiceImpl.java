@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import br.com.telematica.siloapi.model.dto.PlantaDTO;
-import br.com.telematica.siloapi.model.entity.PlantaEntity;
+import br.com.telematica.siloapi.model.entity.Planta;
 import br.com.telematica.siloapi.repository.PlantaRepository;
 import br.com.telematica.siloapi.services.PlantaServInterface;
 import br.com.telematica.siloapi.utils.message.MessageResponse;
@@ -32,7 +32,7 @@ public class PlantaServiceImpl implements PlantaServInterface {
 				logger.error("Planta está nula.");
 				return MessageResponse.badRequest("Planta está nula.");
 			}
-			var entity = new PlantaEntity(planta.getCodigo(), planta.getNome(), planta.getCodigoEmpresa());
+			var entity = new Planta(planta.getCodigo(), planta.getNome(), planta.getCodigoEmpresa());
 			var result = plantaRepository.save(entity);
 
 			logger.info("Planta salva com successo." + result);
@@ -67,7 +67,7 @@ public class PlantaServiceImpl implements PlantaServInterface {
 				logger.error("Planta está nula.");
 				return MessageResponse.badRequest("Planta está nulo.");
 			}
-			var entity = new PlantaEntity(planta.getCodigo(), planta.getNome(), planta.getCodigoEmpresa());
+			var entity = new Planta(planta.getCodigo(), planta.getNome(), planta.getCodigoEmpresa());
 			var result = plantaRepository.save(entity);
 			logger.info("Planta atualizado com successo." + result);
 
@@ -78,7 +78,7 @@ public class PlantaServiceImpl implements PlantaServInterface {
 	}
 
 	@Override
-	public List<PlantaEntity> findAll() throws IOException {
+	public List<Planta> findAll() throws IOException {
 		return plantaRepository.findAll();
 	}
 
@@ -112,7 +112,7 @@ public class PlantaServiceImpl implements PlantaServInterface {
 		}
 	}
 
-	private PlantaDTO convertToPlantaDTO(PlantaEntity plantaEntity) {
+	private PlantaDTO convertToPlantaDTO(Planta plantaEntity) {
 		return new PlantaDTO(plantaEntity);
 	}
 }

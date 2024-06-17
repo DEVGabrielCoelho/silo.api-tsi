@@ -11,7 +11,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "tipo_silo")
-public class TipoSiloEntity {
+public class TipoSilo {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,13 +23,13 @@ public class TipoSiloEntity {
 	@Column(length = 50, nullable = false)
 	private String tsides;
 
-	public TipoSiloEntity tipoSiloEntity(Empresa empresa, String tsides) {
+	public TipoSilo tipoSiloEntity(Empresa empresa, String tsides) {
 		this.empresa = empresa;
 		this.tsides = tsides;
 		return this;
 	}
 
-	public TipoSiloEntity(Long tsicod, Empresa empresa, String tsides) {
+	public TipoSilo(Long tsicod, Empresa empresa, String tsides) {
 		this.tsicod = tsicod;
 		this.empresa = empresa;
 		this.tsides = tsides;

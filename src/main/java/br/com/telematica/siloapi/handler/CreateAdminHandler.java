@@ -43,8 +43,8 @@ public class CreateAdminHandler {
 
 	private static Long cnpjTSI = Long.valueOf("44772937000150");
 
-	private static String[] listaRecursos = { "SIRENE", "MODULO", "PENDENCIA", "FIRMWARE", "MEDICAO", "AUDIO", "LOGGER", "EMPRESA", "CANAL", "BARRAGEM", "USUARIO", "PERFIL", "RECURSO", "ABRANGENCIA" };
-	private static String[] listaAbrangencia = { "SIRENE", "MODULO", "EMPRESA", "BARRAGEM" };
+	private static String[] listaRecursos = { "PENDENCIA", "FIRMWARE", "LOGGER", "USUARIO", "PERFIL", "RECURSO", "ABRANGENCIA", "EMPRESA", "PLANTA", "MEDICAO", "SILO", "TIPOSILO" };
+	private static String[] listaAbrangencia = { "EMPRESA", "PLANTA", "SILO", "TIPOSILO" };
 
 	@PostConstruct
 	public void init() {
@@ -94,8 +94,9 @@ public class CreateAdminHandler {
 				perfil = perfilPermissaoService.createUpdatePerfil(new Perfil(perfil.getPercod(), "ADMIN", "Perfil do Administrador."));
 			int listItem = listaRecursos.length;
 			for (int i = 0; i < listItem; i++) {
-				var valueRecurso = perfilPermissaoService.findByPercodAndRecnomCreate(perfil, recursoService.findByIdEntity(RecursoMapEnum.valueOf(listaRecursos[i]).getNome()));
-				PermissaoModel permissao = new PermissaoModel(RecursoMapEnum.valueOf(listaRecursos[i]), 1, 1, 1, 1, 1);
+				RecursoMapEnum recursoEnum = RecursoMapEnum.valueOf(listaRecursos[i]);
+				var valueRecurso = perfilPermissaoService.findByPercodAndRecnomCreate(perfil, recursoService.findByIdEntity(recursoEnum.getNome()));
+				PermissaoModel permissao = new PermissaoModel(recursoEnum, 1, 1, 1, 1, 1);
 				if (valueRecurso == null)
 					perfilPermissaoService.saveEntityPermissao(perfil, permissao);
 			}

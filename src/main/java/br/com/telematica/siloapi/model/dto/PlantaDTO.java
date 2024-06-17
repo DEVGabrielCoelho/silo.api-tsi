@@ -1,6 +1,6 @@
 package br.com.telematica.siloapi.model.dto;
 
-import br.com.telematica.siloapi.model.entity.PlantaEntity;
+import br.com.telematica.siloapi.model.entity.Planta;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(name = "PlantaDTO", description = "Objeto de transferência de dados de Planta")
@@ -20,7 +20,7 @@ public class PlantaDTO extends Codigo {
 		this.nome = nome;
 	}
 
-	public PlantaDTO(PlantaEntity entity) {
+	public PlantaDTO(Planta entity) {
 		super();
 		this.setCodigo(entity.getPlacod());
 		this.codigoEmpresa = entity.getEmpcod();

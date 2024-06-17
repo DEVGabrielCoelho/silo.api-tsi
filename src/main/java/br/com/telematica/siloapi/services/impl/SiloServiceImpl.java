@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import br.com.telematica.siloapi.model.dto.SiloDTO;
-import br.com.telematica.siloapi.model.entity.SiloEntity;
+import br.com.telematica.siloapi.model.entity.Silo;
 import br.com.telematica.siloapi.repository.SiloRepository;
 import br.com.telematica.siloapi.services.SiloServInterface;
 import br.com.telematica.siloapi.utils.message.MessageResponse;
@@ -33,7 +33,7 @@ public class SiloServiceImpl implements SiloServInterface {
 				throw new RuntimeException("Silo está nula.");
 			}
 
-			var entity = new SiloEntity(siloDTO.getCodigo(), siloDTO.getTipoSilo(), siloDTO.getNome(), siloDTO.getCodiPlanta());
+			var entity = new Silo(siloDTO.getCodigo(), siloDTO.getTipoSilo(), siloDTO.getNome(), siloDTO.getCodiPlanta());
 			var result = siloRepository.save(entity);
 
 			logger.info("Silo salva com successo." + result);
@@ -67,7 +67,7 @@ public class SiloServiceImpl implements SiloServInterface {
 			return MessageResponse.badRequest("Silo está nulo.");
 		}
 		try {
-			var entity = new SiloEntity(siloDTO.getCodigo(), siloDTO.getTipoSilo(), siloDTO.getNome(), siloDTO.getCodiPlanta());
+			var entity = new Silo(siloDTO.getCodigo(), siloDTO.getTipoSilo(), siloDTO.getNome(), siloDTO.getCodiPlanta());
 			var result = siloRepository.save(entity);
 			logger.info("Silo atualizado com successo." + result);
 			return MessageResponse.success(new SiloDTO(result.getSilcod(), result.getTsicod(), result.getPlacod(), result.getSilnom()));
@@ -77,7 +77,7 @@ public class SiloServiceImpl implements SiloServInterface {
 	}
 
 	@Override
-	public List<SiloEntity> findAll() throws IOException {
+	public List<Silo> findAll() throws IOException {
 		return siloRepository.findAll();
 	}
 
@@ -110,7 +110,7 @@ public class SiloServiceImpl implements SiloServInterface {
 		}
 	}
 
-	private SiloDTO convertToSiloDTO(SiloEntity siloDTOEntity) {
+	private SiloDTO convertToSiloDTO(Silo siloDTOEntity) {
 		return new SiloDTO(siloDTOEntity);
 	}
 }

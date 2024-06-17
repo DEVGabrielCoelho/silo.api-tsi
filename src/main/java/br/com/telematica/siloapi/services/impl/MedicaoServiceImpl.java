@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import br.com.telematica.siloapi.model.dto.MedicaoDTO;
-import br.com.telematica.siloapi.model.entity.MedicaoEntity;
+import br.com.telematica.siloapi.model.entity.Medicao;
 import br.com.telematica.siloapi.repository.MedicaoRepository;
 import br.com.telematica.siloapi.services.MedicaoServInterface;
 import br.com.telematica.siloapi.utils.Utils;
@@ -35,7 +35,7 @@ public class MedicaoServiceImpl implements MedicaoServInterface {
 				throw new RuntimeException("Medição está nula.");
 			}
 			Date dateMedicao = Utils.sdfStringforDate(medicaoDTO.getDataMedicao());
-			var entity = new MedicaoEntity(dateMedicao, medicaoDTO.getSilo(), medicaoDTO.getUmidade(), medicaoDTO.getAna(), medicaoDTO.getBarometro(), medicaoDTO.getTemperatura(), medicaoDTO.getDistancia());
+			var entity = new Medicao(dateMedicao, medicaoDTO.getSilo(), medicaoDTO.getUmidade(), medicaoDTO.getAna(), medicaoDTO.getBarometro(), medicaoDTO.getTemperatura(), medicaoDTO.getDistancia());
 			var result = medicaoRepository.save(entity);
 
 			logger.info("Medição salva com sucesso." + result);
@@ -73,7 +73,7 @@ public class MedicaoServiceImpl implements MedicaoServInterface {
 				return MessageResponse.badRequest("Medição está nulo.");
 			}
 			Date dateMedicao = Utils.sdfStringforDate(medicaoDTO.getDataMedicao());
-			var entity = new MedicaoEntity(dateMedicao, medicaoDTO.getSilo(), medicaoDTO.getUmidade(), medicaoDTO.getAna(), medicaoDTO.getBarometro(), medicaoDTO.getTemperatura(), medicaoDTO.getDistancia());
+			var entity = new Medicao(dateMedicao, medicaoDTO.getSilo(), medicaoDTO.getUmidade(), medicaoDTO.getAna(), medicaoDTO.getBarometro(), medicaoDTO.getTemperatura(), medicaoDTO.getDistancia());
 			var result = medicaoRepository.save(entity);
 			logger.info("Medição atualizado com sucesso." + result);
 			var stringDateMedi = Utils.sdfDateforString(result.getMsidth());
@@ -85,7 +85,7 @@ public class MedicaoServiceImpl implements MedicaoServInterface {
 	}
 
 	@Override
-	public List<MedicaoEntity> findAll() throws IOException {
+	public List<Medicao> findAll() throws IOException {
 		return medicaoRepository.findAll();
 	}
 
@@ -116,7 +116,7 @@ public class MedicaoServiceImpl implements MedicaoServInterface {
 		return new MedicaoDTO(stringDateMedi, result.getSilcod(), result.getMsiumi(), result.getMsiana(), result.getMsibar(), result.getMsitem(), result.getMsidis());
 	}
 
-	private MedicaoDTO convertToMedicaoDTO(MedicaoEntity medicaoDTOEntity) {
+	private MedicaoDTO convertToMedicaoDTO(Medicao medicaoDTOEntity) {
 		return new MedicaoDTO(medicaoDTOEntity);
 	}
 }

@@ -149,7 +149,7 @@ public class UsuarioServiceImpl implements UsuarioServInterface {
 		Usuario userSave = null;
 		Optional<Usuario> existingUser = userRepository.findByUsulog(userModel.getLogin());
 		String login = "admin";
-		if (existingUser.get().getUsulog().toUpperCase().equals(login.toUpperCase())) {
+		if (!existingUser.isEmpty() && existingUser.get().getUsulog().toUpperCase().equals(login.toUpperCase())) {
 			userSave = existingUser.get();
 			logger.info("Usuário com o login " + login.toUpperCase() + " já existe: " + userSave);
 			throw new RuntimeException("Usuário já existe!");

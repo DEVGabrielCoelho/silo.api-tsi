@@ -9,7 +9,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "medicao")
-public class MedicaoEntity {
+public class Medicao {
 
 	@Id
 	@Column(nullable = false)
@@ -22,10 +22,10 @@ public class MedicaoEntity {
 	private Double msitem;
 	private Double msidis;
 
-	public MedicaoEntity() {
+	public Medicao() {
 	}
 
-	public MedicaoEntity(Date msidth, Integer silcod, Double msiumi, Double msiana, Double msibar, Double msitem, Double msidis) {
+	public Medicao(Date msidth, Integer silcod, Double msiumi, Double msiana, Double msibar, Double msitem, Double msidis) {
 		this.msidth = msidth;
 		this.silcod = silcod;
 		this.msiumi = msiumi;

@@ -7,7 +7,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.ResponseEntity;
 
 import br.com.telematica.siloapi.model.dto.PlantaDTO;
-import br.com.telematica.siloapi.model.entity.PlantaEntity;
+import br.com.telematica.siloapi.model.entity.Planta;
 import jakarta.transaction.Transactional;
 
 public interface PlantaServInterface {
@@ -19,7 +19,7 @@ public interface PlantaServInterface {
 
 	public ResponseEntity<Object> update(PlantaDTO planta) throws IOException;
 
-	public List<PlantaEntity> findAll() throws IOException;
+	public List<Planta> findAll() throws IOException;
 
 	public ResponseEntity<Object> findAllPlantaDTO() throws IOException;
 

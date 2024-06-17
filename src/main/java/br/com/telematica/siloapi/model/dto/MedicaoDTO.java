@@ -1,6 +1,6 @@
 package br.com.telematica.siloapi.model.dto;
 
-import br.com.telematica.siloapi.model.entity.MedicaoEntity;
+import br.com.telematica.siloapi.model.entity.Medicao;
 import br.com.telematica.siloapi.utils.Utils;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
@@ -43,7 +43,7 @@ public class MedicaoDTO {
 		this.distancia = distancia;
 	}
 
-	public MedicaoDTO(MedicaoEntity medEntity) {
+	public MedicaoDTO(Medicao medEntity) {
 		this.dataMedicao = Utils.sdfDateforString(medEntity.getMsidth());
 		this.silo = medEntity.getSilcod();
 		this.umidade = medEntity.getMsiumi();

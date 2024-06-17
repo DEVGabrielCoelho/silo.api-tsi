@@ -9,7 +9,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "silo")
-public class SiloEntity {
+public class Silo {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,10 +22,10 @@ public class SiloEntity {
 	@Column(nullable = false)
 	private Long placod;
 
-	public SiloEntity() {
+	public Silo() {
 	}
 
-	public SiloEntity(Long silcod, Long tsicod, String silnom, Long placod) {
+	public Silo(Long silcod, Long tsicod, String silnom, Long placod) {
 		this.silcod = silcod;
 		this.tsicod = tsicod;
 		this.silnom = silnom;

@@ -1,6 +1,6 @@
 package br.com.telematica.siloapi.model.dto;
 
-import br.com.telematica.siloapi.model.entity.TipoSiloEntity;
+import br.com.telematica.siloapi.model.entity.TipoSilo;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "Tipo Silo")
@@ -20,7 +20,7 @@ public class TipoSiloDTO extends Codigo {
 		this.descricao = descricao;
 	}
 
-	public TipoSiloDTO(TipoSiloEntity entity) {
+	public TipoSiloDTO(TipoSilo entity) {
 		this.setCodigo(entity.getTsicod());
 		this.empresa = new EmpresaDTO(entity.getEmpresa());
 		this.descricao = entity.getTsides();

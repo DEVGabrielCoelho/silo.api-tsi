@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 
 import br.com.telematica.siloapi.model.TipoSiloModel;
 import br.com.telematica.siloapi.model.dto.TipoSiloDTO;
-import br.com.telematica.siloapi.model.entity.TipoSiloEntity;
+import br.com.telematica.siloapi.model.entity.TipoSilo;
 import br.com.telematica.siloapi.repository.TipoSiloRepository;
 import br.com.telematica.siloapi.services.TipoSiloServInterface;
 import br.com.telematica.siloapi.utils.message.MessageResponse;
@@ -39,7 +39,7 @@ public class TipoSiloServiceImpl implements TipoSiloServInterface {
 				throw new IOException("Empresa não encontrada.");
 			}
 
-			var result = tipoSiloRepository.save(new TipoSiloEntity(null, empresa, tipoSiloDTO.getDescricao()));
+			var result = tipoSiloRepository.save(new TipoSilo(null, empresa, tipoSiloDTO.getDescricao()));
 
 			logger.info("Tipo Silo salvo com sucesso. " + result);
 			return MessageResponse.success(new TipoSiloDTO(result));
@@ -127,7 +127,7 @@ public class TipoSiloServiceImpl implements TipoSiloServInterface {
 		return MessageResponse.success(new TipoSiloDTO(result));
 	}
 
-	private TipoSiloDTO convertToTipoSiloDTO(TipoSiloEntity siloDTOEntity) {
+	private TipoSiloDTO convertToTipoSiloDTO(TipoSilo siloDTOEntity) {
 		return new TipoSiloDTO(siloDTOEntity);
 	}
 

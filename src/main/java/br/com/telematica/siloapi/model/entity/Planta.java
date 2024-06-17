@@ -9,7 +9,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "planta")
-public class PlantaEntity {
+public class Planta {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,10 +20,10 @@ public class PlantaEntity {
 	@Column(nullable = false)
 	private Long empcod;
 
-	public PlantaEntity() {
+	public Planta() {
 	}
 
-	public PlantaEntity(Long placod, String planom, Long empcod) {
+	public Planta(Long placod, String planom, Long empcod) {
 		this.placod = placod;
 		this.planom = planom;
 		this.empcod = empcod;
