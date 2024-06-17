@@ -57,8 +57,11 @@ public class TipoSiloServiceImpl implements TipoSiloInterface {
 
 			if (tipoSilo == null)
 				throw new EmptyResultDataAccessException("Não foi possível encontrar o tipo silo com o ID fornecido.", 1);
+			Long codiTipoSilo = tipoSilo.getTsicod();
+			if (codiTipoSilo == null)
+				throw new EmptyResultDataAccessException("Não foi possível encontrar o tipo silo com o ID fornecido.", 1);
 
-			tipoSiloRepository.deleteById(tipoSilo.getTsicod());
+			tipoSiloRepository.deleteById(codiTipoSilo);
 			logger.info("Tipo Silo com ID " + codigo + " deletado com sucesso.");
 
 			return MessageResponse.success(null);
