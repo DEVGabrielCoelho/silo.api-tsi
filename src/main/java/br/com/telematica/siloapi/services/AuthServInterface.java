@@ -11,7 +11,7 @@ import br.com.telematica.siloapi.model.dto.ResponseAuthDTO;
 import br.com.telematica.siloapi.model.dto.TokenValidationResponseDTO;
 import br.com.telematica.siloapi.records.GenerateTokenRecords;
 
-public interface AuthServiceInterface extends UserDetailsService {
+public interface AuthServInterface extends UserDetailsService {
 	public GenerateTokenRecords getToken(AuthModel authToken) throws IOException;
 
 	public String validToken(String token);

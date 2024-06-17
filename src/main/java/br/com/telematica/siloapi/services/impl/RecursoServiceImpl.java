@@ -17,12 +17,12 @@ import br.com.telematica.siloapi.model.dto.RecursoDTO;
 import br.com.telematica.siloapi.model.entity.Recurso;
 import br.com.telematica.siloapi.model.enums.RecursoMapEnum;
 import br.com.telematica.siloapi.repository.RecursoRepository;
-import br.com.telematica.siloapi.services.RecursoServiceInterface;
+import br.com.telematica.siloapi.services.RecursoServInterface;
 import br.com.telematica.siloapi.utils.Utils;
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
-public class RecursoServiceImpl implements RecursoServiceInterface {
+public class RecursoServiceImpl implements RecursoServInterface {
 
 	@Autowired
 	private RecursoRepository recursoRepository;

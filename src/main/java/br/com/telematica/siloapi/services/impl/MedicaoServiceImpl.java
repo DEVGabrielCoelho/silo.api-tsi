@@ -14,13 +14,13 @@ import org.springframework.stereotype.Service;
 import br.com.telematica.siloapi.model.dto.MedicaoDTO;
 import br.com.telematica.siloapi.model.entity.MedicaoEntity;
 import br.com.telematica.siloapi.repository.MedicaoRepository;
-import br.com.telematica.siloapi.services.MedicaoInterface;
+import br.com.telematica.siloapi.services.MedicaoServInterface;
 import br.com.telematica.siloapi.utils.Utils;
 import br.com.telematica.siloapi.utils.message.MessageResponse;
 import ch.qos.logback.classic.Logger;
 
 @Service
-public class MedicaoServiceImpl implements MedicaoInterface {
+public class MedicaoServiceImpl implements MedicaoServInterface {
 
 	private static Logger logger = (Logger) LoggerFactory.getLogger(MedicaoServiceImpl.class);
 	@Autowired

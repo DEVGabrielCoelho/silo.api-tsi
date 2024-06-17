@@ -24,12 +24,12 @@ import br.com.telematica.siloapi.model.entity.Permissao;
 import br.com.telematica.siloapi.model.entity.Recurso;
 import br.com.telematica.siloapi.repository.PerfilRepository;
 import br.com.telematica.siloapi.repository.PermissaoRepository;
-import br.com.telematica.siloapi.services.PerfilPermissaoServiceInterface;
+import br.com.telematica.siloapi.services.PerfilPermServInterface;
 import br.com.telematica.siloapi.utils.Utils;
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
-public class PerfilPermissaoServiceImpl implements PerfilPermissaoServiceInterface {
+public class PerfilPermissaoServiceImpl implements PerfilPermServInterface {
 
 	@Autowired
 	private PermissaoRepository permissaoRepository;

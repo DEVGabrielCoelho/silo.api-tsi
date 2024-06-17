@@ -9,24 +9,26 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
-import br.com.telematica.siloapi.exception.ResponseGlobalModel;
 import br.com.telematica.siloapi.handler.AbrangenciaHandler;
 import br.com.telematica.siloapi.model.EmpresaModel;
 import br.com.telematica.siloapi.model.dto.EmpresaDTO;
 import br.com.telematica.siloapi.model.entity.Empresa;
 import br.com.telematica.siloapi.records.CheckAbrangenciaRec;
 import br.com.telematica.siloapi.repository.EmpresaRepository;
-import br.com.telematica.siloapi.utils.Utils;
+import br.com.telematica.siloapi.services.EmpresaServInterface;
+import br.com.telematica.siloapi.utils.message.MessageResponse;
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
-public class EmpresaServiceImpl {
+public class EmpresaServiceImpl implements EmpresaServInterface {
 
 	private static final Logger log = LoggerFactory.getLogger(EmpresaServiceImpl.class);
 
@@ -40,32 +42,49 @@ public class EmpresaServiceImpl {
 		return abrancenciaHandler.checkAbrangencia("EMPRESA");
 	}
 
-	public ResponseGlobalModel empresaDeleteById(Long code) throws IOException {
-		Objects.requireNonNull(code, "Código da Empresa está nulo.");
+	@Override
+	public ResponseEntity<EmpresaDTO> empresaDeleteById(Long codigo) throws IOException {
+		Objects.requireNonNull(codigo, "Código da Empresa está nulo.");
 
-		var empresa = findByIdEntity(code);
+		try {
+			var empresa = empresaRepository.findById(codigo).orElseThrow(() -> new EmptyResultDataAccessException("Não foi possível encontrar a empresa com o ID fornecido.", 1));
 
-		if (empresa != null) {
-			var emp = new Empresa(empresa.getEmpcod(), empresa.getEmpcnp(), empresa.getEmpnom(), empresa.getEmpfan(), empresa.getEmptel(), 0);
-			empresaRepository.save(emp);
+			if (empresa.getEmpdel() == 0) {
+				log.info("Empresa não encontrada ou já deletada.");
+				throw new IOException("Empresa não encontrada ou já deletada.");
+			}
+
+			empresa.empresaDel(0);
+			empresaRepository.save(empresa);
+
+			return MessageResponse.success(null);
+		} catch (EmptyResultDataAccessException e) {
+			log.error("Não foi possível encontrar a empresa com o ID fornecido. Erro: ", e);
+			throw new IOException("Não foi possível encontrar a empresa com o ID fornecido.", e);
+		} catch (Exception e) {
+			log.error("Erro ao deletar a empresa. Erro: ", e);
+			throw new IOException("Erro ao deletar a empresa.", e);
 		}
-		return Utils.responseMessageSucess("Empresa apagado com sucesso. Código da Empresa: " + code);
 	}
 
-	public Page<EmpresaDTO> empresaFindAllPaginado(String nome, Pageable pageable) throws IOException {
+	@Override
+	public ResponseEntity<Page<EmpresaDTO>> empresaFindAllPaginado(String nome, Pageable pageable) throws IOException {
 		Objects.requireNonNull(pageable, "Pageable da Empresa está nulo.");
+
 		var check = checagemFixaBarragem();
 		Integer empdel = 1;
 
-		Specification<Empresa> spec;
+		Specification<Empresa> spec = Specification.where(null);
+
 		if (check.isHier() == 0) {
-			spec = Empresa.filterByFields(nome, empdel, null);
+			spec = spec.and(Empresa.filterByFields(nome, empdel, null));
 		} else {
-			spec = Empresa.filterByFields(nome, empdel, check.listAbrangencia());
+			spec = spec.and(Empresa.filterByFields(nome, empdel, check.listAbrangencia()));
 		}
 
 		Page<Empresa> result = empresaRepository.findAll(spec, pageable);
-		return result.map(EmpresaDTO::new);
+
+		return MessageResponse.success(result.map(EmpresaDTO::new));
 	}
 
 	public List<EmpresaDTO> findByEmpresa() {
@@ -79,39 +98,61 @@ public class EmpresaServiceImpl {
 		}
 	}
 
-	public List<EmpresaDTO> empresaFindAll() throws IOException {
+	@Override
+	public ResponseEntity<List<EmpresaDTO>> empresaFindAll() throws IOException {
 		var check = checagemFixaBarragem();
 		var result = check.isHier() == 0 ? empresaRepository.findByEmpdel(1) : empresaRepository.findByEmpdelAndEmpcodIn(1, check.listAbrangencia());
 
-		return result.stream().map(empresa -> new EmpresaDTO(empresa)).collect(Collectors.toList());
+		return MessageResponse.success(result.stream().map(empresa -> new EmpresaDTO(empresa)).collect(Collectors.toList()));
 	}
 
-	public EmpresaDTO empresaUpdate(Long codigo, EmpresaModel empresa) {
+	@Override
+	public ResponseEntity<EmpresaDTO> empresaUpdate(Long codigo, EmpresaModel empresaModel) throws IOException {
 		Objects.requireNonNull(codigo, "Código da Empresa está nulo.");
-		Objects.requireNonNull(empresa.getCnpj(), "CNPJ da Empresa está nulo.");
-		Objects.requireNonNull(empresa.getNome(), "Nome da Empresa está nulo.");
-		return new EmpresaDTO(empresaRepository.save(new Empresa(codigo, empresa.getCnpj(), empresa.getNome(), empresa.getNomeFantasia(), empresa.getTelefone(), 1)));
-
-	}
-
-	public EmpresaDTO empresaSave(EmpresaModel empresa) {
-		Objects.requireNonNull(empresa.getCnpj(), "CNPJ da Empresa está nulo.");
-		Objects.requireNonNull(empresa.getNome(), "Nome da Empresa está nulo.");
-		Empresa emp = null;
-		if (empresa != null) {
-			emp = empresaRepository.save(new Empresa(null, empresa.getCnpj(), empresa.getNome(), empresa.getNomeFantasia(), empresa.getTelefone(), 1));
-		}
-		return new EmpresaDTO(emp);
-	}
-
-	public Empresa findByIdEntity(@NonNull Long codigo) {
-		Objects.requireNonNull(codigo, "Código da Empresa está nulo.");
-		var entity = empresaRepository.findById(codigo);
-		if (entity.isEmpty()) {
+		Objects.requireNonNull(empresaModel.getCnpj(), "CNPJ da Empresa está nulo.");
+		Objects.requireNonNull(empresaModel.getNome(), "Nome da Empresa está nulo.");
+		var empresa = empresaRepository.findById(codigo).orElseThrow(() -> new EmptyResultDataAccessException("Não foi possível encontrar a empresa com o ID fornecido.", 1));
+		if (empresa == null || empresa.getEmpdel() == 0) {
 			log.info("Empresa não encontrado ou deletado.");
-			return null;
+			throw new IOException("Empresa não encontrado ou deletado.");
 		}
-		return entity.get();
+		String nomFant = empresaModel.getNomeFantasia() == null ? empresa.getEmpfan() : empresaModel.getNomeFantasia();
+		String tel = empresaModel.getTelefone() == null ? empresa.getEmptel() : empresaModel.getTelefone();
+		var empresaEntity = new Empresa(codigo, empresaModel.getCnpj(), empresaModel.getNome(), nomFant, tel, 1);
+		return MessageResponse.success(new EmpresaDTO(empresaRepository.save(empresaEntity)));
+
+	}
+
+	@Override
+	public ResponseEntity<EmpresaDTO> empresaSave(EmpresaModel empresaModel) throws IOException {
+		Objects.requireNonNull(empresaModel.getCnpj(), "CNPJ da Empresa está nulo.");
+		Objects.requireNonNull(empresaModel.getNome(), "Nome da Empresa está nulo.");
+		Empresa emp = null;
+		try {
+			Empresa empresa = new Empresa(null, empresaModel.getCnpj(), empresaModel.getNome(), empresaModel.getNomeFantasia(), empresaModel.getTelefone(), 1);
+			emp = empresaRepository.save(empresa);
+		} catch (Exception e) {
+			log.error("Erro ao realizar o cadastro de uma empresa.", e);
+			throw new IOException("Erro ao realizar o cadastro de uma empresa.", e);
+		}
+		return MessageResponse.success(new EmpresaDTO(emp));
+	}
+
+	@Override
+	public ResponseEntity<EmpresaDTO> findByIdApi(Long codigo) throws EntityNotFoundException, IOException {
+		var empresa = findById(codigo);
+		if (empresa == null)
+			throw new IOException("Sem abrangência para essa Empresa.");
+		return MessageResponse.success(new EmpresaDTO(empresa));
+	}
+
+	@Override
+	public ResponseEntity<EmpresaDTO> empresaFindByCnpjApi(Long codigo) throws IOException {
+		Objects.requireNonNull(codigo, "Código da Empresa está nulo.");
+		var empresa = empresaFindByCnpjAbrangencia(codigo);
+		if (empresa == null)
+			throw new RuntimeException("Sem abrangencia para essa empresa");
+		return MessageResponse.success(empresa);
 	}
 
 	public Empresa findByIdAbrangencia(Empresa emp) throws EntityNotFoundException, IOException {
@@ -124,20 +165,13 @@ public class EmpresaServiceImpl {
 
 	public Empresa findById(Long codigo) throws EntityNotFoundException, IOException {
 		Objects.requireNonNull(codigo, "Código da Empresa está nulo.");
-		var emp = findByIdEntity(codigo);
+		var emp = empresaRepository.findById(codigo).get();
 		if (emp == null)
 			return null;
 		var empresa = findByIdAbrangencia(emp);
 		if (empresa == null)
 			return null;
 		return empresa;
-	}
-
-	public EmpresaDTO findByIdApi(Long codigo) throws EntityNotFoundException, IOException {
-		var empresa = findById(codigo);
-		if (empresa == null)
-			throw new IOException("Sem abrangência para essa Empresa.");
-		return new EmpresaDTO(empresa);
 	}
 
 	public Empresa empresaFindByCnpjEntity(Long codigo) throws IOException {
@@ -161,12 +195,14 @@ public class EmpresaServiceImpl {
 		return new EmpresaDTO(emp);
 	}
 
-	public EmpresaDTO empresaFindByCnpjApi(Long codigo) throws IOException {
+	public Empresa findByIdEntity(@NonNull Long codigo) {
 		Objects.requireNonNull(codigo, "Código da Empresa está nulo.");
-		var empresa = empresaFindByCnpjAbrangencia(codigo);
-		if (empresa == null)
-			throw new RuntimeException("Sem abrangencia para essa empresa");
-		return empresa;
+		var entity = empresaRepository.findById(codigo);
+		if (entity.isEmpty() || entity.get().getEmpdel() == 0) {
+			log.info("Empresa não encontrado ou deletado.");
+			return null;
+		}
+		return entity.get();
 	}
 
 }

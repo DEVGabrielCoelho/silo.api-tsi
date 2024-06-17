@@ -17,7 +17,7 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import br.com.telematica.siloapi.model.AuthModel;
 import br.com.telematica.siloapi.model.dto.ResponseAuthDTO;
 import br.com.telematica.siloapi.model.dto.TokenValidationResponseDTO;
-import br.com.telematica.siloapi.services.AuthServiceInterface;
+import br.com.telematica.siloapi.services.AuthServInterface;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -29,7 +29,7 @@ import jakarta.validation.Valid;
 public class AuthenticationController {
 
 	@Autowired
-	private AuthServiceInterface userServImpl;
+	private AuthServInterface userServImpl;
 
 	@PostMapping("/v1/auth")
 	@Operation(description = "Realizar autenticação para obter token de acesso.")

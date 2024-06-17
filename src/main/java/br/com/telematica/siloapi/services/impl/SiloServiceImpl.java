@@ -13,12 +13,12 @@ import org.springframework.stereotype.Service;
 import br.com.telematica.siloapi.model.dto.SiloDTO;
 import br.com.telematica.siloapi.model.entity.SiloEntity;
 import br.com.telematica.siloapi.repository.SiloRepository;
-import br.com.telematica.siloapi.services.SiloInterface;
+import br.com.telematica.siloapi.services.SiloServInterface;
 import br.com.telematica.siloapi.utils.message.MessageResponse;
 import ch.qos.logback.classic.Logger;
 
 @Service
-public class SiloServiceImpl implements SiloInterface {
+public class SiloServiceImpl implements SiloServInterface {
 
 	private static Logger logger = (Logger) LoggerFactory.getLogger(SiloServiceImpl.class);
 	@Autowired

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.telematica.siloapi.model.dto.SiloDTO;
-import br.com.telematica.siloapi.services.SiloInterface;
+import br.com.telematica.siloapi.services.SiloServInterface;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -25,7 +25,7 @@ import jakarta.validation.Valid;
 public class SiloController extends SecurityRestController {
 
 	@Autowired
-	private SiloInterface silo;
+	private SiloServInterface silo;
 
 	@GetMapping("/v1/buscarSilo")
 	@Operation(description = "Busca pelos silos cadastrados")

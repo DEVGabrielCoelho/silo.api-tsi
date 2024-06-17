@@ -13,7 +13,7 @@ import br.com.telematica.siloapi.model.dto.UsuarioDTO;
 import br.com.telematica.siloapi.model.dto.UsuarioPermissaoDTO;
 import jakarta.persistence.EntityNotFoundException;
 
-public interface UsuarioServiceInterface {
+public interface UsuarioServInterface {
 
 	UsuarioDTO findById(@NonNull Long codigo) throws EntityNotFoundException, IOException;
 

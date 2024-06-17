@@ -15,12 +15,12 @@ import br.com.telematica.siloapi.model.TipoSiloModel;
 import br.com.telematica.siloapi.model.dto.TipoSiloDTO;
 import br.com.telematica.siloapi.model.entity.TipoSiloEntity;
 import br.com.telematica.siloapi.repository.TipoSiloRepository;
-import br.com.telematica.siloapi.services.TipoSiloInterface;
+import br.com.telematica.siloapi.services.TipoSiloServInterface;
 import br.com.telematica.siloapi.utils.message.MessageResponse;
 import ch.qos.logback.classic.Logger;
 
 @Service
-public class TipoSiloServiceImpl implements TipoSiloInterface {
+public class TipoSiloServiceImpl implements TipoSiloServInterface {
 
 	private static Logger logger = (Logger) LoggerFactory.getLogger(TipoSiloServiceImpl.class);
 	@Autowired

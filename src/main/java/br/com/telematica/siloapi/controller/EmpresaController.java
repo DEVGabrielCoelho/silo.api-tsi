@@ -19,10 +19,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.telematica.siloapi.exception.ResponseGlobalModel;
 import br.com.telematica.siloapi.model.EmpresaModel;
 import br.com.telematica.siloapi.model.dto.EmpresaDTO;
-import br.com.telematica.siloapi.services.impl.EmpresaServiceImpl;
+import br.com.telematica.siloapi.services.EmpresaServInterface;
 import br.com.telematica.siloapi.utils.Utils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -35,7 +34,7 @@ import jakarta.persistence.EntityNotFoundException;
 public class EmpresaController extends SecurityRestController {
 
 	@Autowired
-	private EmpresaServiceImpl empresaService;
+	private EmpresaServInterface empresaService;
 
 	@GetMapping("/v1/paginado")
 	@Operation(description = "Busca paginada de Empresas cadastradas. Pagina define qual pagina deseja abrir, Tamanho define a quantidade e itens por pagina, Filtro permite buscar pelo código, nome, nome fantasia, cnpj e telefone, Direção definie a ordenação ASC - Ascendente / DESC - Descendente  OrdenarPor requer os seguintes dados: codigo, cnpj, nome, nomeFantasia, telefone.")
@@ -45,43 +44,43 @@ public class EmpresaController extends SecurityRestController {
 		if (ordenarEntity == null) {
 			return ResponseEntity.badRequest().body(Page.empty());
 		}
-		return ResponseEntity.ok(empresaService.empresaFindAllPaginado(filtro, Utils.consultaPage(ordenarEntity, direcao, pagina, tamanho)));
+		return empresaService.empresaFindAllPaginado(filtro, Utils.consultaPage(ordenarEntity, direcao, pagina, tamanho));
 	}
 
 	@GetMapping("/v1/codigo/{codigo}")
 	@Operation(description = "Buscar empresa pelo código cadastrado.")
 	public ResponseEntity<EmpresaDTO> buscarEmpresaPorCodigo(@PathVariable Long codigo) throws ParseException, EntityNotFoundException, IOException {
-		return ResponseEntity.ok(empresaService.findByIdApi(codigo));
+		return empresaService.findByIdApi(codigo);
 	}
 
 	@GetMapping("/v1/cnpj/{cnpj}")
 	@Operation(description = "Buscar empresa pelo CNPJ cadastrado.")
 	public ResponseEntity<EmpresaDTO> buscarEmpresaPorCnpj(@PathVariable Long cnpj) throws ParseException, IOException {
-		return ResponseEntity.ok(empresaService.empresaFindByCnpjApi(cnpj));
+		return empresaService.empresaFindByCnpjApi(cnpj);
 	}
 
 	@GetMapping("/v1")
 	@Operation(description = "Buscar lista de empresas cadastradas.")
 	public ResponseEntity<List<EmpresaDTO>> buscarListaEmpresa() throws ParseException, IOException {
-		return ResponseEntity.ok(empresaService.empresaFindAll());
+		return empresaService.empresaFindAll();
 	}
 
 	@PostMapping("/v1")
 	@Operation(description = "Cadastrar uma empresa.")
-	public ResponseEntity<EmpresaDTO> cadastrarEmpresa(@RequestBody EmpresaModel entity) throws ParseException {
-		return ResponseEntity.ok(empresaService.empresaSave(entity));
+	public ResponseEntity<EmpresaDTO> cadastrarEmpresa(@RequestBody EmpresaModel entity) throws ParseException, IOException {
+		return empresaService.empresaSave(entity);
 	}
 
 	@PutMapping("/v1/{codigo}")
 	@Operation(description = "Atualizar o cadastro de uma empresa passando o código cadastrado.")
-	public ResponseEntity<EmpresaDTO> atualizarEmpresa(@PathVariable Long codigo, @RequestBody EmpresaModel entity) throws ParseException {
-		return ResponseEntity.ok(empresaService.empresaUpdate(codigo, entity));
+	public ResponseEntity<EmpresaDTO> atualizarEmpresa(@PathVariable Long codigo, @RequestBody EmpresaModel entity) throws ParseException, IOException {
+		return empresaService.empresaUpdate(codigo, entity);
 	}
 
 	@DeleteMapping("/v1/{codigo}")
 	@Operation(description = "Deletar uma empresa pelo código cadastrado.")
-	public ResponseEntity<ResponseGlobalModel> deletarEmpresa(@PathVariable Long codigo) throws ParseException, EntityNotFoundException, IOException {
-		return ResponseEntity.ok(empresaService.empresaDeleteById(codigo));
+	public ResponseEntity<EmpresaDTO> deletarEmpresa(@PathVariable Long codigo) throws ParseException, EntityNotFoundException, IOException {
+		return empresaService.empresaDeleteById(codigo);
 	}
 
 }

@@ -12,7 +12,7 @@ import br.com.telematica.siloapi.model.PerfilModel;
 import br.com.telematica.siloapi.model.dto.PerfilPermissaoDTO;
 import jakarta.persistence.EntityNotFoundException;
 
-public interface PerfilPermissaoServiceInterface {
+public interface PerfilPermServInterface {
 
 	public PerfilPermissaoDTO save(PerfilModel perModel) throws IOException;
 

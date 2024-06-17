@@ -30,11 +30,11 @@ import br.com.telematica.siloapi.model.dto.ResponseAuthDTO;
 import br.com.telematica.siloapi.model.dto.TokenValidationResponseDTO;
 import br.com.telematica.siloapi.model.entity.Usuario;
 import br.com.telematica.siloapi.records.GenerateTokenRecords;
-import br.com.telematica.siloapi.services.AuthServiceInterface;
+import br.com.telematica.siloapi.services.AuthServInterface;
 import br.com.telematica.siloapi.utils.JWTUtil;
 
 @Service
-public class AuthServiceImpl implements AuthServiceInterface {
+public class AuthServiceImpl implements AuthServInterface {
 
 	private static final Logger log = LoggerFactory.getLogger(AuthServiceImpl.class);
 

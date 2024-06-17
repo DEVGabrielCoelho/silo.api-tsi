@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.telematica.siloapi.model.dto.PlantaDTO;
-import br.com.telematica.siloapi.services.PlantaInterface;
+import br.com.telematica.siloapi.services.PlantaServInterface;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -25,7 +25,7 @@ import jakarta.validation.Valid;
 public class PlantaController extends SecurityRestController {
 
 	@Autowired
-	private PlantaInterface planta;
+	private PlantaServInterface planta;
 
 	@GetMapping("/v1/listaPlantas")
 	@Operation(description = "Busca pelas plantas cadastradas")

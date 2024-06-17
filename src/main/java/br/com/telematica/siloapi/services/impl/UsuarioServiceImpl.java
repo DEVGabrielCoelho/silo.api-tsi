@@ -28,12 +28,12 @@ import br.com.telematica.siloapi.model.entity.Empresa;
 import br.com.telematica.siloapi.model.entity.Perfil;
 import br.com.telematica.siloapi.model.entity.Usuario;
 import br.com.telematica.siloapi.repository.UsuarioRepository;
-import br.com.telematica.siloapi.services.UsuarioServiceInterface;
+import br.com.telematica.siloapi.services.UsuarioServInterface;
 import br.com.telematica.siloapi.utils.Utils;
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
-public class UsuarioServiceImpl implements UsuarioServiceInterface {
+public class UsuarioServiceImpl implements UsuarioServInterface {
 
 	private static Logger logger = LoggerFactory.getLogger(UsuarioServiceImpl.class);
 

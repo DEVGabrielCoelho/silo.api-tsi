@@ -12,7 +12,7 @@ import br.com.telematica.siloapi.model.RecursoModel;
 import br.com.telematica.siloapi.model.dto.RecursoDTO;
 import jakarta.persistence.EntityNotFoundException;
 
-public interface RecursoServiceInterface {
+public interface RecursoServInterface {
 
 	RecursoDTO save(RecursoModel perModel);
 

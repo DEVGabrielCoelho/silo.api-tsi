@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.telematica.siloapi.exception.ResponseGlobalModel;
 import br.com.telematica.siloapi.model.PerfilModel;
 import br.com.telematica.siloapi.model.dto.PerfilPermissaoDTO;
-import br.com.telematica.siloapi.services.PerfilPermissaoServiceInterface;
+import br.com.telematica.siloapi.services.PerfilPermServInterface;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.EntityNotFoundException;
@@ -36,7 +36,7 @@ import jakarta.validation.Valid;
 public class PerfilController extends SecurityRestController {
 
 	@Autowired
-	private PerfilPermissaoServiceInterface perfilServImpl;
+	private PerfilPermServInterface perfilServImpl;
 
 	@PostMapping("/v1")
 	@Operation(description = "Cadastrar um perfil de usuário com suas permissões de acesso.")

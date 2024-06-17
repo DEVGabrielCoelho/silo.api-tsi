@@ -114,6 +114,11 @@ public class Empresa {
 		this.empdel = empdel;
 	}
 
+	public Empresa empresaDel(Integer empdel) {
+		this.empdel = empdel;
+		return this;
+	}
+
 	public Empresa() {
 		super();
 		// TODO Auto-generated constructor stub

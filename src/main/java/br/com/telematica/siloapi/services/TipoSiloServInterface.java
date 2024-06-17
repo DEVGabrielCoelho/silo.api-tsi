@@ -10,7 +10,7 @@ import br.com.telematica.siloapi.model.TipoSiloModel;
 import br.com.telematica.siloapi.model.dto.TipoSiloDTO;
 import jakarta.transaction.Transactional;
 
-public interface TipoSiloInterface {
+public interface TipoSiloServInterface {
 
 	@Transactional
 	public ResponseEntity<TipoSiloDTO> deleteByTsicod(Long codigo) throws IOException;

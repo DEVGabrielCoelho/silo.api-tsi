@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.telematica.siloapi.model.dto.MedicaoDTO;
-import br.com.telematica.siloapi.services.MedicaoInterface;
+import br.com.telematica.siloapi.services.MedicaoServInterface;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -25,7 +25,7 @@ import jakarta.validation.Valid;
 public class MedicaoController extends SecurityRestController {
 
 	@Autowired
-	private MedicaoInterface medicaoService;
+	private MedicaoServInterface medicaoService;
 
 	@GetMapping("/v1/buscarMedicoes")
 	@Operation(description = "Busca pelas medição registrada")

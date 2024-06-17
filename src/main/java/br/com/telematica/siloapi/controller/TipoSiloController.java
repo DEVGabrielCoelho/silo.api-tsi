@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.telematica.siloapi.model.TipoSiloModel;
 import br.com.telematica.siloapi.model.dto.TipoSiloDTO;
-import br.com.telematica.siloapi.services.TipoSiloInterface;
+import br.com.telematica.siloapi.services.TipoSiloServInterface;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 public class TipoSiloController extends SecurityRestController {
 
 	@Autowired
-	private TipoSiloInterface tipoSiloInterface;
+	private TipoSiloServInterface tipoSiloInterface;
 
 	@GetMapping("/v1")
 	@Operation(description = "Busca pelos tipos silos cadastrados")

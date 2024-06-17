@@ -22,7 +22,7 @@ import br.com.telematica.siloapi.exception.ResponseGlobalModel;
 import br.com.telematica.siloapi.model.UsuarioModel;
 import br.com.telematica.siloapi.model.dto.UsuarioDTO;
 import br.com.telematica.siloapi.model.dto.UsuarioPermissaoDTO;
-import br.com.telematica.siloapi.services.UsuarioServiceInterface;
+import br.com.telematica.siloapi.services.UsuarioServInterface;
 import br.com.telematica.siloapi.utils.Utils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -36,7 +36,7 @@ import jakarta.validation.Valid;
 public class UsuarioController extends SecurityRestController {
 
 	@Autowired
-	private UsuarioServiceInterface userServImpl;
+	private UsuarioServInterface userServImpl;
 
 	@PostMapping("/v1")
 	@Operation(description = "Cadastrar um usuário")

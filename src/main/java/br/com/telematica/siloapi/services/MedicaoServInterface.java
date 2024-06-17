@@ -11,7 +11,7 @@ import br.com.telematica.siloapi.model.dto.MedicaoDTO;
 import br.com.telematica.siloapi.model.entity.MedicaoEntity;
 import jakarta.transaction.Transactional;
 
-public interface MedicaoInterface {
+public interface MedicaoServInterface {
 
 	public ResponseEntity<Object> save(MedicaoDTO medicaoDTO) throws RuntimeException;
 
