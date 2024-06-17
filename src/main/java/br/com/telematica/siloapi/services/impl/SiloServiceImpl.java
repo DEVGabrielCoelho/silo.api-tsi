@@ -10,7 +10,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import br.com.telematica.siloapi.model.GenericResponseModel;
 import br.com.telematica.siloapi.model.dto.SiloDTO;
 import br.com.telematica.siloapi.model.entity.SiloEntity;
 import br.com.telematica.siloapi.repository.SiloRepository;
@@ -26,7 +25,7 @@ public class SiloServiceImpl implements SiloInterface {
 	private SiloRepository siloRepository;
 
 	@Override
-	public ResponseEntity<GenericResponseModel> save(SiloDTO siloDTO) throws RuntimeException {
+	public ResponseEntity<Object> save(SiloDTO siloDTO) throws RuntimeException {
 		try {
 
 			if (siloDTO == null) {
@@ -37,22 +36,22 @@ public class SiloServiceImpl implements SiloInterface {
 			var entity = new SiloEntity(siloDTO.getCodigo(), siloDTO.getTipoSilo(), siloDTO.getNome(), siloDTO.getCodiPlanta());
 			var result = siloRepository.save(entity);
 
-			logger.info("Silo salva com sucesso." + result);
-			return MessageResponse.sucess(new SiloDTO(result.getSilcod(), result.getTsicod(), result.getPlacod(), result.getSilnom()));
+			logger.info("Silo salva com successo." + result);
+			return MessageResponse.success(new SiloDTO(result.getSilcod(), result.getTsicod(), result.getPlacod(), result.getSilnom()));
 		} catch (Exception e) {
 			return MessageResponse.badRequest(e.getMessage());
 		}
 	}
 
 	@Override
-	public ResponseEntity<GenericResponseModel> deleteByPlacod(Integer codigo) throws IOException {
+	public ResponseEntity<Object> deleteByPlacod(Integer codigo) throws IOException {
 		if (codigo == null) {
 			logger.error("O ID do silo está nulo.");
 			return MessageResponse.badRequest("O ID do silo está nulo.");
 		}
 		try {
 			siloRepository.deleteByPlacod(codigo);
-			return MessageResponse.sucess(null);
+			return MessageResponse.success(null);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Não foi possível encontrar o silo com o ID fornecido. Error: " + e.getCause());
 			return MessageResponse.notFound("Não foi possível encontrar o silo com o ID fornecido." + e.getMessage());
@@ -62,7 +61,7 @@ public class SiloServiceImpl implements SiloInterface {
 	}
 
 	@Override
-	public ResponseEntity<GenericResponseModel> update(SiloDTO siloDTO) throws IOException {
+	public ResponseEntity<Object> update(SiloDTO siloDTO) throws IOException {
 		if (siloDTO == null) {
 			logger.error("Silo está nula.");
 			return MessageResponse.badRequest("Silo está nulo.");
@@ -70,8 +69,8 @@ public class SiloServiceImpl implements SiloInterface {
 		try {
 			var entity = new SiloEntity(siloDTO.getCodigo(), siloDTO.getTipoSilo(), siloDTO.getNome(), siloDTO.getCodiPlanta());
 			var result = siloRepository.save(entity);
-			logger.info("Silo atualizado com sucesso." + result);
-			return MessageResponse.sucess(new SiloDTO(result.getSilcod(), result.getTsicod(), result.getPlacod(), result.getSilnom()));
+			logger.info("Silo atualizado com successo." + result);
+			return MessageResponse.success(new SiloDTO(result.getSilcod(), result.getTsicod(), result.getPlacod(), result.getSilnom()));
 		} catch (Exception e) {
 			return MessageResponse.badRequest(e.getMessage());
 		}
@@ -83,16 +82,16 @@ public class SiloServiceImpl implements SiloInterface {
 	}
 
 	@Override
-	public ResponseEntity<GenericResponseModel> findAllSiloDTO() throws IOException {
+	public ResponseEntity<Object> findAllSiloDTO() throws IOException {
 		try {
-			return MessageResponse.sucess(siloRepository.findAll().stream().map(this::convertToSiloDTO).collect(Collectors.toList()));
+			return MessageResponse.success(siloRepository.findAll().stream().map(this::convertToSiloDTO).collect(Collectors.toList()));
 		} catch (Exception e) {
 			return MessageResponse.badRequest(e.getMessage());
 		}
 	}
 
 	@Override
-	public ResponseEntity<GenericResponseModel> findById(Integer id) throws IOException, EmptyResultDataAccessException {
+	public ResponseEntity<Object> findById(Integer id) throws IOException, EmptyResultDataAccessException {
 		if (id == null) {
 			logger.error("Id está nulo.");
 			return MessageResponse.badRequest("Id está nulo.");
@@ -105,7 +104,7 @@ public class SiloServiceImpl implements SiloInterface {
 				logger.error("Silo não encontrada.");
 				throw new EmptyResultDataAccessException("Silo não encontrada.", 1);
 			}
-			return MessageResponse.sucess(new SiloDTO(result.getSilcod(), result.getTsicod(), result.getPlacod(), result.getSilnom()));
+			return MessageResponse.success(new SiloDTO(result.getSilcod(), result.getTsicod(), result.getPlacod(), result.getSilnom()));
 		} catch (Exception e) {
 			return MessageResponse.badRequest(e.getMessage());
 		}

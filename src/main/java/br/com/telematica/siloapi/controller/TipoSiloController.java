@@ -1,6 +1,7 @@
 package br.com.telematica.siloapi.controller;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.telematica.siloapi.model.GenericResponseModel;
+import br.com.telematica.siloapi.model.TipoSiloModel;
 import br.com.telematica.siloapi.model.dto.TipoSiloDTO;
 import br.com.telematica.siloapi.services.TipoSiloInterface;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,33 +27,33 @@ import jakarta.validation.Valid;
 public class TipoSiloController extends SecurityRestController {
 
 	@Autowired
-	private TipoSiloInterface tipoSilo;
+	private TipoSiloInterface tipoSiloInterface;
 
-	@GetMapping("/v1/buscarTiposSilos")
+	@GetMapping("/v1")
 	@Operation(description = "Busca pelos tipos silos cadastrados")
-	public ResponseEntity<GenericResponseModel> getSilo() throws IOException {
-		return tipoSilo.findAllTipoSiloDTO();
+	public ResponseEntity<List<TipoSiloDTO>> getSilo() throws IOException {
+		return tipoSiloInterface.findAllTipoSiloDTO();
 
 	}
 
-	@PostMapping("/v1/cadastraTipoSilo")
+	@PostMapping("/v1")
 	@Operation(description = "Cadastro de um novo tipo de silo")
-	public ResponseEntity<GenericResponseModel> createSilo(@Valid @RequestBody TipoSiloDTO tipoSiloDTO) {
-		return tipoSilo.save(tipoSiloDTO);
+	public ResponseEntity<TipoSiloDTO> createSilo(@Valid @RequestBody TipoSiloModel tipoSilo) throws RuntimeException, IOException {
+		return tipoSiloInterface.save(tipoSilo);
 
 	}
 
-	@PutMapping("/v1/atualizaSilo")
+	@PutMapping("/v1/{codigo}")
 	@Operation(description = "Atualização de um tipo de silo")
-	public ResponseEntity<GenericResponseModel> updateSilo(@Valid @RequestBody TipoSiloDTO tipoSiloDTO) throws IOException {
-		return tipoSilo.update(tipoSiloDTO);
+	public ResponseEntity<TipoSiloDTO> updateSilo(@Valid @PathVariable("codigo") Long codigo, @Valid @RequestBody TipoSiloModel tipoSilo) throws IOException {
+		return tipoSiloInterface.update(codigo, tipoSilo);
 
 	}
 
-	@DeleteMapping("/v1/deletarTipoSilo/{codigo}")
+	@DeleteMapping("/v1/{codigo}")
 	@Operation(description = "Deletar um Tipo de Silo")
-	public ResponseEntity<GenericResponseModel> deleteSilo(@Valid @PathVariable("codigo") Integer codigo) throws IOException {
-		return tipoSilo.deleteByTsicod(codigo);
+	public ResponseEntity<TipoSiloDTO> deleteSilo(@Valid @PathVariable("codigo") Long codigo) throws IOException {
+		return tipoSiloInterface.deleteByTsicod(codigo);
 	}
 
 }

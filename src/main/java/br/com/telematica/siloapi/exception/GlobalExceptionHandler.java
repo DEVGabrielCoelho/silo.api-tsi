@@ -7,9 +7,9 @@ import java.text.ParseException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -20,82 +20,76 @@ import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import br.com.telematica.siloapi.utils.Utils;
+import br.com.telematica.siloapi.utils.message.MessageResponse;
 import jakarta.persistence.EntityNotFoundException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
 	private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-	// Retorno para 200 sem dados ou não encontrado
+	@ExceptionHandler(AccessDeniedException.class)
+	public ResponseEntity<ResponseGlobalModel> handleUnauthorizedException(AccessDeniedException ex) {
+		return MessageResponse.notAuthorize(MessageResponse.responseGlobalModelError(ex.getMessage()));
+	}
+
+	@ExceptionHandler(AuthenticationException.class)
+	public ResponseEntity<ResponseGlobalModel> handleAuthenticationException(AuthenticationException ex) {
+		return MessageResponse.notAuthorize(MessageResponse.responseGlobalModelError(ex.getMessage()));
+	}
+
 	@ExceptionHandler(EntityNotFoundException.class)
-	public static ResponseEntity<Object> handleResponse200(EntityNotFoundException ex) {
+	public static ResponseEntity<ResponseGlobalModel> handleEntityNotFoundException(EntityNotFoundException ex) {
 		log.info("EntityNotFoundException: " + ex.getMessage());
-		return ResponseEntity.status(HttpStatus.OK).body(null);
+		return MessageResponse.badRequest(MessageResponse.responseGlobalModelError(ex.getMessage()));
 	}
 
-	// Retorno para 400 erro
 	@ExceptionHandler(IOException.class)
-	public static ResponseEntity<ResponseGlobalModel> handleError400(IOException ex) {
+	public static ResponseEntity<ResponseGlobalModel> handleIOException(IOException ex) {
 		log.error("IOException: " + ex.getMessage());
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Utils.responseMessageError(ex.getMessage()));
+		return MessageResponse.badRequest(MessageResponse.responseGlobalModelError(ex.getMessage()));
 	}
 
-	// Retorno para 400 erro
 	@ExceptionHandler(NoSuchAlgorithmException.class)
-	public static ResponseEntity<ResponseGlobalModel> handleError400(NoSuchAlgorithmException ex) {
+	public static ResponseEntity<ResponseGlobalModel> handleNoSuchAlgorithmException(NoSuchAlgorithmException ex) {
 		log.error("IOException: " + ex.getMessage());
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Utils.responseMessageError(ex.getMessage()));
+		return MessageResponse.badRequest(MessageResponse.responseGlobalModelError(ex.getMessage()));
 	}
 
-	// Retorno para 400 erro
 	@ExceptionHandler(NullPointerException.class)
-	public static ResponseEntity<ResponseGlobalModel> handleError400(NullPointerException ex) {
+	public static ResponseEntity<ResponseGlobalModel> handleNullPointerException(NullPointerException ex) {
 		log.error("IOException: " + ex.getMessage());
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Utils.responseMessageError(ex.getMessage()));
+		return MessageResponse.badRequest(MessageResponse.responseGlobalModelError(ex.getMessage()));
 	}
 
-	// Retorno para 401 erro na autenticação ou falha no token
 	@ExceptionHandler(TokenExpiredException.class)
 	public ResponseEntity<ResponseGlobalModel> handleTokenExpiredException(TokenExpiredException ex) {
 		log.error("TokenExpiredException: ", ex);
-		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Utils.responseMessageError(ex.getMessage()));
+		return MessageResponse.badRequest(MessageResponse.responseGlobalModelError(ex.getMessage()));
 	}
 
-	// Retorno para 401 erro na autenticação ou falha no token
 	@ExceptionHandler(JWTVerificationException.class)
 	public ResponseEntity<ResponseGlobalModel> handleJWTVerificationException(JWTVerificationException ex) {
 		log.error("JWTVerificationException: ", ex);
-		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Utils.responseMessageError(ex.getMessage()));
+		return MessageResponse.badRequest(MessageResponse.responseGlobalModelError(ex.getMessage()));
 	}
 
-	// Retorno para 401 erro na autenticação ou falha no token
 	@ExceptionHandler(JWTCreationException.class)
 	public ResponseEntity<ResponseGlobalModel> handleJWTCreationException(JWTCreationException ex) {
 		log.error("JWTCreationException: ", ex);
-		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Utils.responseMessageError(ex.getMessage()));
+		return MessageResponse.badRequest(MessageResponse.responseGlobalModelError(ex.getMessage()));
 	}
 
-	// Retorno para 401 erro na autenticação ou falha no token
 	@ExceptionHandler(AccessDeniedException.class)
 	public ResponseEntity<ResponseGlobalModel> handleAccessDeniedException(AccessDeniedException ex) {
 		log.error("AccessDeniedException: ", ex);
-		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Utils.responseMessageError(ex.getMessage()));
+		return MessageResponse.badRequest(MessageResponse.responseGlobalModelError(ex.getMessage()));
 	}
 
-	// Retorno para 403 mensagem de abrangencia
 	@ExceptionHandler(RuntimeException.class)
-	public static ResponseEntity<Object> handleError403(RuntimeException ex) {
+	public static ResponseEntity<ResponseGlobalModel> handleError403(RuntimeException ex) {
 		log.error("RuntimeException: " + ex.getMessage());
-		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Utils.responseMessageError(ex.getMessage()));
+		return MessageResponse.badRequest(MessageResponse.responseGlobalModelError(ex.getMessage()));
 	}
-
-//	// Retorno para 500 mensagem de erro
-//	@ExceptionHandler(Exception.class)
-//	public ResponseEntity<ResponseGlobalModel> handleGenericException(Exception ex) {
-//		log.error("Exception: ", ex);
-//		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Utils.responseMessageError("Internal server error"));
-//	}
 
 	@ExceptionHandler(IllegalArgumentException.class)
 	public void handleIllegalArgumentException(IllegalArgumentException ex) {

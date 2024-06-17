@@ -34,7 +34,7 @@ public class LoggerController extends SecurityRestController {
 
 	@GetMapping("/v1/paginado")
 	@Operation(description = "Busca paginada de logger. Pagina define a pagina que deseja acessar, Tamanho define a quantidade de itens por pagina, Direção definie a ordenação ASC - Ascendente / DESC - Descendente, Filtro busca pelo data, tipoLoggger e mensagem, DataInicio e DataFim filtra pelo intervalo da data (caso seja o filtro seja só por dataInicio/Fim, filtro busca do dataInicio -> Hoje e dataFim -> até data do log mais antigo), OrdernarPor requer os sequintes campos: data, numSerie, tipoLogger. ")
-	public ResponseEntity<Page<LoggerDTO>> buscarLoggerPaginado(@RequestParam(value = "pagina", defaultValue = "0")@NonNull  Integer pagina, @RequestParam(value = "tamanho", defaultValue = "10")@NonNull  Integer tamanho, @RequestParam(value = "direcao", defaultValue = "ASC") @NonNull String direcao,
+	public ResponseEntity<Page<LoggerDTO>> buscarLoggerPaginado(@RequestParam(value = "pagina", defaultValue = "0") @NonNull Integer pagina, @RequestParam(value = "tamanho", defaultValue = "10") @NonNull Integer tamanho, @RequestParam(value = "direcao", defaultValue = "ASC") @NonNull String direcao,
 			@RequestParam(value = "ordenarPor", defaultValue = "data") String ordenarPor,
 			// @RequestParam(value = "modulo", required = false) Long modulo,
 			@RequestParam(value = "filtro", required = false) String filtro, @RequestParam(value = "startDate", required = false) String startDate, @RequestParam(value = "endDate", required = false) String endDate) throws EntityNotFoundException, IOException {

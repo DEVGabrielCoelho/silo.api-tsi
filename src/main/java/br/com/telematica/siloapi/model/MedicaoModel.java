@@ -1,4 +1,4 @@
-package br.com.telematica.siloapi.model.dto;
+package br.com.telematica.siloapi.model;
 
 import br.com.telematica.siloapi.model.entity.MedicaoEntity;
 import br.com.telematica.siloapi.utils.Utils;
@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 
 @Schema(description = "Medicão")
-public class MedicaoDTO {
+public class MedicaoModel {
 
 	@NotBlank
 	@Schema(description = "Data", example = "2021-08-01T00:00:00.000Z")
@@ -30,10 +30,10 @@ public class MedicaoDTO {
 	@Schema(description = "Distancia", example = "1.0")
 	private Double distancia;
 
-	public MedicaoDTO() {
+	public MedicaoModel() {
 	}
 
-	public MedicaoDTO(String dataMedicao, Integer silo, Double umidade, Double ana, Double barometro, Double temperatura, Double distancia) {
+	public MedicaoModel(String dataMedicao, Integer silo, Double umidade, Double ana, Double barometro, Double temperatura, Double distancia) {
 		this.dataMedicao = dataMedicao;
 		this.silo = silo;
 		this.umidade = umidade;
@@ -43,7 +43,7 @@ public class MedicaoDTO {
 		this.distancia = distancia;
 	}
 
-	public MedicaoDTO(MedicaoEntity medEntity) {
+	public MedicaoModel(MedicaoEntity medEntity) {
 		this.dataMedicao = Utils.sdfDateforString(medEntity.getMsidth());
 		this.silo = medEntity.getSilcod();
 		this.umidade = medEntity.getMsiumi();

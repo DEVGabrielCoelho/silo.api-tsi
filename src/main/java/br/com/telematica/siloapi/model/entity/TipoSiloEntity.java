@@ -5,6 +5,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -15,17 +17,21 @@ public class TipoSiloEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(nullable = false)
 	private Long tsicod;
-	@Column(nullable = false)
-	private Long empcod;
+	@ManyToOne
+	@JoinColumn(name = "empcod", nullable = false)
+	private Empresa empresa;
 	@Column(length = 50, nullable = false)
 	private String tsides;
 
-	public TipoSiloEntity() {
+	public TipoSiloEntity tipoSiloEntity(Empresa empresa, String tsides) {
+		this.empresa = empresa;
+		this.tsides = tsides;
+		return this;
 	}
 
-	public TipoSiloEntity(Long tsicod, Long empcod, String tsides) {
+	public TipoSiloEntity(Long tsicod, Empresa empresa, String tsides) {
 		this.tsicod = tsicod;
-		this.empcod = empcod;
+		this.empresa = empresa;
 		this.tsides = tsides;
 	}
 
@@ -37,12 +43,12 @@ public class TipoSiloEntity {
 		this.tsicod = tsicod;
 	}
 
-	public Long getEmpcod() {
-		return empcod;
+	public Empresa getEmpresa() {
+		return empresa;
 	}
 
-	public void setEmpcod(Long empcod) {
-		this.empcod = empcod;
+	public void setEmpresa(Empresa empresa) {
+		this.empresa = empresa;
 	}
 
 	public String getTsides() {
@@ -58,8 +64,8 @@ public class TipoSiloEntity {
 		StringBuilder builder = new StringBuilder();
 		builder.append("TipoSiloEntity [tsicod=");
 		builder.append(tsicod);
-		builder.append(", empcod=");
-		builder.append(empcod);
+		builder.append(", empresa=");
+		builder.append(empresa);
 		builder.append(", tsides=");
 		builder.append(tsides);
 		builder.append("]");

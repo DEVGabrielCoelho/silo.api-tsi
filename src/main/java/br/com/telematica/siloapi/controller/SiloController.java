@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.telematica.siloapi.model.GenericResponseModel;
 import br.com.telematica.siloapi.model.dto.SiloDTO;
 import br.com.telematica.siloapi.services.SiloInterface;
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,27 +29,27 @@ public class SiloController extends SecurityRestController {
 
 	@GetMapping("/v1/buscarSilo")
 	@Operation(description = "Busca pelos silos cadastrados")
-	public ResponseEntity<GenericResponseModel> getSilo() throws IOException {
+	public ResponseEntity<Object> getSilo() throws IOException {
 		return silo.findAllSiloDTO();
 
 	}
 
 	@PostMapping("/v1/cadastraSilo")
 	@Operation(description = "Cadastro de um novo silo")
-	public ResponseEntity<GenericResponseModel> createSilo(@Valid @RequestBody SiloDTO siloDTO) {
+	public ResponseEntity<Object> createSilo(@Valid @RequestBody SiloDTO siloDTO) {
 		return silo.save(siloDTO);
 	}
 
 	@PutMapping("/v1/atualizaSilo")
 	@Operation(description = "Atualização de um silo")
-	public ResponseEntity<GenericResponseModel> updateSilo(@Valid @RequestBody SiloDTO siloDTO) throws IOException {
+	public ResponseEntity<Object> updateSilo(@Valid @RequestBody SiloDTO siloDTO) throws IOException {
 		return silo.update(siloDTO);
 
 	}
 
 	@DeleteMapping("/v1/deletarSilo/{codigo}")
 	@Operation(description = "Deletar um silo")
-	public ResponseEntity<GenericResponseModel> deleteSilo(@Valid @PathVariable("codigo") Integer codigo) throws IOException {
+	public ResponseEntity<Object> deleteSilo(@Valid @PathVariable("codigo") Integer codigo) throws IOException {
 		return silo.deleteByPlacod(codigo);
 
 	}

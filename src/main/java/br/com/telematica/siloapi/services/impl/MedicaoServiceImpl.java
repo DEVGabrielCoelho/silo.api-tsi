@@ -11,7 +11,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import br.com.telematica.siloapi.model.GenericResponseModel;
 import br.com.telematica.siloapi.model.dto.MedicaoDTO;
 import br.com.telematica.siloapi.model.entity.MedicaoEntity;
 import br.com.telematica.siloapi.repository.MedicaoRepository;
@@ -28,7 +27,7 @@ public class MedicaoServiceImpl implements MedicaoInterface {
 	private MedicaoRepository medicaoRepository;
 
 	@Override
-	public ResponseEntity<GenericResponseModel> save(MedicaoDTO medicaoDTO) throws RuntimeException {
+	public ResponseEntity<Object> save(MedicaoDTO medicaoDTO) throws RuntimeException {
 		try {
 
 			if (medicaoDTO == null) {
@@ -36,20 +35,20 @@ public class MedicaoServiceImpl implements MedicaoInterface {
 				throw new RuntimeException("Medição está nula.");
 			}
 			Date dateMedicao = Utils.sdfStringforDate(medicaoDTO.getDataMedicao());
-			var entity = new MedicaoEntity(dateMedicao, medicaoDTO.getCodigoSilo(), medicaoDTO.getUmidade(), medicaoDTO.getAna(), medicaoDTO.getBarometro(), medicaoDTO.getTemperatura(), medicaoDTO.getDistancia());
+			var entity = new MedicaoEntity(dateMedicao, medicaoDTO.getSilo(), medicaoDTO.getUmidade(), medicaoDTO.getAna(), medicaoDTO.getBarometro(), medicaoDTO.getTemperatura(), medicaoDTO.getDistancia());
 			var result = medicaoRepository.save(entity);
 
 			logger.info("Medição salva com sucesso." + result);
 			var stringDateMedi = Utils.sdfDateforString(result.getMsidth());
 
-			return MessageResponse.sucess(new MedicaoDTO(stringDateMedi, result.getSilcod(), result.getMsiumi(), result.getMsiana(), result.getMsibar(), result.getMsitem(), result.getMsidis()));
+			return MessageResponse.success(new MedicaoDTO(stringDateMedi, result.getSilcod(), result.getMsiumi(), result.getMsiana(), result.getMsibar(), result.getMsitem(), result.getMsidis()));
 		} catch (Exception e) {
 			return MessageResponse.badRequest(e.getMessage());
 		}
 	}
 
 	@Override
-	public ResponseEntity<GenericResponseModel> deleteByMsidth(String msidth) throws Exception {
+	public ResponseEntity<Object> deleteByMsidth(String msidth) throws Exception {
 		try {
 			if (msidth == null) {
 				logger.error("O ID da Medição está nulo.");
@@ -57,7 +56,7 @@ public class MedicaoServiceImpl implements MedicaoInterface {
 			}
 
 			medicaoRepository.deleteByMsidth(Utils.sdfStringforDate(msidth));
-			return MessageResponse.sucess(null);
+			return MessageResponse.success(null);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Não foi possível encontrar a Medição com o ID fornecido. Error: ", e);
 			return MessageResponse.notFound("Não foi possível encontrar a Medição com o ID fornecido." + e.getMessage());
@@ -67,19 +66,19 @@ public class MedicaoServiceImpl implements MedicaoInterface {
 	}
 
 	@Override
-	public ResponseEntity<GenericResponseModel> update(MedicaoDTO medicaoDTO) throws IOException, Exception {
+	public ResponseEntity<Object> update(MedicaoDTO medicaoDTO) throws IOException, Exception {
 		try {
 			if (medicaoDTO == null) {
 				logger.error("Medição está nula.");
 				return MessageResponse.badRequest("Medição está nulo.");
 			}
 			Date dateMedicao = Utils.sdfStringforDate(medicaoDTO.getDataMedicao());
-			var entity = new MedicaoEntity(dateMedicao, medicaoDTO.getCodigoSilo(), medicaoDTO.getUmidade(), medicaoDTO.getAna(), medicaoDTO.getBarometro(), medicaoDTO.getTemperatura(), medicaoDTO.getDistancia());
+			var entity = new MedicaoEntity(dateMedicao, medicaoDTO.getSilo(), medicaoDTO.getUmidade(), medicaoDTO.getAna(), medicaoDTO.getBarometro(), medicaoDTO.getTemperatura(), medicaoDTO.getDistancia());
 			var result = medicaoRepository.save(entity);
 			logger.info("Medição atualizado com sucesso." + result);
 			var stringDateMedi = Utils.sdfDateforString(result.getMsidth());
 
-			return MessageResponse.sucess(new MedicaoDTO(stringDateMedi, result.getSilcod(), result.getMsiumi(), result.getMsiana(), result.getMsibar(), result.getMsitem(), result.getMsidis()));
+			return MessageResponse.success(new MedicaoDTO(stringDateMedi, result.getSilcod(), result.getMsiumi(), result.getMsiana(), result.getMsibar(), result.getMsitem(), result.getMsidis()));
 		} catch (Exception e) {
 			return MessageResponse.badRequest(e.getMessage());
 		}
@@ -91,10 +90,10 @@ public class MedicaoServiceImpl implements MedicaoInterface {
 	}
 
 	@Override
-	public ResponseEntity<GenericResponseModel> findAllMedicaoDTO() throws IOException {
+	public ResponseEntity<Object> findAllMedicaoDTO() throws IOException {
 		try {
 
-			return MessageResponse.sucess(medicaoRepository.findAll().stream().map(this::convertToMedicaoDTO).collect(Collectors.toList()));
+			return MessageResponse.success(medicaoRepository.findAll().stream().map(this::convertToMedicaoDTO).collect(Collectors.toList()));
 		} catch (Exception e) {
 			return MessageResponse.badRequest(e.getMessage());
 		}

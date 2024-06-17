@@ -68,25 +68,6 @@ public class EmpresaServiceImpl {
 		return result.map(EmpresaDTO::new);
 	}
 
-	// public Page<EmpresaDTO> empresaFindAllPaginado(String nome, Pageable
-	// pageable) throws IOException {
-	// Objects.requireNonNull(pageable, "Pageable da Empresa está nulo.");
-	// var check = checagemFixaBarragem();
-	// Page<Empresa> result;
-	// if (nome == null)
-	// result = check.isHier() == 0 ? empresaRepository.findByEmpdel(1, pageable) :
-	// empresaRepository.findByEmpdelAndEmpcodIn(1, pageable,
-	// check.listAbrangencia());
-	// else
-	// result = check.isHier() == 0 ?
-	// empresaRepository.findByEmpnomLikeAndEmpdel(nome, 1, pageable) :
-	// empresaRepository.findByEmpnomLikeAndEmpdelAndEmpcodIn(nome, 1, pageable,
-	// check.listAbrangencia());
-	//
-	// return result.map(empresa -> new EmpresaDTO(empresa));
-	//
-	// }
-
 	public List<EmpresaDTO> findByEmpresa() {
 		try {
 

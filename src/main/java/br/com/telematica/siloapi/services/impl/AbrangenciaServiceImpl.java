@@ -101,8 +101,7 @@ public class AbrangenciaServiceImpl implements AbrangenciaServiceInterface {
 
 	public Page<AbrangenciaListaDetalhesDTO> findAllPageApi(String nome, Pageable pageable) throws EntityNotFoundException, IOException {
 		Objects.requireNonNull(pageable, "Pageable do Abrangencia está nulo.");
-		Specification<Abrangencia> spec;
-		spec = Abrangencia.filterByFields(nome);
+		Specification<Abrangencia> spec = Abrangencia.filterByFields(nome);
 
 		Page<Abrangencia> result = abrangenciaRepository.findAll(spec, pageable);
 

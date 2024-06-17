@@ -10,7 +10,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import br.com.telematica.siloapi.model.GenericResponseModel;
 import br.com.telematica.siloapi.model.dto.PlantaDTO;
 import br.com.telematica.siloapi.model.entity.PlantaEntity;
 import br.com.telematica.siloapi.repository.PlantaRepository;
@@ -26,7 +25,7 @@ public class PlantaServiceImpl implements PlantaInterface {
 	private PlantaRepository plantaRepository;
 
 	@Override
-	public ResponseEntity<GenericResponseModel> save(PlantaDTO planta) throws RuntimeException {
+	public ResponseEntity<Object> save(PlantaDTO planta) throws RuntimeException {
 		try {
 
 			if (planta == null) {
@@ -36,15 +35,15 @@ public class PlantaServiceImpl implements PlantaInterface {
 			var entity = new PlantaEntity(planta.getCodigo(), planta.getNome(), planta.getCodigoEmpresa());
 			var result = plantaRepository.save(entity);
 
-			logger.info("Planta salva com sucesso." + result);
-			return MessageResponse.sucess(new PlantaDTO(result.getPlacod(), result.getEmpcod(), result.getPlanom()));
+			logger.info("Planta salva com successo." + result);
+			return MessageResponse.success(new PlantaDTO(result.getPlacod(), result.getEmpcod(), result.getPlanom()));
 		} catch (Exception e) {
 			return MessageResponse.badRequest(e.getMessage());
 		}
 	}
 
 	@Override
-	public ResponseEntity<GenericResponseModel> deleteByPlacod(Integer codigo) throws IOException {
+	public ResponseEntity<Object> deleteByPlacod(Integer codigo) throws IOException {
 		if (codigo == null) {
 			logger.error("O ID da planta está nulo.");
 			return MessageResponse.badRequest("O ID da planta está nulo.");
@@ -52,7 +51,7 @@ public class PlantaServiceImpl implements PlantaInterface {
 		try {
 			plantaRepository.removeByPlacod(codigo);
 
-			return MessageResponse.sucess(null);
+			return MessageResponse.success(null);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Não foi possível encontrar a planta com o ID fornecido. Error: " + e.getCause());
 			return MessageResponse.notFound("Não foi possível encontrar a planta com o ID fornecido." + e.getMessage());
@@ -62,7 +61,7 @@ public class PlantaServiceImpl implements PlantaInterface {
 	}
 
 	@Override
-	public ResponseEntity<GenericResponseModel> update(PlantaDTO planta) throws IOException {
+	public ResponseEntity<Object> update(PlantaDTO planta) throws IOException {
 		try {
 			if (planta == null) {
 				logger.error("Planta está nula.");
@@ -70,9 +69,9 @@ public class PlantaServiceImpl implements PlantaInterface {
 			}
 			var entity = new PlantaEntity(planta.getCodigo(), planta.getNome(), planta.getCodigoEmpresa());
 			var result = plantaRepository.save(entity);
-			logger.info("Planta atualizado com sucesso." + result);
+			logger.info("Planta atualizado com successo." + result);
 
-			return MessageResponse.sucess(new PlantaDTO(result.getPlacod(), result.getEmpcod(), result.getPlanom()));
+			return MessageResponse.success(new PlantaDTO(result.getPlacod(), result.getEmpcod(), result.getPlanom()));
 		} catch (Exception e) {
 			return MessageResponse.badRequest(e.getMessage());
 		}
@@ -84,17 +83,17 @@ public class PlantaServiceImpl implements PlantaInterface {
 	}
 
 	@Override
-	public ResponseEntity<GenericResponseModel> findAllPlantaDTO() throws IOException {
+	public ResponseEntity<Object> findAllPlantaDTO() throws IOException {
 		try {
 
-			return MessageResponse.sucess(plantaRepository.findAll().stream().map(this::convertToPlantaDTO).collect(Collectors.toList()));
+			return MessageResponse.success(plantaRepository.findAll().stream().map(this::convertToPlantaDTO).collect(Collectors.toList()));
 		} catch (Exception e) {
 			return MessageResponse.badRequest(e.getMessage());
 		}
 	}
 
 	@Override
-	public ResponseEntity<GenericResponseModel> findById(Integer id) throws IOException, EmptyResultDataAccessException {
+	public ResponseEntity<Object> findById(Integer id) throws IOException, EmptyResultDataAccessException {
 		try {
 			if (id == null) {
 				logger.error("Id está nulo.");
@@ -107,7 +106,7 @@ public class PlantaServiceImpl implements PlantaInterface {
 				throw new EmptyResultDataAccessException("Planta não encontrada.", 1);
 			}
 
-			return MessageResponse.sucess(new PlantaDTO(result.getPlacod(), result.getEmpcod(), result.getPlanom()));
+			return MessageResponse.success(new PlantaDTO(result.getPlacod(), result.getEmpcod(), result.getPlanom()));
 		} catch (Exception e) {
 			return MessageResponse.badRequest(e.getMessage());
 		}

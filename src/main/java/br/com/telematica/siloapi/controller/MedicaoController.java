@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.telematica.siloapi.model.GenericResponseModel;
 import br.com.telematica.siloapi.model.dto.MedicaoDTO;
 import br.com.telematica.siloapi.services.MedicaoInterface;
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,25 +29,25 @@ public class MedicaoController extends SecurityRestController {
 
 	@GetMapping("/v1/buscarMedicoes")
 	@Operation(description = "Busca pelas medição registrada")
-	public ResponseEntity<GenericResponseModel> getMedicao() throws IOException {
+	public ResponseEntity<Object> getMedicao() throws IOException {
 		return medicaoService.findAllMedicaoDTO();
 	}
 
 	@PostMapping("/v1/cadastraMedicao")
 	@Operation(description = "Cadastro de uma nova medição")
-	public ResponseEntity<GenericResponseModel> createMedicao(@Valid @RequestBody MedicaoDTO medicaoDTO) {
+	public ResponseEntity<Object> createMedicao(@Valid @RequestBody MedicaoDTO medicaoDTO) {
 		return medicaoService.save(medicaoDTO);
 	}
 
 	@PutMapping("/v1/atualizaMedicao")
 	@Operation(description = "Atualização de uma medição")
-	public ResponseEntity<GenericResponseModel> updateMedicao(@Valid @RequestBody MedicaoDTO medicaoDTO) throws IOException, Exception {
+	public ResponseEntity<Object> updateMedicao(@Valid @RequestBody MedicaoDTO medicaoDTO) throws IOException, Exception {
 		return medicaoService.update(medicaoDTO);
 	}
 
 	@DeleteMapping("/v1/deletarMedicao/{dataMedicao}")
 	@Operation(description = "Deletar uma medição")
-	public ResponseEntity<GenericResponseModel> deleteMedicao(@Valid @PathVariable("dataMedicao") String dataMedicao) throws Exception {
+	public ResponseEntity<Object> deleteMedicao(@Valid @PathVariable("dataMedicao") String dataMedicao) throws Exception {
 		return medicaoService.deleteByMsidth(dataMedicao);
 
 	}

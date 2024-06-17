@@ -7,14 +7,14 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public class TipoSiloDTO extends Codigo {
 
 	@Schema(description = "Código da Empresa", example = "1", required = true)
-	private Long empresa;
+	private EmpresaDTO empresa;
 	@Schema(description = "Descrição", example = "Tipo 1", required = true)
 	private String descricao;
 
 	public TipoSiloDTO() {
 	}
 
-	public TipoSiloDTO(Long codigo, Long empresa, String descricao) {
+	public TipoSiloDTO(Long codigo, EmpresaDTO empresa, String descricao) {
 		super(codigo);
 		this.empresa = empresa;
 		this.descricao = descricao;
@@ -22,15 +22,15 @@ public class TipoSiloDTO extends Codigo {
 
 	public TipoSiloDTO(TipoSiloEntity entity) {
 		this.setCodigo(entity.getTsicod());
-		this.empresa = entity.getEmpcod();
+		this.empresa = new EmpresaDTO(entity.getEmpresa());
 		this.descricao = entity.getTsides();
 	}
 
-	public Long getEmpresa() {
+	public EmpresaDTO getEmpresa() {
 		return empresa;
 	}
 
-	public void setEmpresa(Long empresa) {
+	public void setEmpresa(EmpresaDTO empresa) {
 		this.empresa = empresa;
 	}
 

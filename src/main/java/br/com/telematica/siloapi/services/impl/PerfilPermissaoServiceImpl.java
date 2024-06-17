@@ -90,8 +90,7 @@ public class PerfilPermissaoServiceImpl implements PerfilPermissaoServiceInterfa
 	public Page<PerfilPermissaoDTO> findAllPagePerfil(String nome, Pageable pageable) throws EntityNotFoundException, IOException {
 		Objects.requireNonNull(pageable, "Pageable do Perfil está nulo.");
 
-		Specification<Perfil> spec;
-		spec = Perfil.filterByFields(nome);
+		Specification<Perfil> spec  = Perfil.filterByFields(nome);
 
 		Page<Perfil> result = perfilRepository.findAll(spec, pageable);
 		return result.map(perfil -> {

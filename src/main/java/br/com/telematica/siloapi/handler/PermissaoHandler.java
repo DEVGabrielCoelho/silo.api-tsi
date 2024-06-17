@@ -1,5 +1,7 @@
 package br.com.telematica.siloapi.handler;
 
+import java.util.Objects;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +22,13 @@ public class PermissaoHandler {
 	private PerfilPermissaoServiceImpl perfilPermissaoService;
 
 	public boolean checkPermission(String perfil, URLValidator urlValidator, String method) {
+		String nomeRecurso = urlValidator.getRecursoMapEnum().getNome();
+		Objects.requireNonNull(nomeRecurso, "Nome do recurso está nulo");
+		Objects.requireNonNull(perfil, "Perfil está nulo");
+		Objects.requireNonNull(urlValidator, "UrlValidator está nulo");
+		
+		var recursoEntity = recursoService.findByIdEntity(nomeRecurso);
 		var perfilEntity = perfilPermissaoService.findByIdPerfilEntity(perfil);
-		var recursoEntity = recursoService.findByIdEntity(urlValidator.getRecursoMapEnum().toString());
 		var entity = perfilPermissaoService.findByPerfilAndRecurso(perfilEntity, recursoEntity);
 
 		switch (method.toUpperCase()) {

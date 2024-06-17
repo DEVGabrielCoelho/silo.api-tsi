@@ -115,7 +115,8 @@ public class CreateAdminHandler {
 				perfil = perfilPermissaoService.createUpdatePerfil(new Perfil(perfil.getPercod(), "DEVICE", "Perfil do DEVICE."));
 			int listItem = listaRecursos.length;
 			for (int i = 0; i < listItem; i++) {
-				var valueRecurso = perfilPermissaoService.findByPercodAndRecnomCreate(perfil, recursoService.findByIdEntity(RecursoMapEnum.valueOf(listaRecursos[i]).getNome()));
+				RecursoMapEnum recursoEnum = RecursoMapEnum.valueOf(listaRecursos[i]);
+				var valueRecurso = perfilPermissaoService.findByPercodAndRecnomCreate(perfil, recursoService.findByIdEntity(recursoEnum.getNome()));
 				PermissaoModel permissao = new PermissaoModel(RecursoMapEnum.valueOf(listaRecursos[i]), 1, 1, 1, 1, 1);
 				if (valueRecurso == null)
 					perfilPermissaoService.saveEntityPermissao(perfil, permissao);
@@ -153,7 +154,8 @@ public class CreateAdminHandler {
 //			List<AbrangenciaDetalhesModel> listAbrangencia = new ArrayList<>();
 			int listItem = listaAbrangencia.length;
 			for (int i = 0; i < listItem; i++) {
-				var recurso = recursoService.findByIdEntity(RecursoMapEnum.valueOf(listaAbrangencia[i]).getNome());
+				RecursoMapEnum recursoEnum = RecursoMapEnum.valueOf(listaAbrangencia[i]);
+				var recurso = recursoService.findByIdEntity(recursoEnum.getNome());
 				var detalhes = abrangenciaService.findByAbrangenciaAndRecursoContainingAbrangencia(abrangencia, recurso);
 				JsonNodeConverter jsonNode = new JsonNodeConverter();
 				String data = jsonNode.convertToDatabaseColumn(new ObjectMapper().createArrayNode());
