@@ -29,17 +29,19 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(AccessDeniedException.class)
 	public ResponseEntity<ResponseGlobalModel> handleUnauthorizedException(AccessDeniedException ex) {
+		log.error("EntityNotFoundException: " + ex.getMessage());
 		return MessageResponse.notAuthorize(MessageResponse.responseGlobalModelError(ex.getMessage()));
 	}
 
 	@ExceptionHandler(AuthenticationException.class)
 	public ResponseEntity<ResponseGlobalModel> handleAuthenticationException(AuthenticationException ex) {
+		log.error("EntityNotFoundException: " + ex.getMessage());
 		return MessageResponse.notAuthorize(MessageResponse.responseGlobalModelError(ex.getMessage()));
 	}
 
 	@ExceptionHandler(EntityNotFoundException.class)
 	public static ResponseEntity<ResponseGlobalModel> handleEntityNotFoundException(EntityNotFoundException ex) {
-		log.info("EntityNotFoundException: " + ex.getMessage());
+		log.error("EntityNotFoundException: " + ex.getMessage());
 		return MessageResponse.badRequest(MessageResponse.responseGlobalModelError(ex.getMessage()));
 	}
 

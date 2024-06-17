@@ -27,18 +27,18 @@ public class MessageResponse {
 	}
 
 	// Método para bad request
-	public static <T> ResponseEntity<T> badRequest(T message) {
-		return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+	public static <T> ResponseEntity<T> badRequest(T object) {
+		return new ResponseEntity<>(object, HttpStatus.BAD_REQUEST);
 	}
 
 	// Método para não autorizado
-	public static <T> ResponseEntity<T> notAuthorize(T message) {
-		return new ResponseEntity<>(message, HttpStatus.UNAUTHORIZED);
+	public static <T> ResponseEntity<T> notAuthorize(T object) {
+		return new ResponseEntity<>(object, HttpStatus.UNAUTHORIZED);
 	}
 
 	// Método para não encontrado
-	public static <T> ResponseEntity<T> notFound(T message) {
-		return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
+	public static <T> ResponseEntity<T> notFound(T object) {
+		return new ResponseEntity<>(object, HttpStatus.NOT_FOUND);
 	}
 
 	public static ResponseGlobalModel responseGlobalModelSucess(String message) {
