@@ -5,6 +5,8 @@ import java.util.Date;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -14,8 +16,9 @@ public class Medicao {
 	@Id
 	@Column(nullable = false)
 	private Date msidth;
-	@Column(nullable = false)
-	private Integer silcod;
+	@ManyToOne
+	@JoinColumn(name = "silcod", nullable = false)
+	private Silo silo;
 	private Double msiumi;
 	private Double msiana;
 	private Double msibar;
@@ -25,14 +28,24 @@ public class Medicao {
 	public Medicao() {
 	}
 
-	public Medicao(Date msidth, Integer silcod, Double msiumi, Double msiana, Double msibar, Double msitem, Double msidis) {
+	public Medicao(Date msidth, Silo silo, Double msiumi, Double msiana, Double msibar, Double msitem, Double msidis) {
 		this.msidth = msidth;
-		this.silcod = silcod;
+		this.silo = silo;
 		this.msiumi = msiumi;
 		this.msiana = msiana;
 		this.msibar = msibar;
 		this.msitem = msitem;
 		this.msidis = msidis;
+	}
+
+	public Medicao updateMedicao(Silo silo, Double msiumi, Double msiana, Double msibar, Double msitem, Double msidis) {
+		this.silo = silo;
+		this.msiumi = msiumi;
+		this.msiana = msiana;
+		this.msibar = msibar;
+		this.msitem = msitem;
+		this.msidis = msidis;
+		return this;
 	}
 
 	public Date getMsidth() {
@@ -43,12 +56,12 @@ public class Medicao {
 		this.msidth = msidth;
 	}
 
-	public Integer getSilcod() {
-		return silcod;
+	public Silo getSilo() {
+		return silo;
 	}
 
-	public void setSilcod(Integer silcod) {
-		this.silcod = silcod;
+	public void setSilo(Silo silo) {
+		this.silo = silo;
 	}
 
 	public Double getMsiumi() {
@@ -93,15 +106,31 @@ public class Medicao {
 
 	@Override
 	public String toString() {
-		final StringBuffer sb = new StringBuffer("MeasureEntity{");
-		sb.append("msidth=").append(msidth);
-		sb.append(", silcod=").append(silcod);
-		sb.append(", msiumi=").append(msiumi);
-		sb.append(", msiana=").append(msiana);
-		sb.append(", msibar=").append(msibar);
-		sb.append(", msitem=").append(msitem);
-		sb.append(", msidis=").append(msidis);
-		sb.append('}');
-		return sb.toString();
+		StringBuilder builder = new StringBuilder();
+		builder.append("Medicao [");
+		if (msidth != null) {
+			builder.append("msidth=").append(msidth).append(", ");
+		}
+		if (silo != null) {
+			builder.append("silo=").append(silo).append(", ");
+		}
+		if (msiumi != null) {
+			builder.append("msiumi=").append(msiumi).append(", ");
+		}
+		if (msiana != null) {
+			builder.append("msiana=").append(msiana).append(", ");
+		}
+		if (msibar != null) {
+			builder.append("msibar=").append(msibar).append(", ");
+		}
+		if (msitem != null) {
+			builder.append("msitem=").append(msitem).append(", ");
+		}
+		if (msidis != null) {
+			builder.append("msidis=").append(msidis);
+		}
+		builder.append("]");
+		return builder.toString();
 	}
+
 }

@@ -4,8 +4,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import br.com.telematica.siloapi.model.entity.Planta;
 
-public interface PlantaRepository extends JpaRepository<Planta, Integer> {
+public interface PlantaRepository extends JpaRepository<Planta, Long> {
 
-	void removeByPlacod(Integer codigo);
+	void removeByPlacod(Long codigo);
 
 }

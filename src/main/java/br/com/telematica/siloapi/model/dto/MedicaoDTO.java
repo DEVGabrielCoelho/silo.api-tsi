@@ -13,7 +13,7 @@ public class MedicaoDTO {
 	private String dataMedicao;
 	@NotBlank
 	@Schema(description = "Código", example = "1")
-	private Integer silo;
+	private Long silo;
 	@NotBlank
 	@Schema(description = "Umidade", example = "1.0")
 	private Double umidade;
@@ -33,7 +33,7 @@ public class MedicaoDTO {
 	public MedicaoDTO() {
 	}
 
-	public MedicaoDTO(String dataMedicao, Integer silo, Double umidade, Double ana, Double barometro, Double temperatura, Double distancia) {
+	public MedicaoDTO(String dataMedicao, Long silo, Double umidade, Double ana, Double barometro, Double temperatura, Double distancia) {
 		this.dataMedicao = dataMedicao;
 		this.silo = silo;
 		this.umidade = umidade;
@@ -45,7 +45,7 @@ public class MedicaoDTO {
 
 	public MedicaoDTO(Medicao medEntity) {
 		this.dataMedicao = Utils.sdfDateforString(medEntity.getMsidth());
-		this.silo = medEntity.getSilcod();
+		this.silo = medEntity.getSilo().getSilcod();
 		this.umidade = medEntity.getMsiumi();
 		this.ana = medEntity.getMsiana();
 		this.barometro = medEntity.getMsibar();
@@ -61,11 +61,11 @@ public class MedicaoDTO {
 		this.dataMedicao = dataMedicao;
 	}
 
-	public Integer getSilo() {
+	public Long getSilo() {
 		return silo;
 	}
 
-	public void setSilo(Integer silo) {
+	public void setSilo(Long silo) {
 		this.silo = silo;
 	}
 

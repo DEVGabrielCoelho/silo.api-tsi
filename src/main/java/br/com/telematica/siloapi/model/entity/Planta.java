@@ -5,6 +5,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -17,16 +19,23 @@ public class Planta {
 	private Long placod;
 	@Column(length = 100, nullable = false)
 	private String planom;
-	@Column(nullable = false)
-	private Long empcod;
+	@ManyToOne
+	@JoinColumn(name = "empcod", nullable = false)
+	private Empresa empresa;
 
 	public Planta() {
 	}
 
-	public Planta(Long placod, String planom, Long empcod) {
+	public Planta(Long placod, String planom, Empresa empresa) {
 		this.placod = placod;
 		this.planom = planom;
-		this.empcod = empcod;
+		this.empresa = empresa;
+	}
+
+	public Planta plantaUpdateOrSave(String planom, Empresa empresa) {
+		this.planom = planom;
+		this.empresa = empresa;
+		return this;
 	}
 
 	public Long getPlacod() {
@@ -45,23 +54,27 @@ public class Planta {
 		this.planom = planom;
 	}
 
-	public Long getEmpcod() {
-		return empcod;
+	public Empresa getEmpresa() {
+		return empresa;
 	}
 
-	public void setEmpcod(Long empcod) {
-		this.empcod = empcod;
+	public void setEmpresa(Empresa empresa) {
+		this.empresa = empresa;
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("PlantaEntity [placod=");
-		builder.append(placod);
-		builder.append(", planom=");
-		builder.append(planom);
-		builder.append(", empcod=");
-		builder.append(empcod);
+		builder.append("Planta [");
+		if (placod != null) {
+			builder.append("placod=").append(placod).append(", ");
+		}
+		if (planom != null) {
+			builder.append("planom=").append(planom).append(", ");
+		}
+		if (empresa != null) {
+			builder.append("empresa=").append(empresa);
+		}
 		builder.append("]");
 		return builder.toString();
 	}

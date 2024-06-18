@@ -24,8 +24,8 @@ public class SiloDTO extends Codigo {
 	}
 
 	public SiloDTO(Silo entity) {
-		this.tipoSilo = entity.getTsicod();
-		this.codiPlanta = entity.getPlacod();
+		this.tipoSilo = entity.getTipoSilo().getTsicod();
+		this.codiPlanta = entity.getPlanta().getPlacod();
 		this.nome = entity.getSilnom();
 	}
 

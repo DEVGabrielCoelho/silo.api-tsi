@@ -11,6 +11,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import br.com.telematica.siloapi.exception.CustomMessageException;
 import br.com.telematica.siloapi.model.TipoSiloModel;
 import br.com.telematica.siloapi.model.dto.TipoSiloDTO;
 import br.com.telematica.siloapi.model.entity.TipoSilo;
@@ -18,15 +19,20 @@ import br.com.telematica.siloapi.repository.TipoSiloRepository;
 import br.com.telematica.siloapi.services.TipoSiloServInterface;
 import br.com.telematica.siloapi.utils.message.MessageResponse;
 import ch.qos.logback.classic.Logger;
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class TipoSiloServiceImpl implements TipoSiloServInterface {
 
 	private static Logger logger = (Logger) LoggerFactory.getLogger(TipoSiloServiceImpl.class);
+
 	@Autowired
 	private TipoSiloRepository tipoSiloRepository;
+
 	@Autowired
 	private EmpresaServiceImpl empresaService;
+
+	private static final String RECURSO = "Tipo Silo";
 
 	@Override
 	public ResponseEntity<TipoSiloDTO> save(TipoSiloModel tipoSiloDTO) throws RuntimeException, IOException {
@@ -34,7 +40,7 @@ public class TipoSiloServiceImpl implements TipoSiloServInterface {
 		Objects.requireNonNull(tipoSiloDTO.getDescricao(), "Descrição está nulo.");
 
 		try {
-			var empresa = empresaService.findById(tipoSiloDTO.getEmpresa());
+			var empresa = empresaService.findByIdEntity(tipoSiloDTO.getEmpresa());
 			if (empresa == null) {
 				throw new IOException("Empresa não encontrada.");
 			}
@@ -45,7 +51,7 @@ public class TipoSiloServiceImpl implements TipoSiloServInterface {
 			return MessageResponse.success(new TipoSiloDTO(result));
 		} catch (Exception e) {
 			logger.error("Erro ao salvar o Tipo de Silo.", e);
-			throw new IOException("Erro ao salvar o Tipo de Silo.", e);
+			throw CustomMessageException.exceptionIOException("salvar", RECURSO, tipoSiloDTO, e);
 		}
 	}
 
@@ -53,13 +59,13 @@ public class TipoSiloServiceImpl implements TipoSiloServInterface {
 	public ResponseEntity<TipoSiloDTO> deleteByTsicod(Long codigo) throws IOException {
 		Objects.requireNonNull(codigo, "Código do Tipo do Silo está nulo.");
 		try {
-			var tipoSilo = tipoSiloRepository.findById(codigo).orElseThrow(() -> new EmptyResultDataAccessException("Não foi possível encontrar o tipo silo com o ID fornecido.", 1));
+			var tipoSilo = findEntity(codigo);
 
 			if (tipoSilo == null)
-				throw new EmptyResultDataAccessException("Não foi possível encontrar o tipo silo com o ID fornecido.", 1);
+				throw CustomMessageException.exceptionEntityNotFoundException(codigo, RECURSO, null);
 			Long codiTipoSilo = tipoSilo.getTsicod();
 			if (codiTipoSilo == null)
-				throw new EmptyResultDataAccessException("Não foi possível encontrar o tipo silo com o ID fornecido.", 1);
+				throw CustomMessageException.exceptionEntityNotFoundException(codigo, RECURSO, null);
 
 			tipoSiloRepository.deleteById(codiTipoSilo);
 			logger.info("Tipo Silo com ID " + codigo + " deletado com sucesso.");
@@ -67,10 +73,10 @@ public class TipoSiloServiceImpl implements TipoSiloServInterface {
 			return MessageResponse.success(null);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Não foi possível encontrar o tipo silo com o ID fornecido. Erro: ", e);
-			throw new IOException("Não foi possível encontrar o tipo silo com o ID fornecido.", e);
+			throw CustomMessageException.exceptionEntityNotFoundException(codigo, RECURSO, e);
 		} catch (Exception e) {
 			logger.error("Erro ao deletar o tipo do silo. Erro: ", e);
-			throw new IOException("Erro ao deletar o tipo do silo.", e);
+			throw CustomMessageException.exceptionIOException("deletar", RECURSO, codigo, e);
 		}
 	}
 
@@ -82,53 +88,53 @@ public class TipoSiloServiceImpl implements TipoSiloServInterface {
 
 		try {
 			var empresa = empresaService.findById(tipoSiloDTO.getEmpresa());
-			if (empresa == null)
-				throw new IOException("Empresa não encontrada.");
 
 			var resultEntity = tipoSiloRepository.findById(codigo).orElse(null);
 			if (resultEntity == null)
-				throw new IOException("Tipo de Silo não encontrado");
+				throw CustomMessageException.exceptionEntityNotFoundException(codigo, RECURSO, null);
 
 			var entity = resultEntity.tipoSiloEntity(empresa, tipoSiloDTO.getDescricao());
-			if (entity == null)
-				throw new IOException("Erro ao atualizar a entidade do Tipo de Silo");
-
 			var result = tipoSiloRepository.save(entity);
 
 			logger.info("Tipo Silo atualizado com sucesso. " + result);
 			return MessageResponse.success(new TipoSiloDTO(result));
 		} catch (Exception e) {
 			logger.error("Erro ao atualizar o Tipo de Silo.", e);
-			throw new IOException("Erro ao atualizar o Tipo de Silo.", e);
+			throw CustomMessageException.exceptionCodigoIOException("atualizar", RECURSO, codigo, tipoSiloDTO, e);
 		}
 	}
 
 	@Override
 	public ResponseEntity<List<TipoSiloDTO>> findAllTipoSiloDTO() throws IOException {
-		try {
-			return MessageResponse.success(tipoSiloRepository.findAll().stream().map(this::convertToTipoSiloDTO).collect(Collectors.toList()));
-		} catch (Exception e) {
-			throw new IOException("Erro ao salvar o tipo do silo.");
-		}
+		return MessageResponse.success(tipoSiloRepository.findAll().stream().map(this::convertToTipoSiloDTO).collect(Collectors.toList()));
+
 	}
 
 	@Override
-	public ResponseEntity<TipoSiloDTO> findById(Long codigo) throws IOException, EmptyResultDataAccessException {
-		if (codigo == null) {
-			logger.error("Id está nulo.");
-			throw new IOException("Id está nulo.");
-		}
+	public ResponseEntity<TipoSiloDTO> findById(Long codigo) throws IOException, EntityNotFoundException {
+		Objects.requireNonNull(codigo, "Código do Tipo do Silo está nulo.");
 		var result = tipoSiloRepository.findById(codigo).orElse(null);
 
 		if (result == null) {
 			logger.error("Tipo Silo não encontrada.");
-			throw new EmptyResultDataAccessException("Tipo Silo não encontrada.", 1);
+			return MessageResponse.success(null);
 		}
 		return MessageResponse.success(new TipoSiloDTO(result));
 	}
 
 	private TipoSiloDTO convertToTipoSiloDTO(TipoSilo siloDTOEntity) {
 		return new TipoSiloDTO(siloDTOEntity);
+	}
+
+	TipoSilo findEntity(Long codigo) {
+		Objects.requireNonNull(codigo, "Código está nulo.");
+		var result = tipoSiloRepository.findById(codigo).orElse(null);
+
+		if (result == null) {
+			logger.error("Tipo Silo não encontrada.");
+			return null;
+		}
+		return result;
 	}
 
 }

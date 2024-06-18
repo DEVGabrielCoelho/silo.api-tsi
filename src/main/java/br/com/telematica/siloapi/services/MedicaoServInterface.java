@@ -4,25 +4,24 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.ResponseEntity;
 
+import br.com.telematica.siloapi.model.MedicaoModel;
 import br.com.telematica.siloapi.model.dto.MedicaoDTO;
 import br.com.telematica.siloapi.model.entity.Medicao;
-import jakarta.transaction.Transactional;
 
 public interface MedicaoServInterface {
 
-	public ResponseEntity<Object> save(MedicaoDTO medicaoDTO) throws RuntimeException;
+	ResponseEntity<MedicaoDTO> deleteByMsidth(String msidth) throws IOException;
 
-	@Transactional
-	public ResponseEntity<Object> deleteByMsidth(String msidth) throws Exception;
+	List<Medicao> findAll() throws IOException;
 
-	public ResponseEntity<Object> update(MedicaoDTO medicaoDTO) throws IOException, Exception;
+	ResponseEntity<List<MedicaoDTO>> findAllMedicaoDTO() throws IOException;
 
-	public List<Medicao> findAll() throws IOException;
+	MedicaoDTO findByData(Date date) throws IOException;
 
-	public ResponseEntity<Object> findAllMedicaoDTO() throws IOException;
+	ResponseEntity<MedicaoDTO> save(MedicaoModel medicaoDTO) throws IOException;
 
-	public MedicaoDTO findByData(Date date) throws IOException, EmptyResultDataAccessException;
+	ResponseEntity<MedicaoDTO> update(MedicaoModel medicaoDTO) throws IOException;
+
 }

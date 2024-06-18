@@ -37,29 +37,38 @@ public class JWTUtil {
 		return secret;
 	}
 
-	public GenerateTokenRecords generateToken(Usuario usuario) throws IllegalArgumentException {
-		try {
-			Algorithm algorithm = Algorithm.HMAC256(secret);
-			Instant expirationInstant = genExpirationDate();
-			String token = JWT.create().withIssuer("auth-api").withSubject(usuario.getUsulog()).withExpiresAt(Date.from(expirationInstant)).sign(algorithm);
+	public GenerateTokenRecords generateToken(Usuario usuario) {
+	    try {
+	        Algorithm algorithm = Algorithm.HMAC256(secret);
+	        Instant expirationInstant = genExpirationDate();
+	        String token = JWT.create()
+	            .withIssuer("auth-api")
+	            .withSubject(usuario.getUsulog())
+	            .withExpiresAt(Date.from(expirationInstant))
+	            .withClaim("role", usuario.getPerfil().getPernom())
+	            .sign(algorithm);
 
-			return new GenerateTokenRecords(usuario.getUsername(), token, Utils.newDateString(), dtfEditado.format(expirationInstant.atZone(ZoneId.systemDefault())));
-		} catch (JWTCreationException | IllegalArgumentException exception) {
-			throw new JWTCreationException("Error while generating token", exception);
-		}
+	        return new GenerateTokenRecords(usuario.getUsername(), token, Utils.newDateString(), dtfEditado.format(expirationInstant.atZone(ZoneId.systemDefault())));
+	    } catch (JWTCreationException | IllegalArgumentException e) {
+	        throw new JWTCreationException("Error while generating token", e);
+	    }
 	}
+
 
 	public String validateToken(String token) {
-		try {
-			Algorithm algorithm = Algorithm.HMAC256(secret);
-			JWTVerifier verifier = JWT.require(algorithm).withIssuer("auth-api").build();
-			return verifier.verify(token).getSubject();
-		} catch (TokenExpiredException exception) {
-			throw new AccessDeniedException("Token has expired");
-		} catch (JWTVerificationException exception) {
-			throw new AccessDeniedException("Token verification failed");
-		}
+	    try {
+	        Algorithm algorithm = Algorithm.HMAC256(secret);
+	        JWTVerifier verifier = JWT.require(algorithm)
+	            .withIssuer("auth-api")
+	            .build();
+	        return verifier.verify(token).getSubject();
+	    } catch (TokenExpiredException e) {
+	        throw new AccessDeniedException("Token has expired", e);
+	    } catch (JWTVerificationException e) {
+	        throw new AccessDeniedException("Token verification failed", e);
+	    }
 	}
+
 
 	public GenerateTokenRecords validateOrRefreshToken(String token) {
 		try {

@@ -25,112 +25,105 @@ import jakarta.persistence.EntityNotFoundException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
-	private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-	@ExceptionHandler(AccessDeniedException.class)
-	public ResponseEntity<ResponseGlobalModel> handleUnauthorizedException(AccessDeniedException ex) {
-		log.error("EntityNotFoundException: " + ex.getMessage());
-		return MessageResponse.notAuthorize(MessageResponse.responseGlobalModelError(ex.getMessage()));
-	}
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ResponseGlobalModel> handleAccessDeniedException(AccessDeniedException ex) {
+        log.error("AccessDeniedException: " + ex.getMessage());
+        return MessageResponse.notAuthorize(MessageResponse.responseGlobalModelError(ex.getMessage()));
+    }
 
-	@ExceptionHandler(AuthenticationException.class)
-	public ResponseEntity<ResponseGlobalModel> handleAuthenticationException(AuthenticationException ex) {
-		log.error("EntityNotFoundException: " + ex.getMessage());
-		return MessageResponse.notAuthorize(MessageResponse.responseGlobalModelError(ex.getMessage()));
-	}
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ResponseGlobalModel> handleAuthenticationException(AuthenticationException ex) {
+        log.error("AuthenticationException: " + ex.getMessage());
+        return MessageResponse.notAuthorize(MessageResponse.responseGlobalModelError(ex.getMessage()));
+    }
 
-	@ExceptionHandler(EntityNotFoundException.class)
-	public static ResponseEntity<ResponseGlobalModel> handleEntityNotFoundException(EntityNotFoundException ex) {
-		log.error("EntityNotFoundException: " + ex.getMessage());
-		return MessageResponse.badRequest(MessageResponse.responseGlobalModelError(ex.getMessage()));
-	}
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ResponseGlobalModel> handleEntityNotFoundException(EntityNotFoundException ex) {
+        log.error("EntityNotFoundException: " + ex.getMessage());
+        return MessageResponse.badRequest(MessageResponse.responseGlobalModelError(ex.getMessage()));
+    }
 
-	@ExceptionHandler(IOException.class)
-	public static ResponseEntity<ResponseGlobalModel> handleIOException(IOException ex) {
-		log.error("IOException: " + ex.getMessage());
-		return MessageResponse.badRequest(MessageResponse.responseGlobalModelError(ex.getMessage()));
-	}
+    @ExceptionHandler(IOException.class)
+    public ResponseEntity<ResponseGlobalModel> handleIOException(IOException ex) {
+        log.error("IOException: " + ex.getMessage());
+        return MessageResponse.badRequest(MessageResponse.responseGlobalModelError(ex.getMessage()));
+    }
 
-	@ExceptionHandler(NoSuchAlgorithmException.class)
-	public static ResponseEntity<ResponseGlobalModel> handleNoSuchAlgorithmException(NoSuchAlgorithmException ex) {
-		log.error("IOException: " + ex.getMessage());
-		return MessageResponse.badRequest(MessageResponse.responseGlobalModelError(ex.getMessage()));
-	}
+    @ExceptionHandler(NoSuchAlgorithmException.class)
+    public ResponseEntity<ResponseGlobalModel> handleNoSuchAlgorithmException(NoSuchAlgorithmException ex) {
+        log.error("NoSuchAlgorithmException: " + ex.getMessage());
+        return MessageResponse.badRequest(MessageResponse.responseGlobalModelError(ex.getMessage()));
+    }
 
-	@ExceptionHandler(NullPointerException.class)
-	public static ResponseEntity<ResponseGlobalModel> handleNullPointerException(NullPointerException ex) {
-		log.error("IOException: " + ex.getMessage());
-		return MessageResponse.badRequest(MessageResponse.responseGlobalModelError(ex.getMessage()));
-	}
+    @ExceptionHandler(NullPointerException.class)
+    public ResponseEntity<ResponseGlobalModel> handleNullPointerException(NullPointerException ex) {
+        log.error("NullPointerException: " + ex.getMessage());
+        return MessageResponse.badRequest(MessageResponse.responseGlobalModelError(ex.getMessage()));
+    }
 
-	@ExceptionHandler(TokenExpiredException.class)
-	public ResponseEntity<ResponseGlobalModel> handleTokenExpiredException(TokenExpiredException ex) {
-		log.error("TokenExpiredException: ", ex);
-		return MessageResponse.badRequest(MessageResponse.responseGlobalModelError(ex.getMessage()));
-	}
+    @ExceptionHandler(TokenExpiredException.class)
+    public ResponseEntity<ResponseGlobalModel> handleTokenExpiredException(TokenExpiredException ex) {
+        log.error("TokenExpiredException: " + ex.getMessage());
+        return MessageResponse.badRequest(MessageResponse.responseGlobalModelError(ex.getMessage()));
+    }
 
-	@ExceptionHandler(JWTVerificationException.class)
-	public ResponseEntity<ResponseGlobalModel> handleJWTVerificationException(JWTVerificationException ex) {
-		log.error("JWTVerificationException: ", ex);
-		return MessageResponse.badRequest(MessageResponse.responseGlobalModelError(ex.getMessage()));
-	}
+    @ExceptionHandler(JWTVerificationException.class)
+    public ResponseEntity<ResponseGlobalModel> handleJWTVerificationException(JWTVerificationException ex) {
+        log.error("JWTVerificationException: " + ex.getMessage());
+        return MessageResponse.badRequest(MessageResponse.responseGlobalModelError(ex.getMessage()));
+    }
 
-	@ExceptionHandler(JWTCreationException.class)
-	public ResponseEntity<ResponseGlobalModel> handleJWTCreationException(JWTCreationException ex) {
-		log.error("JWTCreationException: ", ex);
-		return MessageResponse.badRequest(MessageResponse.responseGlobalModelError(ex.getMessage()));
-	}
+    @ExceptionHandler(JWTCreationException.class)
+    public ResponseEntity<ResponseGlobalModel> handleJWTCreationException(JWTCreationException ex) {
+        log.error("JWTCreationException: " + ex.getMessage());
+        return MessageResponse.badRequest(MessageResponse.responseGlobalModelError(ex.getMessage()));
+    }
 
-	@ExceptionHandler(AccessDeniedException.class)
-	public ResponseEntity<ResponseGlobalModel> handleAccessDeniedException(AccessDeniedException ex) {
-		log.error("AccessDeniedException: ", ex);
-		return MessageResponse.badRequest(MessageResponse.responseGlobalModelError(ex.getMessage()));
-	}
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ResponseGlobalModel> handleRuntimeException(RuntimeException ex) {
+        log.error("RuntimeException: " + ex.getMessage());
+        return MessageResponse.badRequest(MessageResponse.responseGlobalModelError(ex.getMessage()));
+    }
 
-	@ExceptionHandler(RuntimeException.class)
-	public static ResponseEntity<ResponseGlobalModel> handleError403(RuntimeException ex) {
-		log.error("RuntimeException: " + ex.getMessage());
-		return MessageResponse.badRequest(MessageResponse.responseGlobalModelError(ex.getMessage()));
-	}
+    @ExceptionHandler(IllegalArgumentException.class)
+    public void handleIllegalArgumentException(IllegalArgumentException ex) {
+        log.error("IllegalArgumentException: " + ex.getMessage());
+    }
 
-	@ExceptionHandler(IllegalArgumentException.class)
-	public void handleIllegalArgumentException(IllegalArgumentException ex) {
-		log.error("IllegalArgumentException: " + ex.getMessage());
-	}
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public void handleUsernameNotFoundException(UsernameNotFoundException ex) {
+        log.error("UsernameNotFoundException: " + ex.getMessage());
+    }
 
-	@ExceptionHandler(UsernameNotFoundException.class)
-	public void handleUsernameNotFoundException(UsernameNotFoundException ex) {
-		log.error("UsernameNotFoundException: " + ex.getMessage());
-	}
+    @ExceptionHandler(Exception.class)
+    public void handleException(Exception ex) {
+        log.error("Exception: ", ex);
+    }
 
-	@ExceptionHandler(Exception.class)
-	public void handleSecurityException(Exception ex) {
-		log.error("Exception: ", ex);
-	}
+    @ExceptionHandler(SignatureException.class)
+    public void handleSignatureException(SignatureException ex) {
+        log.error("SignatureException: " + ex.getMessage());
+    }
 
-	@ExceptionHandler(SignatureException.class)
-	public void handleSignatureException(SignatureException ex) {
-		log.error("SignatureException: " + ex.getMessage());
-	}
+    @ExceptionHandler(AssertionError.class)
+    public void handleAssertionError(AssertionError ex) {
+        log.error("AssertionError: " + ex.getMessage());
+    }
 
-	@ExceptionHandler(AssertionError.class)
-	public void handleAssertionError(AssertionError ex) {
-		log.error("AssertionError: " + ex.getMessage());
-	}
+    @ExceptionHandler(ParseException.class)
+    public void handleParseException(ParseException ex) {
+        log.error("ParseException: " + ex.getMessage());
+    }
 
-	@ExceptionHandler(ParseException.class)
-	public void handleParseException(ParseException ex) {
-		log.error("ParseException: " + ex.getMessage());
-	}
+    @ExceptionHandler(JsonMappingException.class)
+    public void handleJsonMappingException(JsonMappingException ex) {
+        log.error("JsonMappingException: " + ex.getMessage());
+    }
 
-	@ExceptionHandler(JsonMappingException.class)
-	public void handleJsonMappingException(JsonMappingException ex) {
-		log.error("JsonMappingException: " + ex.getMessage());
-	}
-
-	@ExceptionHandler(JsonProcessingException.class)
-	public void handleJsonProcessingException(JsonProcessingException ex) {
-		log.error("JsonProcessingException: " + ex.getMessage());
-	}
-
+    @ExceptionHandler(JsonProcessingException.class)
+    public void handleJsonProcessingException(JsonProcessingException ex) {
+        log.error("JsonProcessingException: " + ex.getMessage());
+    }
 }

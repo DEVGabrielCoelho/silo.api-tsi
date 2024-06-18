@@ -2,6 +2,7 @@ package br.com.telematica.siloapi.services.impl;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.slf4j.LoggerFactory;
@@ -10,12 +11,15 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import br.com.telematica.siloapi.exception.CustomMessageException;
+import br.com.telematica.siloapi.model.PlantaModel;
 import br.com.telematica.siloapi.model.dto.PlantaDTO;
 import br.com.telematica.siloapi.model.entity.Planta;
 import br.com.telematica.siloapi.repository.PlantaRepository;
 import br.com.telematica.siloapi.services.PlantaServInterface;
 import br.com.telematica.siloapi.utils.message.MessageResponse;
 import ch.qos.logback.classic.Logger;
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class PlantaServiceImpl implements PlantaServInterface {
@@ -23,57 +27,64 @@ public class PlantaServiceImpl implements PlantaServInterface {
 	private static Logger logger = (Logger) LoggerFactory.getLogger(PlantaServiceImpl.class);
 	@Autowired
 	private PlantaRepository plantaRepository;
+	@Autowired
+	private EmpresaServiceImpl empresaServiceImpl;
+	private static final String RECURSO = "Planta";
 
 	@Override
-	public ResponseEntity<Object> save(PlantaDTO planta) throws RuntimeException {
+	public ResponseEntity<PlantaDTO> save(PlantaModel planta) throws IOException {
+		Objects.requireNonNull(planta.getEmpresa(), "Código da Empresa está nulo.");
+		Objects.requireNonNull(planta.getNome(), "Nome da planta está nulo.");
 		try {
-
-			if (planta == null) {
-				logger.error("Planta está nula.");
-				return MessageResponse.badRequest("Planta está nula.");
-			}
-			var entity = new Planta(planta.getCodigo(), planta.getNome(), planta.getCodigoEmpresa());
+			var entity = new Planta();
+			var emp = empresaServiceImpl.findById(planta.getEmpresa());
+			entity.plantaUpdateOrSave(planta.getNome(), emp);
 			var result = plantaRepository.save(entity);
 
 			logger.info("Planta salva com successo." + result);
-			return MessageResponse.success(new PlantaDTO(result.getPlacod(), result.getEmpcod(), result.getPlanom()));
+			return MessageResponse.success(new PlantaDTO(result));
 		} catch (Exception e) {
-			return MessageResponse.badRequest(e.getMessage());
+			throw CustomMessageException.exceptionIOException("criar", RECURSO, planta, e);
+
 		}
 	}
 
 	@Override
-	public ResponseEntity<Object> deleteByPlacod(Integer codigo) throws IOException {
-		if (codigo == null) {
-			logger.error("O ID da planta está nulo.");
-			return MessageResponse.badRequest("O ID da planta está nulo.");
-		}
+	public ResponseEntity<PlantaDTO> deleteByPlacod(Long codigo) throws IOException {
+		Objects.requireNonNull(codigo, "Código da Planta está nulo.");
 		try {
-			plantaRepository.removeByPlacod(codigo);
+			var entity = findEntity(codigo);
+			if (entity == null)
+				throw new EntityNotFoundException("Não foi possível encontrar a Planta com o ID fornecido.");
+
+			plantaRepository.removeByPlacod(entity.getPlacod());
 
 			return MessageResponse.success(null);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Não foi possível encontrar a planta com o ID fornecido. Error: " + e.getCause());
-			return MessageResponse.notFound("Não foi possível encontrar a planta com o ID fornecido." + e.getMessage());
+			logger.error("Não foi possível encontrar a Planta com o ID fornecido. Error: " + e.getCause());
+			throw CustomMessageException.exceptionEntityNotFoundException(codigo, RECURSO, e);
 		} catch (Exception e) {
-			return MessageResponse.badRequest(e.getMessage());
+			logger.error("Erro ao deletar a Planta. Erro: ", e);
+			throw CustomMessageException.exceptionIOException("Deletar", RECURSO, codigo, e);
 		}
 	}
 
 	@Override
-	public ResponseEntity<Object> update(PlantaDTO planta) throws IOException {
+	public ResponseEntity<PlantaDTO> update(Long codigo, PlantaModel planta) throws IOException {
+		Objects.requireNonNull(codigo, "Código da Planta está nulo.");
+		Objects.requireNonNull(planta.getEmpresa(), "Código da Empresa está nulo.");
+		Objects.requireNonNull(planta.getNome(), "Nome da planta está nulo.");
 		try {
-			if (planta == null) {
-				logger.error("Planta está nula.");
-				return MessageResponse.badRequest("Planta está nulo.");
-			}
-			var entity = new Planta(planta.getCodigo(), planta.getNome(), planta.getCodigoEmpresa());
+
+			var entity = findEntity(codigo);
+			var emp = empresaServiceImpl.findById(planta.getEmpresa());
+			entity.plantaUpdateOrSave(planta.getNome(), emp);
 			var result = plantaRepository.save(entity);
 			logger.info("Planta atualizado com successo." + result);
 
-			return MessageResponse.success(new PlantaDTO(result.getPlacod(), result.getEmpcod(), result.getPlanom()));
+			return MessageResponse.success(new PlantaDTO(result));
 		} catch (Exception e) {
-			return MessageResponse.badRequest(e.getMessage());
+			throw CustomMessageException.exceptionCodigoIOException("atualizar", RECURSO, codigo, planta, e);
 		}
 	}
 
@@ -83,36 +94,38 @@ public class PlantaServiceImpl implements PlantaServInterface {
 	}
 
 	@Override
-	public ResponseEntity<Object> findAllPlantaDTO() throws IOException {
-		try {
+	public ResponseEntity<List<PlantaDTO>> findAllPlantaDTO() throws IOException {
+		return MessageResponse.success(plantaRepository.findAll().stream().map(this::convertToPlantaDTO).collect(Collectors.toList()));
 
-			return MessageResponse.success(plantaRepository.findAll().stream().map(this::convertToPlantaDTO).collect(Collectors.toList()));
-		} catch (Exception e) {
-			return MessageResponse.badRequest(e.getMessage());
-		}
 	}
 
 	@Override
-	public ResponseEntity<Object> findById(Integer id) throws IOException, EmptyResultDataAccessException {
-		try {
-			if (id == null) {
-				logger.error("Id está nulo.");
-				return MessageResponse.badRequest("Id está nulo.");
-			}
-			var result = plantaRepository.findById(id).orElse(null);
+	public ResponseEntity<PlantaDTO> findById(Long codigo) throws IOException, EmptyResultDataAccessException {
+		Objects.requireNonNull(codigo, "Código da Plata está nulo.");
 
-			if (result == null) {
-				logger.error("Planta não encontrada.");
-				throw new EmptyResultDataAccessException("Planta não encontrada.", 1);
-			}
+		var result = findEntity(codigo);
 
-			return MessageResponse.success(new PlantaDTO(result.getPlacod(), result.getEmpcod(), result.getPlanom()));
-		} catch (Exception e) {
-			return MessageResponse.badRequest(e.getMessage());
+		if (result == null) {
+			logger.error("Planta não encontrada.");
+			return MessageResponse.success(null);
 		}
+
+		return MessageResponse.success(new PlantaDTO(result));
+
 	}
 
 	private PlantaDTO convertToPlantaDTO(Planta plantaEntity) {
 		return new PlantaDTO(plantaEntity);
+	}
+
+	Planta findEntity(Long codigo) {
+		Objects.requireNonNull(codigo, "Código está nulo.");
+		var result = plantaRepository.findById(codigo).orElse(null);
+
+		if (result == null) {
+			logger.error("Tipo Silo não encontrada.");
+			return null;
+		}
+		return result;
 	}
 }

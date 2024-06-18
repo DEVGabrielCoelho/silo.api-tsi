@@ -1,6 +1,5 @@
 package br.com.telematica.siloapi.model;
 
-import br.com.telematica.siloapi.model.entity.Silo;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "Silo")
@@ -20,12 +19,6 @@ public class SiloModel {
 		this.tipoSilo = tipoSilo;
 		this.planta = planta;
 		this.nome = nome;
-	}
-
-	public SiloModel(Silo entity) {
-		this.tipoSilo = entity.getTsicod();
-		this.planta = entity.getPlacod();
-		this.nome = entity.getSilnom();
 	}
 
 	public Long getTipoSilo() {

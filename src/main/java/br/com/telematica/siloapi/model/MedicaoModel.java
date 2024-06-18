@@ -1,7 +1,5 @@
 package br.com.telematica.siloapi.model;
 
-import br.com.telematica.siloapi.model.entity.Medicao;
-import br.com.telematica.siloapi.utils.Utils;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 
@@ -13,7 +11,7 @@ public class MedicaoModel {
 	private String dataMedicao;
 	@NotBlank
 	@Schema(description = "Código", example = "1")
-	private Integer silo;
+	private Long silo;
 	@NotBlank
 	@Schema(description = "Umidade", example = "1.0")
 	private Double umidade;
@@ -33,7 +31,7 @@ public class MedicaoModel {
 	public MedicaoModel() {
 	}
 
-	public MedicaoModel(String dataMedicao, Integer silo, Double umidade, Double ana, Double barometro, Double temperatura, Double distancia) {
+	public MedicaoModel(String dataMedicao, Long silo, Double umidade, Double ana, Double barometro, Double temperatura, Double distancia) {
 		this.dataMedicao = dataMedicao;
 		this.silo = silo;
 		this.umidade = umidade;
@@ -41,16 +39,6 @@ public class MedicaoModel {
 		this.barometro = barometro;
 		this.temperatura = temperatura;
 		this.distancia = distancia;
-	}
-
-	public MedicaoModel(Medicao medEntity) {
-		this.dataMedicao = Utils.sdfDateforString(medEntity.getMsidth());
-		this.silo = medEntity.getSilcod();
-		this.umidade = medEntity.getMsiumi();
-		this.ana = medEntity.getMsiana();
-		this.barometro = medEntity.getMsibar();
-		this.temperatura = medEntity.getMsitem();
-		this.distancia = medEntity.getMsidis();
 	}
 
 	public String getDataMedicao() {
@@ -61,11 +49,11 @@ public class MedicaoModel {
 		this.dataMedicao = dataMedicao;
 	}
 
-	public Integer getSilo() {
+	public Long getSilo() {
 		return silo;
 	}
 
-	public void setSilo(Integer silo) {
+	public void setSilo(Long silo) {
 		this.silo = silo;
 	}
 

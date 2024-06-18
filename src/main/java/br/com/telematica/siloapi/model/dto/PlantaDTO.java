@@ -23,7 +23,7 @@ public class PlantaDTO extends Codigo {
 	public PlantaDTO(Planta entity) {
 		super();
 		this.setCodigo(entity.getPlacod());
-		this.codigoEmpresa = entity.getEmpcod();
+		this.codigoEmpresa = entity.getEmpresa().getEmpcod();
 		this.nome = entity.getPlanom();
 	}
 

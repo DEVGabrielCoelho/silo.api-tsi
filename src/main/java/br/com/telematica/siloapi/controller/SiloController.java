@@ -1,6 +1,7 @@
 package br.com.telematica.siloapi.controller;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,11 +14,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.telematica.siloapi.model.SiloModel;
 import br.com.telematica.siloapi.model.dto.SiloDTO;
 import br.com.telematica.siloapi.services.SiloServInterface;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/silo")
@@ -29,27 +30,27 @@ public class SiloController extends SecurityRestController {
 
 	@GetMapping("/v1/buscarSilo")
 	@Operation(description = "Busca pelos silos cadastrados")
-	public ResponseEntity<Object> getSilo() throws IOException {
+	public ResponseEntity<List<SiloDTO>> getSilo() throws IOException {
 		return silo.findAllSiloDTO();
 
 	}
 
 	@PostMapping("/v1/cadastraSilo")
 	@Operation(description = "Cadastro de um novo silo")
-	public ResponseEntity<Object> createSilo(@Valid @RequestBody SiloDTO siloDTO) {
+	public ResponseEntity<SiloDTO> createSilo(@RequestBody SiloModel siloDTO) throws IOException {
 		return silo.save(siloDTO);
 	}
 
-	@PutMapping("/v1/atualizaSilo")
+	@PutMapping("/v1/atualizaSilo/{codigo}")
 	@Operation(description = "Atualização de um silo")
-	public ResponseEntity<Object> updateSilo(@Valid @RequestBody SiloDTO siloDTO) throws IOException {
-		return silo.update(siloDTO);
+	public ResponseEntity<SiloDTO> updateSilo(@PathVariable("codigo") Long codigo, @RequestBody SiloModel siloDTO) throws IOException {
+		return silo.update(codigo, siloDTO);
 
 	}
 
 	@DeleteMapping("/v1/deletarSilo/{codigo}")
 	@Operation(description = "Deletar um silo")
-	public ResponseEntity<Object> deleteSilo(@Valid @PathVariable("codigo") Integer codigo) throws IOException {
+	public ResponseEntity<SiloDTO> deleteSilo(@PathVariable("codigo") Long codigo) throws IOException {
 		return silo.deleteByPlacod(codigo);
 
 	}

@@ -6,23 +6,23 @@ import java.util.List;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.ResponseEntity;
 
+import br.com.telematica.siloapi.model.PlantaModel;
 import br.com.telematica.siloapi.model.dto.PlantaDTO;
 import br.com.telematica.siloapi.model.entity.Planta;
-import jakarta.transaction.Transactional;
 
 public interface PlantaServInterface {
 
-	public ResponseEntity<Object> save(PlantaDTO planta) throws RuntimeException;
+	ResponseEntity<PlantaDTO> save(PlantaModel planta) throws IOException;
 
-	@Transactional
-	public ResponseEntity<Object> deleteByPlacod(Integer codigo) throws IOException;
+	ResponseEntity<PlantaDTO> deleteByPlacod(Long codigo) throws IOException;
 
-	public ResponseEntity<Object> update(PlantaDTO planta) throws IOException;
+	ResponseEntity<PlantaDTO> update(Long codigo, PlantaModel planta) throws IOException;
 
-	public List<Planta> findAll() throws IOException;
+	List<Planta> findAll() throws IOException;
 
-	public ResponseEntity<Object> findAllPlantaDTO() throws IOException;
+	ResponseEntity<List<PlantaDTO>> findAllPlantaDTO() throws IOException;
 
-	public ResponseEntity<Object> findById(Integer id) throws IOException, EmptyResultDataAccessException;
+	ResponseEntity<PlantaDTO> findById(Long codigo) throws IOException, EmptyResultDataAccessException;
 
+	
 }

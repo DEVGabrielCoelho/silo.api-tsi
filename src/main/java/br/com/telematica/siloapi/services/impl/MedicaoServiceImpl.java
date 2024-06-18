@@ -3,6 +3,7 @@ package br.com.telematica.siloapi.services.impl;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.slf4j.LoggerFactory;
@@ -11,6 +12,8 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import br.com.telematica.siloapi.exception.CustomMessageException;
+import br.com.telematica.siloapi.model.MedicaoModel;
 import br.com.telematica.siloapi.model.dto.MedicaoDTO;
 import br.com.telematica.siloapi.model.entity.Medicao;
 import br.com.telematica.siloapi.repository.MedicaoRepository;
@@ -25,62 +28,61 @@ public class MedicaoServiceImpl implements MedicaoServInterface {
 	private static Logger logger = (Logger) LoggerFactory.getLogger(MedicaoServiceImpl.class);
 	@Autowired
 	private MedicaoRepository medicaoRepository;
+	@Autowired
+	private SiloServiceImpl siloServiceImpl;
+
+	private static final String RECURSO = "Medição";
 
 	@Override
-	public ResponseEntity<Object> save(MedicaoDTO medicaoDTO) throws RuntimeException {
+	public ResponseEntity<MedicaoDTO> save(MedicaoModel medicaoDTO) throws IOException {
+		checkDataMedicao(medicaoDTO);
 		try {
 
-			if (medicaoDTO == null) {
-				logger.error("Medição está nula.");
-				throw new RuntimeException("Medição está nula.");
-			}
 			Date dateMedicao = Utils.sdfStringforDate(medicaoDTO.getDataMedicao());
-			var entity = new Medicao(dateMedicao, medicaoDTO.getSilo(), medicaoDTO.getUmidade(), medicaoDTO.getAna(), medicaoDTO.getBarometro(), medicaoDTO.getTemperatura(), medicaoDTO.getDistancia());
+			var silo = siloServiceImpl.findEntity(medicaoDTO.getSilo());
+			var entity = new Medicao(dateMedicao, silo, medicaoDTO.getUmidade(), medicaoDTO.getAna(), medicaoDTO.getBarometro(), medicaoDTO.getTemperatura(), medicaoDTO.getDistancia());
 			var result = medicaoRepository.save(entity);
 
 			logger.info("Medição salva com sucesso." + result);
-			var stringDateMedi = Utils.sdfDateforString(result.getMsidth());
+//			var stringDateMedi = Utils.sdfDateforString(result.getMsidth());
 
-			return MessageResponse.success(new MedicaoDTO(stringDateMedi, result.getSilcod(), result.getMsiumi(), result.getMsiana(), result.getMsibar(), result.getMsitem(), result.getMsidis()));
+			return MessageResponse.success(new MedicaoDTO(result));
 		} catch (Exception e) {
-			return MessageResponse.badRequest(e.getMessage());
+			throw CustomMessageException.exceptionIOException("criar", RECURSO, medicaoDTO, e);
 		}
 	}
 
 	@Override
-	public ResponseEntity<Object> deleteByMsidth(String msidth) throws Exception {
+	public ResponseEntity<MedicaoDTO> deleteByMsidth(String msidth) throws IOException {
+		Objects.requireNonNull(msidth, "Data da Medição está nulo.");
 		try {
-			if (msidth == null) {
-				logger.error("O ID da Medição está nulo.");
-				return MessageResponse.badRequest("O ID da Medição está nulo.");
-			}
-
 			medicaoRepository.deleteByMsidth(Utils.sdfStringforDate(msidth));
 			return MessageResponse.success(null);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Não foi possível encontrar a Medição com o ID fornecido. Error: ", e);
-			return MessageResponse.notFound("Não foi possível encontrar a Medição com o ID fornecido." + e.getMessage());
+			throw CustomMessageException.exceptionEntityNotFoundException(msidth, RECURSO, e);
 		} catch (Exception e) {
-			return MessageResponse.badRequest(e.getMessage());
+			logger.error("Erro ao deletar o tipo do silo. Erro: ", e);
+			throw CustomMessageException.exceptionIOException("deletar", RECURSO, msidth, e);
 		}
 	}
 
 	@Override
-	public ResponseEntity<Object> update(MedicaoDTO medicaoDTO) throws IOException, Exception {
+	public ResponseEntity<MedicaoDTO> update(MedicaoModel medicaoDTO) throws IOException {
+		checkDataMedicao(medicaoDTO);
 		try {
-			if (medicaoDTO == null) {
-				logger.error("Medição está nula.");
-				return MessageResponse.badRequest("Medição está nulo.");
-			}
+
 			Date dateMedicao = Utils.sdfStringforDate(medicaoDTO.getDataMedicao());
-			var entity = new Medicao(dateMedicao, medicaoDTO.getSilo(), medicaoDTO.getUmidade(), medicaoDTO.getAna(), medicaoDTO.getBarometro(), medicaoDTO.getTemperatura(), medicaoDTO.getDistancia());
+			var entity = medicaoRepository.findByMsidth(dateMedicao);
+			var silo = siloServiceImpl.findEntity(medicaoDTO.getSilo());
+			entity.updateMedicao(silo, medicaoDTO.getUmidade(), medicaoDTO.getAna(), medicaoDTO.getBarometro(), medicaoDTO.getTemperatura(), medicaoDTO.getDistancia());
 			var result = medicaoRepository.save(entity);
 			logger.info("Medição atualizado com sucesso." + result);
-			var stringDateMedi = Utils.sdfDateforString(result.getMsidth());
+//			var stringDateMedi = Utils.sdfDateforString(result.getMsidth());
 
-			return MessageResponse.success(new MedicaoDTO(stringDateMedi, result.getSilcod(), result.getMsiumi(), result.getMsiana(), result.getMsibar(), result.getMsitem(), result.getMsidis()));
+			return MessageResponse.success(new MedicaoDTO(result));
 		} catch (Exception e) {
-			return MessageResponse.badRequest(e.getMessage());
+			throw CustomMessageException.exceptionIOException("criar", RECURSO, medicaoDTO, e);
 		}
 	}
 
@@ -90,33 +92,28 @@ public class MedicaoServiceImpl implements MedicaoServInterface {
 	}
 
 	@Override
-	public ResponseEntity<Object> findAllMedicaoDTO() throws IOException {
-		try {
-
-			return MessageResponse.success(medicaoRepository.findAll().stream().map(this::convertToMedicaoDTO).collect(Collectors.toList()));
-		} catch (Exception e) {
-			return MessageResponse.badRequest(e.getMessage());
-		}
+	public ResponseEntity<List<MedicaoDTO>> findAllMedicaoDTO() throws IOException {
+		return MessageResponse.success(medicaoRepository.findAll().stream().map(this::convertToMedicaoDTO).collect(Collectors.toList()));
 
 	}
 
 	@Override
-	public MedicaoDTO findByData(Date date) throws IOException, EmptyResultDataAccessException {
-		if (date == null) {
-			logger.error("Data está nula.");
-			throw new IOException("Data está nulo.");
-		}
-		var result = medicaoRepository.findByMsidth(date);
-
-		if (result == null) {
-			logger.error("Medição não encontrada.");
-			throw new EmptyResultDataAccessException("Medição não encontrada.", 1);
-		}
-		var stringDateMedi = Utils.sdfDateforString(result.getMsidth());
-		return new MedicaoDTO(stringDateMedi, result.getSilcod(), result.getMsiumi(), result.getMsiana(), result.getMsibar(), result.getMsitem(), result.getMsidis());
+	public MedicaoDTO findByData(Date date) throws IOException {
+		return new MedicaoDTO(medicaoRepository.findByMsidth(date));
 	}
 
 	private MedicaoDTO convertToMedicaoDTO(Medicao medicaoDTOEntity) {
 		return new MedicaoDTO(medicaoDTOEntity);
+	}
+
+	private void checkDataMedicao(MedicaoModel model) {
+		Objects.requireNonNull(model.getDataMedicao(), "Data da Medição está nulo.");
+		Objects.requireNonNull(model.getSilo(), "Código do Silo está nulo.");
+		Objects.requireNonNull(model.getUmidade(), "Umidade está nulo.");
+		Objects.requireNonNull(model.getTemperatura(), "Temperatura está nulo.");
+		Objects.requireNonNull(model.getAna(), "Ana está nulo.");
+		Objects.requireNonNull(model.getBarometro(), "Barometro está nulo.");
+		Objects.requireNonNull(model.getDistancia(), "Distância está nulo.");
+
 	}
 }

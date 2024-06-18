@@ -5,6 +5,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -15,21 +17,23 @@ public class Silo {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(nullable = false)
 	private Long silcod;
-	@Column(nullable = false)
-	private Long tsicod;
+	@ManyToOne
+	@JoinColumn(name = "tsicod", nullable = false)
+	private TipoSilo tipoSilo;
 	@Column(length = 100, nullable = false)
 	private String silnom;
-	@Column(nullable = false)
-	private Long placod;
+	@ManyToOne
+	@JoinColumn(name = "placod", nullable = false)
+	private Planta planta;
 
 	public Silo() {
 	}
 
-	public Silo(Long silcod, Long tsicod, String silnom, Long placod) {
+	public Silo(Long silcod, TipoSilo tipoSilo, String silnom, Planta planta) {
 		this.silcod = silcod;
-		this.tsicod = tsicod;
+		this.tipoSilo = tipoSilo;
 		this.silnom = silnom;
-		this.placod = placod;
+		this.planta = planta;
 	}
 
 	public Long getSilcod() {
@@ -40,12 +44,20 @@ public class Silo {
 		this.silcod = silcod;
 	}
 
-	public Long getTsicod() {
-		return tsicod;
+	public TipoSilo getTipoSilo() {
+		return tipoSilo;
 	}
 
-	public void setTsicod(Long tsicod) {
-		this.tsicod = tsicod;
+	public void setTipoSilo(TipoSilo tipoSilo) {
+		this.tipoSilo = tipoSilo;
+	}
+
+	public Planta getPlanta() {
+		return planta;
+	}
+
+	public void setPlanta(Planta planta) {
+		this.planta = planta;
 	}
 
 	public String getSilnom() {
@@ -56,25 +68,22 @@ public class Silo {
 		this.silnom = silnom;
 	}
 
-	public Long getPlacod() {
-		return placod;
-	}
-
-	public void setPlacod(Long placod) {
-		this.placod = placod;
-	}
-
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("SiloEntity [silcod=");
-		builder.append(silcod);
-		builder.append(", tsicod=");
-		builder.append(tsicod);
-		builder.append(", silnom=");
-		builder.append(silnom);
-		builder.append(", placod=");
-		builder.append(placod);
+		builder.append("Silo [");
+		if (silcod != null) {
+			builder.append("silcod=").append(silcod).append(", ");
+		}
+		if (tipoSilo != null) {
+			builder.append("tipoSilo=").append(tipoSilo).append(", ");
+		}
+		if (silnom != null) {
+			builder.append("silnom=").append(silnom).append(", ");
+		}
+		if (planta != null) {
+			builder.append("planta=").append(planta);
+		}
 		builder.append("]");
 		return builder.toString();
 	}

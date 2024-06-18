@@ -4,8 +4,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import br.com.telematica.siloapi.model.entity.Silo;
 
-public interface SiloRepository extends JpaRepository<Silo, Integer> {
+public interface SiloRepository extends JpaRepository<Silo, Long> {
 
-	void deleteByPlacod(Integer codigo);
+	void deleteByPlacod(Long codigo);
 
 }
