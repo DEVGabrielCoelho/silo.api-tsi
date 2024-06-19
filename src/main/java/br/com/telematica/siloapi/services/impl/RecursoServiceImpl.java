@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,7 @@ import br.com.telematica.siloapi.model.enums.RecursoMapEnum;
 import br.com.telematica.siloapi.repository.RecursoRepository;
 import br.com.telematica.siloapi.services.RecursoServInterface;
 import br.com.telematica.siloapi.utils.Utils;
+import br.com.telematica.siloapi.utils.message.MessageResponse;
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
@@ -92,37 +94,37 @@ public class RecursoServiceImpl implements RecursoServInterface {
 	}
 
 	@Override
-	public Page<RecursoDTO> findAll(String nome, Pageable pageable) throws EntityNotFoundException, IOException {
-		return findAllEntity(nome, pageable).map(map -> new RecursoDTO(map));
+	public ResponseEntity<Page<RecursoDTO>> findAll(String nome, Pageable pageable) throws EntityNotFoundException, IOException {
+		return MessageResponse.success(findAllEntity(nome, pageable).map(map -> new RecursoDTO(map)));
 	}
 
 	@Override
-	public RecursoDTO save(RecursoModel recursoModel) {
-		return new RecursoDTO(saveEntity(recursoModel));
+	public ResponseEntity<RecursoDTO> save(RecursoModel recursoModel) {
+		return MessageResponse.success(new RecursoDTO(saveEntity(recursoModel)));
 	}
 
 	@Override
-	public RecursoDTO update(Long codigo, RecursoModel recursoModel) {
-		return new RecursoDTO(updateEntity(codigo, recursoModel));
+	public ResponseEntity<RecursoDTO> update(Long codigo, RecursoModel recursoModel) {
+		return MessageResponse.success(new RecursoDTO(updateEntity(codigo, recursoModel)));
 	}
 
 	@Override
-	public List<RecursoDTO> findAll() throws EntityNotFoundException, IOException {
-		return findAllEntity().stream().map(map -> new RecursoDTO(map)).collect(Collectors.toList());
+	public ResponseEntity<List<RecursoDTO>> findAll() throws EntityNotFoundException, IOException {
+		return MessageResponse.success(findAllEntity().stream().map(map -> new RecursoDTO(map)).collect(Collectors.toList()));
 	}
 
 	@Override
-	public RecursoDTO findById(@NonNull Long codigo) throws EntityNotFoundException, IOException {
-		return findByIdApi(codigo);
+	public ResponseEntity<RecursoDTO> findById(@NonNull Long codigo) throws EntityNotFoundException, IOException {
+		return MessageResponse.success(findByIdApi(codigo));
 	}
 
 	@Override
-	public RecursoDTO findByString(@NonNull String nome) throws EntityNotFoundException, IOException {
-		return findByIdApi(nome);
+	public ResponseEntity<RecursoDTO> findByString(@NonNull String nome) throws EntityNotFoundException, IOException {
+		return MessageResponse.success(findByIdApi(nome));
 	}
 
 	@Override
-	public ResponseGlobalModel delete(@NonNull Long codigo) throws IOException {
-		return deleteEntity(codigo);
+	public ResponseEntity<ResponseGlobalModel> delete(@NonNull Long codigo) throws IOException {
+		return MessageResponse.success(deleteEntity(codigo));
 	}
 }

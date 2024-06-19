@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 
 import br.com.telematica.siloapi.exception.ResponseGlobalModel;
@@ -15,18 +16,12 @@ import jakarta.persistence.EntityNotFoundException;
 
 public interface UsuarioServInterface {
 
-	UsuarioDTO findById(@NonNull Long codigo) throws EntityNotFoundException, IOException;
-
-	List<UsuarioDTO> findAll() throws EntityNotFoundException, IOException;
-
-	UsuarioDTO saveUpdateEncodePassword(@NonNull Long codigo, @NonNull UsuarioModel userModel) throws EntityNotFoundException, IOException;
-
-	UsuarioDTO saveUpdateEncodePassword(@NonNull UsuarioModel userModel) throws EntityNotFoundException, IOException;
-
-	Page<UsuarioDTO> findAll(String nome, @NonNull Pageable pageable) throws EntityNotFoundException, IOException;
-
-	ResponseGlobalModel delete(@NonNull Long perfil) throws IOException;
-
-	UsuarioPermissaoDTO findByIdPermission(@NonNull Long codigo) throws EntityNotFoundException, IOException;
+	ResponseEntity<UsuarioDTO> findById(@NonNull Long codigo) throws EntityNotFoundException, IOException;
+	ResponseEntity<List<UsuarioDTO>> findAll() throws EntityNotFoundException, IOException;
+	ResponseEntity<UsuarioDTO> saveUpdateEncodePassword(@NonNull Long codigo, @NonNull UsuarioModel userModel) throws EntityNotFoundException, IOException;
+	ResponseEntity<UsuarioDTO> saveUpdateEncodePassword(@NonNull UsuarioModel userModel) throws EntityNotFoundException, IOException;
+	ResponseEntity<Page<UsuarioDTO>> findAll(String nome, @NonNull Pageable pageable) throws EntityNotFoundException, IOException;
+	ResponseEntity<ResponseGlobalModel> delete(@NonNull Long perfil) throws IOException;
+	ResponseEntity<UsuarioPermissaoDTO> findByIdPermission(@NonNull Long codigo) throws EntityNotFoundException, IOException;
 
 }

@@ -41,29 +41,25 @@ public class UsuarioController extends SecurityRestController {
 	@PostMapping("/v1/cadastrar")
 	@Operation(description = "Cadastrar um novo usuário. Recebe os detalhes do usuário e o armazena no sistema.")
 	public ResponseEntity<UsuarioDTO> criar(@RequestBody @NonNull UsuarioModel cadastro) throws EntityNotFoundException, IOException {
-		var userService = userServImpl.saveUpdateEncodePassword(cadastro);
-		return ResponseEntity.ok(userService);
+		return userServImpl.saveUpdateEncodePassword(cadastro);
 	}
 
 	@GetMapping("/v1/codigo/{codigo}")
 	@Operation(description = "Buscar um usuário pelo código. Retorna os detalhes de um usuário específico com base no código fornecido.")
 	public ResponseEntity<UsuarioDTO> buscarPorCodigo(@PathVariable @NonNull Long codigo) throws EntityNotFoundException, IOException {
-		var userList = userServImpl.findById(codigo);
-		return ResponseEntity.ok(userList);
+		return userServImpl.findById(codigo);
 	}
 
 	@GetMapping("/v1/permissao/{codigo}")
 	@Operation(description = "Buscar um usuário e suas permissões pelo código do usuário. Retorna os detalhes do usuário e suas permissões.")
 	public ResponseEntity<UsuarioPermissaoDTO> buscarPorCodigoPermissaoUsuario(@PathVariable @NonNull Long codigo) throws EntityNotFoundException, IOException {
-		var userList = userServImpl.findByIdPermission(codigo);
-		return ResponseEntity.ok(userList);
+		return userServImpl.findByIdPermission(codigo);
 	}
 
 	@GetMapping("/v1/lsitar")
 	@Operation(description = "Listar todos os usuários cadastrados. Retorna uma lista de todos os usuários existentes.")
 	public ResponseEntity<List<UsuarioDTO>> listar() throws EntityNotFoundException, IOException {
-		var userList = userServImpl.findAll();
-		return ResponseEntity.ok(userList);
+		return userServImpl.findAll();
 	}
 
 	@GetMapping("/v1/paginado")
@@ -74,20 +70,18 @@ public class UsuarioController extends SecurityRestController {
 		if (ordenarEntity == null) {
 			return ResponseEntity.badRequest().body(Page.empty());
 		}
-		return ResponseEntity.ok(userServImpl.findAll(filtro, Utils.consultaPage(ordenarEntity, direcao, pagina, tamanho)));
+		return userServImpl.findAll(filtro, Utils.consultaPage(ordenarEntity, direcao, pagina, tamanho));
 	}
 
 	@PutMapping("/v1/atualizar/{codigo}")
 	@Operation(description = "Atualizar um usuário existente. Atualiza os detalhes de um usuário com base no código fornecido.")
 	public ResponseEntity<UsuarioDTO> editar(@Valid @PathVariable @NonNull Long codigo, @Valid @RequestBody @NonNull UsuarioModel entity) throws EntityNotFoundException, IOException {
-		var userService = userServImpl.saveUpdateEncodePassword(codigo, entity);
-		return ResponseEntity.ok(userService);
+		return userServImpl.saveUpdateEncodePassword(codigo, entity);
 	}
 
 	@DeleteMapping("/v1/deletar/{codigo}")
 	@Operation(description = "Deletar um usuário pelo código. Remove um usuário específico com base no código fornecido.")
 	public ResponseEntity<ResponseGlobalModel> deletar(@Valid @PathVariable @NonNull Long codigo) throws IOException {
-		var userService = userServImpl.delete(codigo);
-		return ResponseEntity.ok(userService);
+		return userServImpl.delete(codigo);
 	}
 }

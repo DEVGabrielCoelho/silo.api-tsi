@@ -12,12 +12,12 @@ public interface SiloModuloServInterface {
 
 	ResponseEntity<SiloModuloDTO> save(SiloModuloModel object) throws IOException;
 
-	ResponseEntity<SiloModuloDTO> deleteByPlacod(Long codigo) throws IOException;
+	ResponseEntity<SiloModuloDTO> delete(Long codigo) throws IOException;
 
 	ResponseEntity<SiloModuloDTO> update(Long codigo, SiloModuloModel object) throws IOException;
 
-	ResponseEntity<List<SiloModuloDTO>> findAllSiloDTO();
+	ResponseEntity<List<SiloModuloDTO>> findAll();
 
-	ResponseEntity<SiloModuloDTO> findById(Long codigo);
+	ResponseEntity<SiloModuloDTO> findId(Long codigo);
 
 }

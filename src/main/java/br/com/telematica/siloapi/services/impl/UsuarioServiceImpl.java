@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,7 @@ import br.com.telematica.siloapi.model.entity.Usuario;
 import br.com.telematica.siloapi.repository.UsuarioRepository;
 import br.com.telematica.siloapi.services.UsuarioServInterface;
 import br.com.telematica.siloapi.utils.Utils;
+import br.com.telematica.siloapi.utils.message.MessageResponse;
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
@@ -58,7 +60,8 @@ public class UsuarioServiceImpl implements UsuarioServInterface {
 		if (user.isEmpty()) {
 			throw new RuntimeException("Usuário não existe!");
 		}
-		return new UsuarioDTO(user.get(), empresaService.findById(user.get().getEmpresa().getEmpcod()), user.get().getPerfil(), abrangenciaService.findByIdSimples(user.get().getAbrangencia().getAbrcod()));
+		return new UsuarioDTO(user.get(), empresaService.findById(user.get().getEmpresa().getEmpcod()),
+				user.get().getPerfil(), abrangenciaService.findByIdSimples(user.get().getAbrangencia().getAbrcod()));
 	}
 
 	public Usuario findLoginEntity(String login) {
@@ -69,7 +72,8 @@ public class UsuarioServiceImpl implements UsuarioServInterface {
 		return user.get();
 	}
 
-	public Page<Usuario> findAllEntity(String nome, @NonNull Pageable pageable) throws EntityNotFoundException, IOException {
+	public Page<Usuario> findAllEntity(String nome, @NonNull Pageable pageable)
+			throws EntityNotFoundException, IOException {
 		Objects.requireNonNull(pageable, "Pageable do Usuário está nulo.");
 		Specification<Usuario> spec;
 		spec = Usuario.filterByFields(nome);
@@ -102,10 +106,12 @@ public class UsuarioServiceImpl implements UsuarioServInterface {
 		if (user == null)
 			throw new RuntimeException("Sem abrangência permitida para esse Usuário.");
 
-		return new UsuarioDTO(user, empresaService.findById(user.getEmpresa().getEmpcod()), user.getPerfil(), abrangenciaService.findByIdSimples(user.getAbrangencia().getAbrcod()));
+		return new UsuarioDTO(user, empresaService.findById(user.getEmpresa().getEmpcod()), user.getPerfil(),
+				abrangenciaService.findByIdSimples(user.getAbrangencia().getAbrcod()));
 	}
 
-	public Usuario saveUpdateEntity(@NonNull Long codigo, @NonNull UsuarioModel userModel) throws EntityNotFoundException, IOException {
+	public Usuario saveUpdateEntity(@NonNull Long codigo, @NonNull UsuarioModel userModel)
+			throws EntityNotFoundException, IOException {
 		Optional<Usuario> existingUser = userRepository.findById(codigo);
 		String login = "admin";
 		if (existingUser.get().getUsulog().toUpperCase().equals(login.toUpperCase())) {
@@ -182,55 +188,68 @@ public class UsuarioServiceImpl implements UsuarioServInterface {
 	}
 
 	@Override
-	public Page<UsuarioDTO> findAll(String nome, @NonNull Pageable pageable) throws EntityNotFoundException, IOException {
-		return findAllEntity(nome, pageable).map(map -> {
+	public ResponseEntity<Page<UsuarioDTO>> findAll(String nome, @NonNull Pageable pageable)
+			throws EntityNotFoundException, IOException {
+		return MessageResponse.success(findAllEntity(nome, pageable).map(map -> {
 			EmpresaDTO empresaDTO = null;
 			try {
 				empresaDTO = new EmpresaDTO(empresaService.findById(map.getEmpresa().getEmpcod()));
-				return new UsuarioDTO(map, empresaDTO, map.getPerfil(), abrangenciaService.findByIdSimples(map.getAbrangencia().getAbrcod()));
+				return new UsuarioDTO(map, empresaDTO, map.getPerfil(),
+						abrangenciaService.findByIdSimples(map.getAbrangencia().getAbrcod()));
 			} catch (EntityNotFoundException | IOException e) {
 				return new UsuarioDTO(map, empresaDTO, map.getPerfil(), null);
 			}
-		});
+		}));
 	}
 
 	@Override
-	public List<UsuarioDTO> findAll() throws EntityNotFoundException, IOException {
-		return findAllEntity().stream().map(map -> {
+	public ResponseEntity<List<UsuarioDTO>> findAll() throws EntityNotFoundException, IOException {
+		return MessageResponse.success(findAllEntity().stream().map(map -> {
 			EmpresaDTO empresaDTO = null;
 			try {
 				empresaDTO = new EmpresaDTO(empresaService.findById(map.getEmpresa().getEmpcod()));
-				return new UsuarioDTO(map, empresaDTO, map.getPerfil(), abrangenciaService.findByIdSimples(map.getAbrangencia().getAbrcod()));
+				return new UsuarioDTO(map, empresaDTO, map.getPerfil(),
+						abrangenciaService.findByIdSimples(map.getAbrangencia().getAbrcod()));
 			} catch (EntityNotFoundException | IOException e) {
 				return new UsuarioDTO(map, empresaDTO, map.getPerfil(), null);
 			}
-		}).collect(Collectors.toList());
+		}).collect(Collectors.toList()));
 	}
 
 	@Override
-	public UsuarioDTO findById(@NonNull Long codigo) throws EntityNotFoundException, IOException {
-		return findByUsuario(codigo);
+	public ResponseEntity<UsuarioDTO> findById(@NonNull Long codigo) throws EntityNotFoundException, IOException {
+		return MessageResponse.success(findByUsuario(codigo));
 	}
 
 	@Override
-	public UsuarioPermissaoDTO findByIdPermission(@NonNull Long codigo) throws EntityNotFoundException, IOException {
+	public ResponseEntity<UsuarioPermissaoDTO> findByIdPermission(@NonNull Long codigo)
+			throws EntityNotFoundException, IOException {
 		var user = findByIdEntity(codigo);
-		return new UsuarioPermissaoDTO(user, new EmpresaDTO(empresaService.findById(user.getEmpresa().getEmpcod())), abrangenciaService.findByIdSimples(user.getAbrangencia().getAbrcod()), permissaoService.findByIdPerfil(user.getPerfil().getPercod()));
+		return MessageResponse
+				.success(new UsuarioPermissaoDTO(user, new EmpresaDTO(empresaService.findById(user.getEmpresa().getEmpcod())),
+						abrangenciaService.findByIdSimples(user.getAbrangencia().getAbrcod()),
+						permissaoService.findByIdPerfil(user.getPerfil().getPercod())));
 	}
 
 	@Override
-	public UsuarioDTO saveUpdateEncodePassword(@NonNull UsuarioModel userModel) throws EntityNotFoundException, IOException {
-		return new UsuarioDTO(saveUpdateEntity(userModel), empresaService.findById(userModel.getEmpresa()), permissaoService.findByIdPerfilEntity(userModel.getPerfil()), abrangenciaService.findByIdSimples(userModel.getAbrangencia()));
+	public ResponseEntity<UsuarioDTO> saveUpdateEncodePassword(@NonNull UsuarioModel userModel)
+			throws EntityNotFoundException, IOException {
+		return MessageResponse.create(new UsuarioDTO(saveUpdateEntity(userModel),
+				empresaService.findById(userModel.getEmpresa()), permissaoService.findByIdPerfilEntity(userModel.getPerfil()),
+				abrangenciaService.findByIdSimples(userModel.getAbrangencia())));
 	}
 
 	@Override
-	public UsuarioDTO saveUpdateEncodePassword(@NonNull Long codigo, @NonNull UsuarioModel userModel) throws EntityNotFoundException, IOException {
-		return new UsuarioDTO(saveUpdateEntity(codigo, userModel), empresaService.findById(userModel.getEmpresa()), permissaoService.findByIdPerfilEntity(userModel.getPerfil()), abrangenciaService.findByIdSimples(userModel.getAbrangencia()));
+	public ResponseEntity<UsuarioDTO> saveUpdateEncodePassword(@NonNull Long codigo, @NonNull UsuarioModel userModel)
+			throws EntityNotFoundException, IOException {
+		return MessageResponse.success(new UsuarioDTO(saveUpdateEntity(codigo, userModel),
+				empresaService.findById(userModel.getEmpresa()), permissaoService.findByIdPerfilEntity(userModel.getPerfil()),
+				abrangenciaService.findByIdSimples(userModel.getAbrangencia())));
 	}
 
 	@Override
-	public ResponseGlobalModel delete(@NonNull Long perfil) throws IOException {
-		return deleteEntity(perfil);
+	public ResponseEntity<ResponseGlobalModel> delete(@NonNull Long perfil) throws IOException {
+		return MessageResponse.success(deleteEntity(perfil));
 	}
 
 	// public Usuario buscarUsuarioAtual() {

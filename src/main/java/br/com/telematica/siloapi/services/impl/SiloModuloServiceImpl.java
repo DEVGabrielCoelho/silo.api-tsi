@@ -47,7 +47,7 @@ public class SiloModuloServiceImpl implements SiloModuloServInterface {
 	}
 
 	@Override
-	public ResponseEntity<SiloModuloDTO> deleteByPlacod(Long codigo) throws IOException {
+	public ResponseEntity<SiloModuloDTO> delete(Long codigo) throws IOException {
 		SiloModulo siloModulo = null;
 		try {
 
@@ -86,13 +86,13 @@ public class SiloModuloServiceImpl implements SiloModuloServInterface {
 	}
 
 	@Override
-	public ResponseEntity<List<SiloModuloDTO>> findAllSiloDTO() {
+	public ResponseEntity<List<SiloModuloDTO>> findAll() {
 		List<SiloModulo> modulo = siloModuloRepository.findAll();
 		return MessageResponse.success(modulo.stream().map(SiloModuloDTO::new).collect(Collectors.toList()));
 	}
 
 	@Override
-	public ResponseEntity<SiloModuloDTO> findById(Long codigo) {
+	public ResponseEntity<SiloModuloDTO> findId(Long codigo) {
 		var siloModulo = siloModuloRepository.findById(codigo);
 		if (siloModulo.isEmpty() || !siloModulo.isPresent())
 			MessageResponse.success(null);

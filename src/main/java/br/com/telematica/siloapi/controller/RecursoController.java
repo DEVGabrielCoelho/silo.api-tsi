@@ -39,41 +39,41 @@ public class RecursoController extends SecurityRestController {
 	@Operation(description = "Cadastrar um novo recurso. Recebe os detalhes do recurso e o armazena no sistema. Obs: Gerado automaticamente ao iniciar a aplicação.")
 	public ResponseEntity<RecursoDTO> cadastrarRecurso(@RequestBody RecursoModel cadastro) {
 		var recursoService = recursoServImpl.save(cadastro);
-		return ResponseEntity.ok(recursoService);
+		return recursoService;
 	}
 
 	@GetMapping("/v1/buscar/{codigo}")
 	@Operation(description = "Buscar recurso pelo código. Retorna os detalhes de um recurso específico com base no código fornecido.")
 	public ResponseEntity<RecursoDTO> buscarRecursoPorCodigo(@PathVariable Long codigo) throws EntityNotFoundException, IOException {
 		var recursoList = recursoServImpl.findById(codigo);
-		return ResponseEntity.ok(recursoList);
+		return recursoList;
 	}
 
 	@GetMapping("/v1/listar")
 	@Operation(description = "Listar todos os recursos cadastrados. Retorna uma lista de todos os recursos existentes.")
 	public ResponseEntity<List<RecursoDTO>> buscarListarRecurso() throws EntityNotFoundException, IOException {
 		var recursoList = recursoServImpl.findAll();
-		return ResponseEntity.ok(recursoList);
+		return recursoList;
 	}
 
 	@GetMapping("/v1/paginado")
 	@Operation(description = "Busca paginada de recursos. Retorna uma lista paginada de recursos com opções de filtragem e ordenação. Obs: O campo 'ordenarPor' requer os seguintes dados: código, nome, descrição.")
 	public ResponseEntity<Page<RecursoDTO>> buscarRecursoPaginado(@RequestParam(value = "pagina", defaultValue = "0") Integer pagina, @RequestParam(value = "tamanho", defaultValue = "10") Integer tamanho, @RequestParam(value = "nome", required = false) String nome)
 			throws EntityNotFoundException, IOException {
-		return ResponseEntity.ok(recursoServImpl.findAll(nome, PageRequest.of(pagina, tamanho)));
+		return recursoServImpl.findAll(nome, PageRequest.of(pagina, tamanho));
 	}
 
 	@PutMapping("/v1/atualizar/{codigo}")
 	@Operation(description = "Atualizar um recurso existente. Atualiza os detalhes de um recurso com base no código fornecido. Obs: Como recurso é gerado automaticamente, se alterado pode ocasionar algum problema nas funcionalidades.")
 	public ResponseEntity<RecursoDTO> atualizarRecurso(@Valid @PathVariable Long codigo, @Valid @RequestBody RecursoModel entity) throws ParseException {
 		var recursoService = recursoServImpl.update(codigo, entity);
-		return ResponseEntity.ok(recursoService);
+		return recursoService;
 	}
 
 	@DeleteMapping("/v1/deletar/{codigo}")
 	@Operation(description = "Deletar um recurso pelo código. Remove um recurso específico com base no código fornecido. Obs: Como recurso é gerado automaticamente, se alterado pode ocasionar algum problema nas funcionalidades.")
 	public ResponseEntity<ResponseGlobalModel> deletarRecurso(@Valid @PathVariable Long codigo) throws IOException {
 		var recursoService = recursoServImpl.delete(codigo);
-		return ResponseEntity.ok(recursoService);
+		return recursoService;
 	}
 }
