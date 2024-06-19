@@ -29,7 +29,7 @@ public class MedicaoServiceImpl implements MedicaoServInterface {
 	@Autowired
 	private MedicaoRepository medicaoRepository;
 	@Autowired
-	private SiloServiceImpl siloServiceImpl;
+	private SiloModuloServiceImpl siloModuloServiceImpl;
 
 	private static final String RECURSO = "Medição";
 
@@ -39,8 +39,8 @@ public class MedicaoServiceImpl implements MedicaoServInterface {
 		try {
 
 			Date dateMedicao = Utils.sdfStringforDate(medicaoDTO.getDataMedicao());
-			var silo = siloServiceImpl.findEntity(medicaoDTO.getSilo());
-			var entity = new Medicao(dateMedicao, silo, medicaoDTO.getUmidade(), medicaoDTO.getAna(), medicaoDTO.getBarometro(), medicaoDTO.getTemperatura(), medicaoDTO.getDistancia());
+			var siloModulo = siloModuloServiceImpl.findEntity(medicaoDTO.getSilo());
+			var entity = new Medicao(dateMedicao, siloModulo, medicaoDTO.getUmidade(), medicaoDTO.getAna(), medicaoDTO.getBarometro(), medicaoDTO.getTemperatura(), medicaoDTO.getDistancia());
 			var result = medicaoRepository.save(entity);
 
 			logger.info("Medição salva com sucesso." + result);
@@ -73,8 +73,8 @@ public class MedicaoServiceImpl implements MedicaoServInterface {
 
 			Date dateMedicao = Utils.sdfStringforDate(medicaoDTO.getDataMedicao());
 			var entity = medicaoRepository.findByMsidth(dateMedicao);
-			var silo = siloServiceImpl.findEntity(medicaoDTO.getSilo());
-			entity.updateMedicao(silo, medicaoDTO.getUmidade(), medicaoDTO.getAna(), medicaoDTO.getBarometro(), medicaoDTO.getTemperatura(), medicaoDTO.getDistancia());
+			var siloModulo = siloModuloServiceImpl.findEntity(medicaoDTO.getSilo());
+			entity.updateMedicao(siloModulo, medicaoDTO.getUmidade(), medicaoDTO.getAna(), medicaoDTO.getBarometro(), medicaoDTO.getTemperatura(), medicaoDTO.getDistancia());
 			var result = medicaoRepository.save(entity);
 			logger.info("Medição atualizado com sucesso." + result);
 

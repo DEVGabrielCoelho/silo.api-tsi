@@ -30,52 +30,54 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @CrossOrigin
 @RestController
 @RequestMapping("api/pendencia-firmware")
-@Tag(name = "Pendencias", description = "API para controle de pendencias")
+@Tag(name = "Pendências", description = "API para controle e gerenciamento de firmware")
 public class FirmwareController extends SecurityRestController {
 
 	@Autowired
 	private FirmwareServiceImpl firmService;
 
 	@GetMapping("/v1/paginado")
-	@Operation(description = "Busca paginada de firmware. Pagina define em qual pagina deseja carregar, Tamanho define a quantidade de itens que deseja trazer por pagina.")
+	@Operation(description = "Busca paginada de firmware. Retorna uma lista paginada de firmware com opções de filtragem.")
 	public ResponseEntity<Page<FirmwareDTO>> buscarFirmwarePaginado(@RequestParam(value = "pagina", defaultValue = "0") Integer pagina, @RequestParam(value = "tamanho", defaultValue = "10") Integer tamanho) {
-		return ResponseEntity.ok(firmService.findAllPaginado(PageRequest.of(pagina, tamanho)));
+		return ResponseEntity.ok(firmService.findAllPaginado
+
+		(PageRequest.of(pagina, tamanho)));
 	}
 
-	@GetMapping("/v1")
-	@Operation(description = "Buscar lista de Firmware cadastrados.")
+	@GetMapping("/v1/listar")
+	@Operation(description = "Listar todos os firmwares cadastrados. Retorna uma lista de todos os firmwares existentes.")
 	public ResponseEntity<List<FirmwareDTO>> BuscarListaFirmware() throws ParseException {
 		return ResponseEntity.ok(firmService.findByAll());
 	}
 
-	@GetMapping("/v1/{codigo}")
-	@Operation(description = "Buscar pelo código o Firmware cadastrado.")
+	@GetMapping("/v1/buscar/{codigo}")
+	@Operation(description = "Buscar firmware pelo código. Retorna os detalhes de um firmware específico com base no código fornecido.")
 	public ResponseEntity<FirmwareDTO> buscarFirmwarePorId(@PathVariable Long codigo) throws ParseException {
 		return ResponseEntity.ok(firmService.findById(codigo));
 	}
 
 	@GetMapping("/v1/download/{codigo}")
-	@Operation(description = "Downloado pelo código do Firmware cadastrado.")
+	@Operation(description = "Download do firmware pelo código. Permite o download de um firmware específico com base no código fornecido.")
 	public ResponseEntity<Resource> buscarFirmwareParaDownload(@PathVariable Long codigo) throws ParseException, NoSuchAlgorithmException {
 		return firmService.findByIdDownload(codigo);
 	}
 
-	@PostMapping(path = "/v1", consumes = { "multipart/form-data" })
-	@Operation(description = "Cadastrar um firmware. Necessário passar o arquivo do firmware e o Modelo correspondente para identificação.")
+	@PostMapping(path = "/v1/cadastrar", consumes = { "multipart/form-data" })
+	@Operation(description = "Cadastrar um novo firmware. Recebe o arquivo e os detalhes do firmware e o armazena no sistema.")
 	public ResponseEntity<FirmwareDTO> cadastrarFirmware(@RequestParam("arquivo") MultipartFile arquivo, @RequestParam(name = "modelo") String modelo) throws IOException {
 		var save = firmService.save(arquivo, modelo);
 		return ResponseEntity.ok(save);
 	}
 
-	@PutMapping(path = "/v1", consumes = { "multipart/form-data" })
-	@Operation(description = "Atualizar um firmware. Necessário o Código do firmware cadastrado, passar o arquivo do firmware e o Modelo correspondente para identificação caso deseje alterar.")
+	@PutMapping(path = "/v1/atualizar", consumes = { "multipart/form-data" })
+	@Operation(description = "Atualizar um firmware existente. Recebe o código, o novo arquivo e os detalhes do firmware e os atualiza no sistema.")
 	public ResponseEntity<FirmwareDTO> atualizarFirmware(@RequestParam("codigo") Long codigo, @RequestParam("arquivo") MultipartFile arquivo, @RequestParam("numSerie") String numSerie) throws IOException {
 		var save = firmService.update(codigo, arquivo, numSerie);
 		return ResponseEntity.ok(save);
 	}
 
-	@DeleteMapping("/v1/{codigo}")
-	@Operation(description = "Deletar um firmware. Necessário o Código do firmware cadastrado.")
+	@DeleteMapping("/v1/deletar/{codigo}")
+	@Operation(description = "Deletar um firmware pelo código. Remove um firmware específico com base no código fornecido.")
 	public ResponseEntity<ResponseGlobalModel> deletarFirmware(@PathVariable Long codigo) throws IOException {
 		return ResponseEntity.ok(firmService.delete(codigo));
 	}

@@ -26,36 +26,36 @@ import jakarta.persistence.EntityNotFoundException;
 @CrossOrigin
 @RestController
 @RequestMapping("api/logger")
-@Tag(name = "Logger", description = "API para controle de logs")
+@Tag(name = "Logger", description = "API para controle e gerenciamento de logs")
 public class LoggerController extends SecurityRestController {
 
-	@Autowired
-	private LoggerServiceImpl logServ;
+    @Autowired
+    private LoggerServiceImpl logServ;
 
-	@GetMapping("/v1/paginado")
-	@Operation(description = "Busca paginada de logger. Pagina define a pagina que deseja acessar, Tamanho define a quantidade de itens por pagina, Direção definie a ordenação ASC - Ascendente / DESC - Descendente, Filtro busca pelo data, tipoLoggger e mensagem, DataInicio e DataFim filtra pelo intervalo da data (caso seja o filtro seja só por dataInicio/Fim, filtro busca do dataInicio -> Hoje e dataFim -> até data do log mais antigo), OrdernarPor requer os sequintes campos: data, numSerie, tipoLogger. ")
-	public ResponseEntity<Page<LoggerDTO>> buscarLoggerPaginado(@RequestParam(value = "pagina", defaultValue = "0") @NonNull Integer pagina, @RequestParam(value = "tamanho", defaultValue = "10") @NonNull Integer tamanho, @RequestParam(value = "direcao", defaultValue = "ASC") @NonNull String direcao,
-			@RequestParam(value = "ordenarPor", defaultValue = "data") String ordenarPor,
-			// @RequestParam(value = "modulo", required = false) Long modulo,
-			@RequestParam(value = "filtro", required = false) String filtro, @RequestParam(value = "startDate", required = false) String startDate, @RequestParam(value = "endDate", required = false) String endDate) throws EntityNotFoundException, IOException {
+    @GetMapping("/v1/paginado")
+    @Operation(description = "Busca paginada de logs. Retorna uma lista paginada de logs com opções de filtragem e ordenação.")
+    public ResponseEntity<Page<LoggerDTO>> buscarLoggerPaginado(@RequestParam(value = "pagina", defaultValue = "0") @NonNull Integer pagina, @RequestParam(value = "tamanho", defaultValue = "10") @NonNull Integer tamanho, @RequestParam(value = "direcao", defaultValue = "ASC") @NonNull String direcao,
+            @RequestParam(value = "ordenarPor", defaultValue = "data") String ordenarPor,
+            @RequestParam(value = "filtro", required = false) String filtro, @RequestParam(value = "startDate", required = false) String startDate, @RequestParam(value = "endDate", required = false) String endDate) throws EntityNotFoundException, IOException {
 
-		String ordenarEntity = LoggerDTO.consultaPagable(ordenarPor);
-		if (ordenarEntity == null) {
-			return ResponseEntity.badRequest().body(Page.empty());
-		}
+        String ordenarEntity = LoggerDTO.consultaPagable(ordenarPor);
+        if (ordenarEntity == null) {
+            return ResponseEntity.badRequest().body(Page.empty());
+        }
 
-		Page<LoggerDTO> result = logServ.findByAllPaginado(null, filtro, startDate, endDate, Utils.consultaPage(ordenarEntity, direcao, pagina, tamanho));
-		return ResponseEntity.ok(result);
-	}
+        Page<LoggerDTO> result = logServ.findByAllPaginado(null, filtro, startDate, endDate, Utils.consultaPage(ordenarEntity, direcao, pagina, tamanho));
+        return ResponseEntity.ok(result);
+    }
 
-	@GetMapping("/v1")
-	public ResponseEntity<List<LoggerDTO>> buscarListaLogger() throws EntityNotFoundException, IOException {
-		return ResponseEntity.ok(logServ.findByAll());
-	}
+    @GetMapping("/v1/listar")
+    @Operation(description = "Listar todos os logs cadastrados. Retorna uma lista de todos os logs existentes.")
+    public ResponseEntity<List<LoggerDTO>> buscarListaLogger() throws EntityNotFoundException, IOException {
+        return ResponseEntity.ok(logServ.findByAll());
+    }
 
-	@PostMapping("/v1")
-	public ResponseEntity<LoggerDTO> cadastrarLogger(@RequestBody LoggerModel entity) throws EntityNotFoundException, IOException {
-		return ResponseEntity.ok(logServ.save(entity));
-	}
-
+    @PostMapping("/v1/cadastrar")
+    @Operation(description = "Cadastrar um novo log. Recebe os detalhes do log e o armazena no sistema.")
+    public ResponseEntity<LoggerDTO> cadastrarLogger(@RequestBody LoggerModel entity) throws EntityNotFoundException, IOException {
+        return ResponseEntity.ok(logServ.save(entity));
+    }
 }

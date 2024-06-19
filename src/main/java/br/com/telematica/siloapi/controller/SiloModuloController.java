@@ -19,35 +19,30 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/api/silo-modulo")
-@Tag(name = "Silo Modulo", description = "Silo API")
+@Tag(name = "Silo Módulo", description = "API para gerenciamento de módulos de silos")
 public class SiloModuloController extends SecurityRestController {
 
-
-	@GetMapping("/v1/buscarSilo")
-	@Operation(description = "Busca pelos modulos do silos cadastrados")
+	@GetMapping("/v1/buscar")
+	@Operation(description = "Busca pelos módulos dos silos cadastrados. Retorna uma lista de todos os módulos de silos existentes.")
 	public ResponseEntity<List<Object>> getSiloModulo() throws IOException {
-		return null;
-
+		return null; // Implementar lógica de busca
 	}
 
-	@PostMapping("/v1/cadastraSilo")
-	@Operation(description = "Cadastro de um novo modulo do silo")
+	@PostMapping("/v1/cadastrar")
+	@Operation(description = "Cadastro de um novo módulo de silo. Recebe os detalhes do módulo e o armazena no sistema.")
 	public ResponseEntity<Object> createSiloModulo(@RequestBody SiloModel siloDTO) throws IOException {
-		return null;
+		return null; // Implementar lógica de cadastro
 	}
 
-	@PutMapping("/v1/atualizaSilo/{codigo}")
-	@Operation(description = "Atualização de um modulo do silo")
+	@PutMapping("/v1/atualizar/{codigo}")
+	@Operation(description = "Atualização de um módulo de silo existente. Atualiza os detalhes de um módulo com base no código fornecido.")
 	public ResponseEntity<Object> updateSiloModulo(@PathVariable("codigo") Long codigo, @RequestBody SiloModel siloDTO) throws IOException {
-		return null;
-
+		return null; // Implementar lógica de atualização
 	}
 
-	@DeleteMapping("/v1/deletarSilo/{codigo}")
-	@Operation(description = "Deletar um modulo do silo")
+	@DeleteMapping("/v1/deletar/{codigo}")
+	@Operation(description = "Deletar um módulo de silo pelo código. Remove um módulo específico com base no código fornecido.")
 	public ResponseEntity<Object> deleteSiloModulo(@PathVariable("codigo") Long codigo) throws IOException {
-		return null;
-
+		return null; // Implementar lógica de exclusão
 	}
-
 }

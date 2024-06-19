@@ -22,37 +22,33 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/api/silo")
-@Tag(name = "Silo", description = "Silo API")
+@Tag(name = "Silo", description = "API para gerenciamento de silos")
 public class SiloController extends SecurityRestController {
 
 	@Autowired
 	private SiloServInterface silo;
 
-	@GetMapping("/v1/buscarSilo")
-	@Operation(description = "Busca pelos silos cadastrados")
+	@GetMapping("/v1/listar")
+	@Operation(description = "Busca pelos silos cadastrados. Retorna uma lista de todos os silos existentes no sistema.")
 	public ResponseEntity<List<SiloDTO>> getSilo() throws IOException {
 		return silo.findAllSiloDTO();
-
 	}
 
-	@PostMapping("/v1/cadastraSilo")
-	@Operation(description = "Cadastro de um novo silo")
+	@PostMapping("/v1/cadastrar")
+	@Operation(description = "Cadastro de um novo silo. Recebe os detalhes do silo e o armazena no sistema.")
 	public ResponseEntity<SiloDTO> createSilo(@RequestBody SiloModel siloDTO) throws IOException {
 		return silo.save(siloDTO);
 	}
 
-	@PutMapping("/v1/atualizaSilo/{codigo}")
-	@Operation(description = "Atualização de um silo")
+	@PutMapping("/v1/atualizar/{codigo}")
+	@Operation(description = "Atualização de um silo existente. Atualiza os detalhes de um silo com base no código fornecido.")
 	public ResponseEntity<SiloDTO> updateSilo(@PathVariable("codigo") Long codigo, @RequestBody SiloModel siloDTO) throws IOException {
 		return silo.update(codigo, siloDTO);
-
 	}
 
-	@DeleteMapping("/v1/deletarSilo/{codigo}")
-	@Operation(description = "Deletar um silo")
+	@DeleteMapping("/v1/deletar/{codigo}")
+	@Operation(description = "Deletar um silo pelo código. Remove um silo específico com base no código fornecido.")
 	public ResponseEntity<SiloDTO> deleteSilo(@PathVariable("codigo") Long codigo) throws IOException {
 		return silo.deleteByPlacod(codigo);
-
 	}
-
 }

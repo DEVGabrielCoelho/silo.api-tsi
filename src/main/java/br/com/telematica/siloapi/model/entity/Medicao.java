@@ -16,9 +16,9 @@ public class Medicao {
 	@Id
 	@Column(nullable = false)
 	private Date msidth;
-	@ManyToOne
-	@JoinColumn(name = "silcod", nullable = false)
-	private Silo silo;
+//	@ManyToOne
+//	@JoinColumn(name = "silcod", nullable = false)
+//	private Silo silo;
 	@ManyToOne
 	@JoinColumn(name = "smocod", nullable = false)
 	private SiloModulo silomodulo;
@@ -31,10 +31,9 @@ public class Medicao {
 	public Medicao() {
 	}
 
-	public Medicao(Date msidth, Silo silo, SiloModulo silomodulo, Double msiumi, Double msiana, Double msibar,
-			Double msitem, Double msidis) {
+	public Medicao(Date msidth, SiloModulo silomodulo, Double msiumi, Double msiana, Double msibar, Double msitem, Double msidis) {
 		this.msidth = msidth;
-		this.silo = silo;
+//		this.silo = silo;
 		this.silomodulo = silomodulo;
 		this.msiumi = msiumi;
 		this.msiana = msiana;
@@ -43,9 +42,8 @@ public class Medicao {
 		this.msidis = msidis;
 	}
 
-	public Medicao updateMedicao(Silo silo, SiloModulo silomodulo, Double msiumi, Double msiana, Double msibar,
-			Double msitem, Double msidis) {
-		this.silo = silo;
+	public Medicao updateMedicao(SiloModulo silomodulo, Double msiumi, Double msiana, Double msibar, Double msitem, Double msidis) {
+//		this.silo = silo;
 		this.silomodulo = silomodulo;
 		this.msiumi = msiumi;
 		this.msiana = msiana;
@@ -61,14 +59,6 @@ public class Medicao {
 
 	public void setMsidth(Date msidth) {
 		this.msidth = msidth;
-	}
-
-	public Silo getSilo() {
-		return silo;
-	}
-
-	public void setSilo(Silo silo) {
-		this.silo = silo;
 	}
 
 	public SiloModulo getSilomodulo() {
@@ -126,9 +116,7 @@ public class Medicao {
 		if (msidth != null) {
 			builder.append("msidth=").append(msidth).append(", ");
 		}
-		if (silo != null) {
-			builder.append("silo=").append(silo).append(", ");
-		}
+
 		if (silomodulo != null) {
 			builder.append("silomodulo=").append(silomodulo).append(", ");
 		}

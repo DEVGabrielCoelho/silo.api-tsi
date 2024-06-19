@@ -22,35 +22,33 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/api/medicao")
-@Tag(name = "Medições", description = "Medições API")
+@Tag(name = "Medições", description = "API para gerenciamento de medições")
 public class MedicaoController extends SecurityRestController {
 
 	@Autowired
 	private MedicaoServInterface medicaoService;
 
-	@GetMapping("/v1/buscarMedicoes")
-	@Operation(description = "Busca pelas medição registrada")
+	@GetMapping("/v1/listar")
+	@Operation(description = "Buscar todas as medições registradas. Retorna uma lista de todas as medições existentes.")
 	public ResponseEntity<List<MedicaoDTO>> getMedicao() throws IOException {
 		return medicaoService.findAllMedicaoDTO();
 	}
 
-	@PostMapping("/v1/cadastraMedicao")
-	@Operation(description = "Cadastro de uma nova medição")
+	@PostMapping("/v1/cadastra")
+	@Operation(description = "Cadastrar uma nova medição. Recebe os detalhes da medição e a armazena no sistema.")
 	public ResponseEntity<MedicaoDTO> createMedicao(@RequestBody MedicaoModel medicaoDTO) throws IOException {
 		return medicaoService.save(medicaoDTO);
 	}
 
-	@PutMapping("/v1/atualizaMedicao")
-	@Operation(description = "Atualização de uma medição")
+	@PutMapping("/v1/atualiza")
+	@Operation(description = "Atualizar uma medição existente. Atualiza os detalhes de uma medição com base nas informações fornecidas.")
 	public ResponseEntity<MedicaoDTO> updateMedicao(@RequestBody MedicaoModel medicaoDTO) throws IOException {
 		return medicaoService.update(medicaoDTO);
 	}
 
-	@DeleteMapping("/v1/deletarMedicao")
-	@Operation(description = "Deletar uma medição, formato de data desejado 'yyyy-MM-dd HH:mm:ss'")
+	@DeleteMapping("/v1/deletar")
+	@Operation(description = "Deletar uma medição pelo ID. Remove uma medição específica com base no ID fornecido.")
 	public ResponseEntity<MedicaoDTO> deleteMedicao(@RequestParam(name = "dataMedicao", required = true) String dataMedicao) throws Exception {
 		return medicaoService.deleteByMsidth(dataMedicao);
-
 	}
-
 }

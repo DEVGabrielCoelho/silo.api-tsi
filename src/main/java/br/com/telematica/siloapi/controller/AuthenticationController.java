@@ -25,21 +25,21 @@ import jakarta.validation.Valid;
 @CrossOrigin
 @RestController
 @RequestMapping("/api/autenticacao")
-@Tag(name = "Autenticação", description = "Api para Controle de Autenticação")
+@Tag(name = "Autenticação", description = "API para Controle de Autenticação e gerenciamento de tokens")
 public class AuthenticationController {
 
 	@Autowired
 	private AuthServInterface userServImpl;
 
 	@PostMapping("/v1/auth")
-	@Operation(description = "Realizar autenticação para obter token de acesso.")
+	@Operation(description = "Realizar autenticação de usuário. Recebe credenciais e retorna um token de acesso.")
 	public ResponseEntity<ResponseAuthDTO> postAuth(@Valid @RequestBody @NonNull AuthModel auth) throws Exception {
 		var login = userServImpl.authLogin(auth);
 		return ResponseEntity.ok(login);
 	}
 
 	@GetMapping("/v1/validate")
-	@Operation(description = "Verificar validade do token.")
+	@Operation(description = "Validar token de acesso. Verifica se o token é válido e retorna o status.")
 	public ResponseEntity<TokenValidationResponseDTO> validateToken(@RequestParam("token") @NonNull String token) {
 		try {
 			return ResponseEntity.ok(userServImpl.validateAndParseToken(token));
@@ -49,10 +49,8 @@ public class AuthenticationController {
 	}
 
 	@GetMapping("/v1/refresh")
-	@Operation(description = "Verificar validade do token, se extiver expirado gera um novo token.")
+	@Operation(description = "Gerar novo token. Verifica a validade do token e, se expirado, gera um novo token.")
 	public ResponseEntity<ResponseAuthDTO> refreshToken(@RequestParam("token") String token) {
 		return ResponseEntity.ok(userServImpl.refreshToken(token));
-
 	}
-
 }

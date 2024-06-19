@@ -100,4 +100,15 @@ public class SiloModuloServiceImpl implements SiloModuloServInterface {
 		return MessageResponse.success(new SiloModuloDTO(siloModulo.get()));
 	}
 
+	SiloModulo findEntity(Long codigo) {
+		var result = siloModuloRepository.findById(codigo).orElse(null);
+
+		if (result == null) {
+			logger.error("Silo não encontrado.");
+			return null;
+		}
+
+		return result;
+	}
+
 }

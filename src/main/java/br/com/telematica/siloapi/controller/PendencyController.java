@@ -35,20 +35,20 @@ import jakarta.validation.Valid;
 @CrossOrigin
 @RestController
 @RequestMapping("api/pendencia")
-@Tag(name = "Pendencias", description = "API para controle de pendencias")
+@Tag(name = "Pendências", description = "API para controle e gerenciamento de pendências")
 public class PendencyController extends SecurityRestController {
 
 	@Autowired
 	private PendenciaServiceImpl pendenciaService;
 
 	@GetMapping("/v1/keepAlive/{numero_de_serie}")
-	@Operation(description = "KeepAlive de módulo para atualização de DataHora e consulta de pendencia por módulo.")
+	@Operation(description = "KeepAlive do módulo. Atualiza a DataHora e verifica pendências do módulo pelo número de série.")
 	public ResponseEntity<KeepAliveDTO> buscarPendenciaDeModuloPorNumSerie(@Valid @PathVariable @NonNull String numero_de_serie) throws EntityNotFoundException, IOException {
 		return ResponseEntity.ok(pendenciaService.findByKeepAlive(numero_de_serie));
 	}
 
 	@GetMapping("/v1/paginado")
-	@Operation(description = "Busca de pendencias paginadas. Pagina define qual a pagina deseja ver, Tamanho define a quantidade de itens por pagina, Filtro permite filtrar os seguintes campos Código, TipoPendencia,  Status, DataInicio e DataFim, Direção definie a ordenação ASC - Ascendente / DESC - Descendente ,OrdenarPor requer os seguintes dados: id, tipoPendencia, status, dataInicio, penfim, modulo.")
+	@Operation(description = "Busca paginada de pendências. Retorna uma lista paginada de pendências com opções de filtragem e ordenação.")
 	public ResponseEntity<Page<PendenciasDTO>> buscarPendenciaPaginado(@RequestParam(value = "pagina", defaultValue = "0") Integer pagina, @RequestParam(value = "tamanho", defaultValue = "10") Integer tamanho, @RequestParam(value = "filtro", required = false) String filtro,
 			@RequestParam(value = "modulo", required = false) Long modulo, @RequestParam(value = "ordenarPor", defaultValue = "id") String ordenarPor, @RequestParam(value = "direcao", defaultValue = "ASC", required = false) String direcao) throws EntityNotFoundException, IOException {
 		String ordenarEntity = PendenciasDTO.consultaPagable(ordenarPor);
@@ -58,26 +58,28 @@ public class PendencyController extends SecurityRestController {
 		return ResponseEntity.ok(pendenciaService.findAllPaginado(filtro, modulo, Utils.consultaPage(ordenarEntity, direcao, pagina, tamanho)));
 	}
 
-	@GetMapping("/v1")
-	@Operation(description = "Buscar lista de pendencias cadastradas.")
+	@GetMapping("/v1/listar")
+	@Operation(description = "Listar todas as pendências cadastradas. Retorna uma lista de todas as pendências existentes.")
 	public ResponseEntity<List<PendenciasDTO>> buscarListaPendencia() throws ParseException {
 		return ResponseEntity.ok(pendenciaService.findByAll());
 	}
 
-	@PostMapping("/v1")
-	@Operation(description = "Cadastrar uma pendencia.")
+	@PostMapping("/v1/cadastrar")
+	@Operation(description = "Cadastrar uma nova pendência. Recebe os detalhes da pendência e a armazena no sistema.")
 	public ResponseEntity<PendenciasDTO> cadastrarPendencia(@Valid @RequestBody PendenciaModel entity) throws EntityNotFoundException, IOException {
 		return ResponseEntity.ok(pendenciaService.save(entity));
 	}
 
-	@PutMapping("/v1")
-	@Operation(description = "Atualizar uma pendencia pelo id da pendencia e o status.")
+	@PutMapping("/v1/atualizar")
+	@Operation(description = "Atualizar uma pendência existente. Atualiza o status de uma pendência com base no ID fornecido.")
 	public ResponseEntity<PendenciasDTO> atualizarPendencia(@Valid @RequestParam("idPendencia") Long idPendencia, @Valid @RequestParam("status") StatusEnum status) throws ParseException {
-		return ResponseEntity.ok(pendenciaService.update(idPendencia, status));
+		return ResponseEntity.ok(pendenciaService.update(idPendencia
+
+				, status));
 	}
 
-	@DeleteMapping("/v1")
-	@Operation(description = "Deletar uma pendencia.")
+	@DeleteMapping("/v1/deletar")
+	@Operation(description = "Deletar uma pendência existente. Remove uma pendência com base no ID fornecido.")
 	public ResponseEntity<ResponseGlobalModel> deletarPendencia(@RequestBody PendenciaDelete delete) throws ParseException, IOException {
 		return ResponseEntity.ok(pendenciaService.delete(delete));
 	}

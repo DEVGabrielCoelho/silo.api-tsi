@@ -32,52 +32,51 @@ import jakarta.validation.Valid;
 @CrossOrigin
 @RestController
 @RequestMapping("/api/perfil")
-@Tag(name = "Perfil", description = "Api de registros de Perfil com Permissões.")
+@Tag(name = "Perfil", description = "API para gerenciamento de perfis de usuário e permissões de acesso.")
 public class PerfilController extends SecurityRestController {
 
 	@Autowired
 	private PerfilPermServInterface perfilServImpl;
 
-	@PostMapping("/v1")
-	@Operation(description = "Cadastrar um perfil de usuário com suas permissões de acesso.")
+	@PostMapping("/v1/cadastrar")
+	@Operation(description = "Cadastrar um novo perfil de usuário com permissões de acesso. Recebe os detalhes do perfil e suas permissões e armazena no sistema.")
 	public ResponseEntity<PerfilPermissaoDTO> cadastrarPerfil(@Validated @RequestBody PerfilModel cadastro) throws IOException {
 		var perfilService = perfilServImpl.save(cadastro);
 		return ResponseEntity.ok(perfilService);
 	}
 
-	@GetMapping("/v1/{codigo}")
-	@Operation(description = "Buscar um perfil pelo código.")
+	@GetMapping("/v1/buscar/{codigo}")
+	@Operation(description = "Buscar perfil pelo código. Retorna os detalhes de um perfil específico com base no código fornecido.")
 	public ResponseEntity<PerfilPermissaoDTO> buscarPerfilPorCodigo(@PathVariable @NonNull Long codigo) throws EntityNotFoundException, IOException {
 		var perfilList = perfilServImpl.findById(codigo);
 		return ResponseEntity.ok(perfilList);
 	}
 
-	@GetMapping("/v1")
-	@Operation(description = "Buscar lista de perfils de acesso cadastrados.")
+	@GetMapping("/v1/listar")
+	@Operation(description = "Listar todos os perfis cadastrados. Retorna uma lista de todos os perfis de acesso existentes.")
 	public ResponseEntity<List<PerfilPermissaoDTO>> buscarListarPerfil() throws EntityNotFoundException, IOException {
 		var perfilList = perfilServImpl.findAll();
 		return ResponseEntity.ok(perfilList);
 	}
 
 	@GetMapping("/v1/paginado")
-	@Operation(description = "Buscar pagiado dos perfils de acesso. Pagina define a pagina que desseja acessar, Tamanho define a quantidade de itens por pagina, Filtro busca pelos campos codigo, nome e descrição, OrdenarPor requer os seguintes dados: codigo, login, senha, email.")
+	@Operation(description = "Busca paginada de perfis de acesso. Fornece uma lista paginada de perfis com opções de filtragem e ordenação.")
 	public ResponseEntity<Page<PerfilPermissaoDTO>> buscarPerfilPaginado(@RequestParam(value = "pagina", defaultValue = "0") Integer pagina, @RequestParam(value = "tamanho", defaultValue = "10") Integer tamanho, @RequestParam(value = "filtro", required = false) String filtro)
 			throws EntityNotFoundException, IOException {
 		return ResponseEntity.ok(perfilServImpl.findAll(filtro, PageRequest.of(pagina, tamanho)));
 	}
 
-	@PutMapping("/v1/{codigo}")
-	@Operation(description = "Atualizar um perfil de acesso pelo código.")
+	@PutMapping("/v1/atualizar/{codigo}")
+	@Operation(description = "Atualizar um perfil de acesso existente. Atualiza os detalhes de um perfil com base no código fornecido.")
 	public ResponseEntity<PerfilPermissaoDTO> atualizarPerfil(@Valid @PathVariable @NonNull Long codigo, @Valid @RequestBody PerfilModel entity) throws EntityNotFoundException, IOException {
 		var perfilService = perfilServImpl.update(codigo, entity);
 		return ResponseEntity.ok(perfilService);
 	}
 
-	@DeleteMapping("/v1/{codigo}")
-	@Operation(description = "Deletar um perfil de acesso.")
+	@DeleteMapping("/v1/deletar/{codigo}")
+	@Operation(description = "Deletar um perfil de acesso. Remove um perfil específico com base no código fornecido.")
 	public ResponseEntity<ResponseGlobalModel> deletarPerfil(@Valid @PathVariable @NonNull Long codigo) throws IOException {
 		var perfilService = perfilServImpl.delete(codigo);
 		return ResponseEntity.ok(perfilService);
 	}
-
 }

@@ -12,8 +12,8 @@ public class MedicaoDTO {
 	@Schema(description = "Data", example = "2021-08-01T00:00:00.000Z")
 	private String dataMedicao;
 	@NotBlank
-	@Schema(description = "Código", example = "1")
-	private Long silo;
+	@Schema(description = "Objeto", example = "1")
+	private SiloModuloDTO siloModulo;
 	@NotBlank
 	@Schema(description = "Umidade", example = "1.0")
 	private Double umidade;
@@ -33,9 +33,9 @@ public class MedicaoDTO {
 	public MedicaoDTO() {
 	}
 
-	public MedicaoDTO(String dataMedicao, Long silo, Double umidade, Double ana, Double barometro, Double temperatura, Double distancia) {
+	public MedicaoDTO(String dataMedicao, SiloModuloDTO siloModulo, Double umidade, Double ana, Double barometro, Double temperatura, Double distancia) {
 		this.dataMedicao = dataMedicao;
-		this.silo = silo;
+		this.siloModulo = siloModulo;
 		this.umidade = umidade;
 		this.ana = ana;
 		this.barometro = barometro;
@@ -45,7 +45,7 @@ public class MedicaoDTO {
 
 	public MedicaoDTO(Medicao medEntity) {
 		this.dataMedicao = Utils.sdfDateforString(medEntity.getMsidth());
-		this.silo = medEntity.getSilo().getSilcod();
+		this.siloModulo = new SiloModuloDTO(medEntity.getSilomodulo());
 		this.umidade = medEntity.getMsiumi();
 		this.ana = medEntity.getMsiana();
 		this.barometro = medEntity.getMsibar();
@@ -61,12 +61,12 @@ public class MedicaoDTO {
 		this.dataMedicao = dataMedicao;
 	}
 
-	public Long getSilo() {
-		return silo;
+	public SiloModuloDTO getSiloModulo() {
+		return siloModulo;
 	}
 
-	public void setSilo(Long silo) {
-		this.silo = silo;
+	public void setSiloModulo(SiloModuloDTO siloModulo) {
+		this.siloModulo = siloModulo;
 	}
 
 	public Double getUmidade() {
@@ -114,8 +114,8 @@ public class MedicaoDTO {
 		StringBuilder builder = new StringBuilder();
 		builder.append("MedicaoDTO [dataMedicao=");
 		builder.append(dataMedicao);
-		builder.append(", silo=");
-		builder.append(silo);
+		builder.append(", siloModulo=");
+		builder.append(siloModulo);
 		builder.append(", umidade=");
 		builder.append(umidade);
 		builder.append(", ana=");

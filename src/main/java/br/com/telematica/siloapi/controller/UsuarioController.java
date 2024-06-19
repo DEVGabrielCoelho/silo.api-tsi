@@ -32,42 +32,42 @@ import jakarta.validation.Valid;
 @CrossOrigin
 @RestController
 @RequestMapping("/api/usuario")
-@Tag(name = "Usuário", description = "Api para Controle de Usuários")
+@Tag(name = "Usuário", description = "API para gerenciamento de usuários")
 public class UsuarioController extends SecurityRestController {
 
 	@Autowired
 	private UsuarioServInterface userServImpl;
 
-	@PostMapping("/v1")
-	@Operation(description = "Cadastrar um usuário")
+	@PostMapping("/v1/cadastrar")
+	@Operation(description = "Cadastrar um novo usuário. Recebe os detalhes do usuário e o armazena no sistema.")
 	public ResponseEntity<UsuarioDTO> criar(@RequestBody @NonNull UsuarioModel cadastro) throws EntityNotFoundException, IOException {
 		var userService = userServImpl.saveUpdateEncodePassword(cadastro);
 		return ResponseEntity.ok(userService);
 	}
 
 	@GetMapping("/v1/codigo/{codigo}")
-	@Operation(description = "Buscar um usuario pelo código")
+	@Operation(description = "Buscar um usuário pelo código. Retorna os detalhes de um usuário específico com base no código fornecido.")
 	public ResponseEntity<UsuarioDTO> buscarPorCodigo(@PathVariable @NonNull Long codigo) throws EntityNotFoundException, IOException {
 		var userList = userServImpl.findById(codigo);
 		return ResponseEntity.ok(userList);
 	}
 
 	@GetMapping("/v1/permissao/{codigo}")
-	@Operation(description = "Buscar um usuário e suas permissões apartir do código do usuário.")
+	@Operation(description = "Buscar um usuário e suas permissões pelo código do usuário. Retorna os detalhes do usuário e suas permissões.")
 	public ResponseEntity<UsuarioPermissaoDTO> buscarPorCodigoPermissaoUsuario(@PathVariable @NonNull Long codigo) throws EntityNotFoundException, IOException {
 		var userList = userServImpl.findByIdPermission(codigo);
 		return ResponseEntity.ok(userList);
 	}
 
-	@GetMapping("/v1")
-	@Operation(description = "Buscar lista de usuário")
+	@GetMapping("/v1/lsitar")
+	@Operation(description = "Listar todos os usuários cadastrados. Retorna uma lista de todos os usuários existentes.")
 	public ResponseEntity<List<UsuarioDTO>> listar() throws EntityNotFoundException, IOException {
 		var userList = userServImpl.findAll();
 		return ResponseEntity.ok(userList);
 	}
 
 	@GetMapping("/v1/paginado")
-	@Operation(description = "Busca de usuário paginado. Obs: O campo 'ordenarPor' requer os seguintes dados: codigo, nome, cpf, login, senha, email. Consulta por filtro (sem restrição de consulta).")
+	@Operation(description = "Busca paginada de usuários. Retorna uma lista paginada de usuários com opções de filtragem e ordenação. O campo 'ordenarPor' requer os seguintes dados: código, nome, cpf, login, senha, email.")
 	public ResponseEntity<Page<UsuarioDTO>> buscarPaginado(@RequestParam(value = "pagina", defaultValue = "0") Integer pagina, @RequestParam(value = "tamanho", defaultValue = "10") Integer tamanho, @RequestParam(value = "filtro", required = false) String filtro,
 			@RequestParam(value = "ordenarPor", defaultValue = "codigo") String ordenarPor, @RequestParam(value = "direcao", defaultValue = "ASC", required = false) String direcao) throws EntityNotFoundException, IOException {
 		String ordenarEntity = UsuarioDTO.consultaPagable(ordenarPor);
@@ -77,18 +77,17 @@ public class UsuarioController extends SecurityRestController {
 		return ResponseEntity.ok(userServImpl.findAll(filtro, Utils.consultaPage(ordenarEntity, direcao, pagina, tamanho)));
 	}
 
-	@PutMapping("/v1/{codigo}")
-	@Operation(description = "Atualizar um usuário")
+	@PutMapping("/v1/atualizar/{codigo}")
+	@Operation(description = "Atualizar um usuário existente. Atualiza os detalhes de um usuário com base no código fornecido.")
 	public ResponseEntity<UsuarioDTO> editar(@Valid @PathVariable @NonNull Long codigo, @Valid @RequestBody @NonNull UsuarioModel entity) throws EntityNotFoundException, IOException {
 		var userService = userServImpl.saveUpdateEncodePassword(codigo, entity);
 		return ResponseEntity.ok(userService);
 	}
 
-	@DeleteMapping("/v1/{codigo}")
-	@Operation(description = "Deletar um usuário")
+	@DeleteMapping("/v1/deletar/{codigo}")
+	@Operation(description = "Deletar um usuário pelo código. Remove um usuário específico com base no código fornecido.")
 	public ResponseEntity<ResponseGlobalModel> deletar(@Valid @PathVariable @NonNull Long codigo) throws IOException {
 		var userService = userServImpl.delete(codigo);
 		return ResponseEntity.ok(userService);
 	}
-
 }

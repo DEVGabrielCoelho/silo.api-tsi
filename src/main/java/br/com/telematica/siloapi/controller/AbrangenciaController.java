@@ -32,59 +32,58 @@ import jakarta.validation.Valid;
 @CrossOrigin
 @RestController
 @RequestMapping("/api/abrangencia")
-@Tag(name = "Abrangencia", description = "Api para consulta de Abrangencia")
+@Tag(name = "Abrangencia", description = "API para consulta e gerenciamento de Abrangências")
 public class AbrangenciaController extends SecurityRestController {
 
 	@Autowired
 	private AbrangenciaServInterface abrangenciaServImpl;
 
-	@PostMapping("/v1")
-	@Operation(description = "Cadastrar uma Abrangencia.")
+	@PostMapping("/v1/cadastrar")
+	@Operation(description = "Cadastrar uma nova Abrangência. Envia um objeto de abrangência e armazena-o no sistema.")
 	public ResponseEntity<AbrangenciaListaDetalhesDTO> cadastrarAbrangencia(@RequestBody AbrangenciaModel cadastro) throws IOException {
 		var abrangenciaService = abrangenciaServImpl.save(cadastro);
 		return abrangenciaService;
 	}
 
-	@GetMapping("/v1/{codigo}")
-	@Operation(description = "Buscar uma abrangencia pelo código cadastrado.")
+	@GetMapping("/v1/buscar/{codigo}")
+	@Operation(description = "Buscar uma abrangência pelo código. Retorna os detalhes de uma abrangência específica com base no código fornecido.")
 	public ResponseEntity<AbrangenciaListaDetalhesDTO> buscarAbrangenciaPorCodigo(@PathVariable @NonNull Long codigo) throws EntityNotFoundException, IOException {
 		var abrangenciaList = abrangenciaServImpl.findById(codigo);
 		return abrangenciaList;
 	}
 
-	@GetMapping("/v1")
-	@Operation(description = "Buscar lista de abrangencias cadastradas")
+	@GetMapping("/v1/listar")
+	@Operation(description = "Listar todas as abrangências cadastradas. Retorna uma lista de todas as abrangências existentes.")
 	public ResponseEntity<List<AbrangenciaListaDetalhesDTO>> buscarListarAbrangencia() throws EntityNotFoundException, IOException {
 		var abrangenciaList = abrangenciaServImpl.findAll();
 		return abrangenciaList;
 	}
 
 	@GetMapping("/v1/lista-items-abrangentes")
-	@Operation(description = "Buscar lista com todos os itens abrangentes por recurso.")
+	@Operation(description = "Listar todos os itens abrangentes por recurso. Retorna uma lista detalhada dos itens abrangentes organizados por recurso.")
 	public ResponseEntity<ItensAbrangentes> buscarListarItemsAbrangentes() throws EntityNotFoundException, IOException {
 		var abrangenciaList = abrangenciaServImpl.findByItemAbrangence();
 		return abrangenciaList;
 	}
 
 	@GetMapping("/v1/paginado")
-	@Operation(description = "Busca pagina de abrangencias cadastradas. Pagina define qual pagina deseja abrir, Tamanho define a quantidade de itens por pagina, Filtro é um campo para realizar pesquisa pelo código, nome ou descrição.")
+	@Operation(description = "Busca paginada de abrangências cadastradas. Fornece uma lista de abrangências com paginação, filtragem e ordenação.")
 	public ResponseEntity<Page<AbrangenciaListaDetalhesDTO>> buscarAbrangenciaPaginado(@RequestParam(value = "pagina", defaultValue = "0") Integer pagina, @RequestParam(value = "tamanho", defaultValue = "10") Integer tamanho, @RequestParam(value = "filtro", required = false) String filtro)
 			throws EntityNotFoundException, IOException {
 		return abrangenciaServImpl.findAll(filtro, PageRequest.of(pagina, tamanho));
 	}
 
-	@PutMapping("/v1/{codigo}")
-	@Operation(description = "Atualizar uma abrangencia de acordo com o código já cadastrado e os dados que deseja alterar.")
+	@PutMapping("/v1/atualizar/{codigo}")
+	@Operation(description = "Atualizar uma abrangência existente. Atualiza os detalhes de uma abrangência com base no código fornecido.")
 	public ResponseEntity<AbrangenciaListaDetalhesDTO> atualizarAbrangencia(@Valid @PathVariable Long codigo, @Valid @RequestBody AbrangenciaModel entity) throws ParseException {
 		var abrangenciaService = abrangenciaServImpl.update(codigo, entity);
 		return abrangenciaService;
 	}
 
-	@DeleteMapping("/v1/{codigo}")
-	@Operation(description = "Deletar uma abrangenca pelo código cadastrado.")
+	@DeleteMapping("/v1/deletar/{codigo}")
+	@Operation(description = "Deletar uma abrangência pelo código. Remove uma abrangência específica com base no código fornecido.")
 	public ResponseEntity<AbrangenciaListaDetalhesDTO> deletarAbrangencia(@Valid @PathVariable @NonNull Long codigo) throws IOException {
 		var abrangenciaService = abrangenciaServImpl.delete(codigo);
 		return abrangenciaService;
 	}
-
 }
