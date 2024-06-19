@@ -5,16 +5,20 @@ import jakarta.validation.constraints.NotBlank;
 
 @Schema(description = "Empresa")
 public class EmpresaModel {
-	@NotBlank
-	@Schema(name = "cnpj", description = "CNPJ da Empresa", example = "21233728172312", format = "Integer")
-	private Long cnpj;
-	@NotBlank
-	@Schema(name = "nome", description = "Nome da Empresa", example = "Nome Empresa X", format = "String")
-	private String nome;
-	@Schema(name = "nomeFantasia", description = "Nome Fantasia da Empresa", example = "Empresa X", format = "String")
-	private String nomeFantasia;
-	@Schema(name = "telefone", description = "Telefone da Empresa", example = "(99)99999-9999", format = "String")
-	private String telefone;
+
+    @NotBlank(message = "O campo 'cnpj' é obrigatório e não pode estar em branco.")
+    @Schema(name = "cnpj", description = "CNPJ da Empresa", example = "21233728172312", format = "Integer")
+    private Long cnpj;
+
+    @NotBlank(message = "O campo 'nome' é obrigatório e não pode estar em branco.")
+    @Schema(name = "nome", description = "Nome da Empresa", example = "Nome Empresa X", format = "String")
+    private String nome;
+
+    @Schema(name = "nomeFantasia", description = "Nome Fantasia da Empresa", example = "Empresa X", format = "String")
+    private String nomeFantasia;
+
+    @Schema(name = "telefone", description = "Telefone da Empresa", example = "(99)99999-9999", format = "String")
+    private String telefone;
 
 	public Long getCnpj() {
 		return cnpj;

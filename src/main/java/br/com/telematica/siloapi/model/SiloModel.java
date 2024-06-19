@@ -1,14 +1,21 @@
 package br.com.telematica.siloapi.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 @Schema(description = "Silo")
 public class SiloModel {
 
+	@NotNull(message = "O campo 'tipoSilo' é obrigatório e não pode estar nulo.")
 	@Schema(description = "Tipo do Silo", example = "1", nullable = false)
 	private Long tipoSilo;
-	@Schema(description = "Código Planta", example = "1", nullable = true)
+
+	@NotNull(message = "O campo 'planta' é obrigatório e não pode estar nulo.")
+	@Schema(description = "Código da Planta", example = "1", nullable = true)
 	private Long planta;
+
+	@NotBlank(message = "O campo 'nome' é obrigatório e não pode estar em branco.")
 	@Schema(description = "Nome", example = "Silo 1", nullable = true)
 	private String nome;
 

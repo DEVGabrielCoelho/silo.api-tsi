@@ -5,14 +5,15 @@ import com.fasterxml.jackson.databind.JsonNode;
 import br.com.telematica.siloapi.model.enums.RecursoMapEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 public class AbrangenciaDetalhesModel {
 
-	@NotBlank
+	@NotBlank(message = "O recurso é obrigatório e não pode estar em branco. Escolha entre: BARRAGEM, CANAL, EMPRESA, PENDENCIA, FIRMWARE, LOGGER, MEDICAO, AUDIO, SIRENE, MODULO, USUARIO.")
 	@Schema(name = "recurso", description = "Lista dos níveis de permissão. Permissões: BARRAGEM, CANAL, EMPRESA, PENDENCIA, FIRMWARE, LOGGER, MEDICAO, AUDIO, SIRENE, MODULO, USUARIO", example = "BARRAGEM")
 	private RecursoMapEnum recurso;
 
-	@NotBlank
+	@NotNull(message = "A hierarquia é obrigatória e não pode ser nula. Defina o nível de hierarquia como 0 (não) ou 1 (sim).")
 	@Schema(name = "hierarquia", description = "Define o nível de hierarquia que a abrangência atinge. (0 = não, 1 = sim)", example = "0")
 	private Integer hierarquia;
 

@@ -7,14 +7,14 @@ import jakarta.validation.constraints.NotBlank;
 
 public class AbrangenciaModel {
 
-	@NotBlank
+	@NotBlank(message = "O nome é obrigatório e não pode estar em branco. Informe um nome para a propriedade.")
 	@Schema(name = "nome", description = "Nome da propriedade.", example = "nome", format = "string")
 	private String nome;
 
-	@Schema(name = "descricao", description = "Descrição para detalhes.", example = "Descrição", format = "string")
+	@Schema(name = "descricao", description = "Descrição opcional para detalhes adicionais.", example = "Descrição", format = "string")
 	private String descricao;
 
-	@Schema(name = "recursos", description = "Lista de abrangencia por recurso.")
+	@Schema(name = "recursos", description = "Lista de abrangência por recurso.")
 	private List<AbrangenciaDetalhesModel> recursos;
 
 	public String getNome() {

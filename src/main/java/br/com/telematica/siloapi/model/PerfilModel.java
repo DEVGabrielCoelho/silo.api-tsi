@@ -5,18 +5,19 @@ import java.util.List;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 
+@Schema(description = "Modelo de Perfil")
 public class PerfilModel {
 
-	@NotBlank
-	@Schema(name = "nome", description = "Nome da propriedade.", example = "nome", format = "string")
-	private String nome;
+    @NotBlank(message = "O campo 'nome' é obrigatório e não pode estar em branco.")
+    @Schema(name = "nome", description = "Nome da propriedade.", example = "nome", format = "string")
+    private String nome;
 
-	@Schema(name = "descricao", description = "Descrição para detalhes.", example = "Descrição", format = "string")
-	private String descricao;
+    @Schema(name = "descricao", description = "Descrição para detalhes.", example = "Descrição", format = "string")
+    private String descricao;
 
-	@NotBlank
-	@Schema(name = "permissoes", description = "Lista de permissões.", format = "string")
-	private List<PermissaoModel> permissoes;
+    @NotBlank(message = "O campo 'permissoes' é obrigatório e não pode estar em branco.")
+    @Schema(name = "permissoes", description = "Lista de permissões.", format = "string")
+    private List<PermissaoModel> permissoes;
 
 	public String getNome() {
 		return nome;

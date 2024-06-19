@@ -5,23 +5,27 @@ import br.com.telematica.siloapi.model.enums.StatusEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 
-@Schema(description = "Modelo de Pendencia")
+@Schema(description = "Modelo de Pendência")
 public class PendenciaModel {
 
-	@NotBlank
-	@Schema(name = "numSerie", description = "Numero de Série do Modulo", example = "N123124", format = "String")
-	private String numSerie;
-	@NotBlank
-	@Schema(name = "tipoPendencia", description = "Tipo da Pendência", example = "DATA_HORA", format = "String")
-	private PendenciaEnum tipoPendencia;
-	@NotBlank
-	@Schema(name = "status", description = "Status da pendencia", example = "PENDENCIA", format = "Sring")
-	private StatusEnum status;
-	@NotBlank
-	@Schema(name = "descricao", description = "Descrição da pendencia", example = "Descrição", format = "String")
-	private String descricao;
-	@Schema(name = "codigoFirmware", description = "Se for pendencia colocar o código do firmware cadastrado.", example = "1", format = "Long")
-	private Long codigoFirmware;
+    @NotBlank(message = "O campo 'numSerie' é obrigatório e não pode estar em branco.")
+    @Schema(name = "numSerie", description = "Número de Série do Módulo", example = "N123124", format = "String")
+    private String numSerie;
+
+    @NotBlank(message = "O campo 'tipoPendencia' é obrigatório e não pode estar em branco.")
+    @Schema(name = "tipoPendencia", description = "Tipo da Pendência", example = "DATA_HORA", format = "String")
+    private PendenciaEnum tipoPendencia;
+
+    @NotBlank(message = "O campo 'status' é obrigatório e não pode estar em branco.")
+    @Schema(name = "status", description = "Status da Pendência", example = "PENDENCIA", format = "String")
+    private StatusEnum status;
+
+    @NotBlank(message = "O campo 'descricao' é obrigatório e não pode estar em branco.")
+    @Schema(name = "descricao", description = "Descrição da Pendência", example = "Descrição", format = "String")
+    private String descricao;
+
+    @Schema(name = "firmware", description = "Se for pendência, coloque o código do firmware cadastrado.", example = "1", format = "Long")
+    private Long firmware;
 
 	public String getNumSerie() {
 		return numSerie;
@@ -55,12 +59,12 @@ public class PendenciaModel {
 		this.descricao = descricao;
 	}
 
-	public Long getCodigoFirmware() {
-		return codigoFirmware;
+	public Long getFirmware() {
+		return firmware;
 	}
 
-	public void setCodigoFirmware(Long codigoFirmware) {
-		this.codigoFirmware = codigoFirmware;
+	public void setFirmware(Long firmware) {
+		this.firmware = firmware;
 	}
 
 	@Override
@@ -79,20 +83,20 @@ public class PendenciaModel {
 		if (descricao != null) {
 			builder.append("descricao=").append(descricao).append(", ");
 		}
-		if (codigoFirmware != null) {
-			builder.append("codigoFirmware=").append(codigoFirmware);
+		if (firmware != null) {
+			builder.append("firmware=").append(firmware);
 		}
 		builder.append("]");
 		return builder.toString();
 	}
 
-	public PendenciaModel(String numSerie, PendenciaEnum tipoPendencia, StatusEnum status, String descricao, Long codigoFirmware) {
+	public PendenciaModel(String numSerie, PendenciaEnum tipoPendencia, StatusEnum status, String descricao, Long firmware) {
 		super();
 		this.numSerie = numSerie;
 		this.tipoPendencia = tipoPendencia;
 		this.status = status;
 		this.descricao = descricao;
-		this.codigoFirmware = codigoFirmware;
+		this.firmware = firmware;
 	}
 
 	public PendenciaModel() {

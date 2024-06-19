@@ -3,27 +3,33 @@ package br.com.telematica.siloapi.model;
 import br.com.telematica.siloapi.model.enums.RecursoMapEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 @Schema(description = "Modelo de Permissão")
 public class PermissaoModel {
 
-	@NotBlank
+	@NotBlank(message = "O campo 'recurso' é obrigatório e não pode estar em branco.")
 	@Schema(name = "recurso", description = "Lista dos níveis de permissão. Permissões: BARRAGEM, CANAL, EMPRESA, PENDENCIA, FIRMWARE, LOGGER, MEDICAO, AUDIO, SIRENE, MODULO, USUARIO", example = "BARRAGEM")
 	private RecursoMapEnum recurso;
-	@NotBlank
-	@Schema(name = "listar", description = "Acessivel - 1 / Não Acessivel - 0")
+
+	@NotNull(message = "O campo 'listar' é obrigatório e não pode estar nulo.")
+	@Schema(name = "listar", description = "Acessível - 1 / Não Acessível - 0")
 	private Integer listar;
-	@NotBlank
-	@Schema(name = "buscar", description = "Acessivel - 1 / Não Acessivel - 0")
+
+	@NotNull(message = "O campo 'buscar' é obrigatório e não pode estar nulo.")
+	@Schema(name = "buscar", description = "Acessível - 1 / Não Acessível - 0")
 	private Integer buscar;
-	@NotBlank
-	@Schema(name = "criar", description = "Acessivel - 1 / Não Acessivel - 0")
+
+	@NotNull(message = "O campo 'criar' é obrigatório e não pode estar nulo.")
+	@Schema(name = "criar", description = "Acessível - 1 / Não Acessível - 0")
 	private Integer criar;
-	@NotBlank
-	@Schema(name = "editar", description = "Acessivel - 1 / Não Acessivel - 0")
+
+	@NotNull(message = "O campo 'editar' é obrigatório e não pode estar nulo.")
+	@Schema(name = "editar", description = "Acessível - 1 / Não Acessível - 0")
 	private Integer editar;
-	@NotBlank
-	@Schema(name = "deletar", description = "Acessivel - 1 / Não Acessivel - 0")
+
+	@NotNull(message = "O campo 'deletar' é obrigatório e não pode estar nulo.")
+	@Schema(name = "deletar", description = "Acessível - 1 / Não Acessível - 0")
 	private Integer deletar;
 
 	public RecursoMapEnum getRecurso() {

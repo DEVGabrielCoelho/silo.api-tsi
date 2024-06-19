@@ -7,18 +7,21 @@ import jakarta.validation.constraints.NotBlank;
 @Schema(description = "Modelo de registro de Logger.")
 public class LoggerModel {
 
-	@NotBlank
-	@Schema(name = "data", description = "Data do Log", example = "2024-05-22T10:05:01.001", format = "String")
-	private String data;
-	@NotBlank
-	@Schema(name = "numSerie", description = "Número de Série", example = "N123124", format = "String")
-	private String numSerie;
-	@NotBlank
-	@Schema(name = "tipoLogger", description = "Modelos de Loggers", example = "INFO", format = "String")
-	private LoggerEnum tipoLogger;
-	@NotBlank
-	@Schema(name = "mensagem", description = "Mensagem do Logger", example = "Mensagem Teste", format = "String")
-	private String mensagem;
+    @NotBlank(message = "O campo 'data' é obrigatório e não pode estar em branco.")
+    @Schema(name = "data", description = "Data do Log", example = "2024-05-22T10:05:01.001", format = "String")
+    private String data;
+
+    @NotBlank(message = "O campo 'numSerie' é obrigatório e não pode estar em branco.")
+    @Schema(name = "numSerie", description = "Número de Série", example = "N123124", format = "String")
+    private String numSerie;
+
+    @NotBlank(message = "O campo 'tipoLogger' é obrigatório e não pode estar em branco.")
+    @Schema(name = "tipoLogger", description = "Modelos de Loggers", example = "INFO", format = "String")
+    private LoggerEnum tipoLogger;
+
+    @NotBlank(message = "O campo 'mensagem' é obrigatório e não pode estar em branco.")
+    @Schema(name = "mensagem", description = "Mensagem do Logger", example = "Mensagem Teste", format = "String")
+    private String mensagem;
 
 	public String getData() {
 		return data;

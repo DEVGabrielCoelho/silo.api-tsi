@@ -4,18 +4,20 @@ import br.com.telematica.siloapi.model.enums.StatusEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 
-@Schema(description = "Modelo para deletar uma pendencia")
+@Schema(description = "Modelo para deletar uma pendência")
 public class PendenciaDelete {
 
-	@NotBlank
-	@Schema(name = "idPendencia", description = "Id da pendencia", example = "1", format = "Long")
-	private Long idPendencia;
-	@NotBlank
-	@Schema(name = "status", description = "Status da Pendencia", example = "EXECUTANDO", format = "String")
-	private StatusEnum status;
-	@NotBlank
-	@Schema(name = "descricao", description = "Descrição da pendencia", example = "Descrição", format = "String")
-	private String descricao;
+    @NotBlank(message = "O campo 'idPendencia' é obrigatório e não pode estar em branco.")
+    @Schema(name = "idPendencia", description = "ID da pendência", example = "1", format = "Long")
+    private Long idPendencia;
+
+    @NotBlank(message = "O campo 'status' é obrigatório e não pode estar em branco.")
+    @Schema(name = "status", description = "Status da Pendência", example = "EXECUTANDO", format = "String")
+    private StatusEnum status;
+
+    @NotBlank(message = "O campo 'descricao' é obrigatório e não pode estar em branco.")
+    @Schema(name = "descricao", description = "Descrição da pendência", example = "Descrição", format = "String")
+    private String descricao;
 
 	public Long getIdPendencia() {
 		return idPendencia;
