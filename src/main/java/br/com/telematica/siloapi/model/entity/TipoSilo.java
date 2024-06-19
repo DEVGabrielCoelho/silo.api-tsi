@@ -5,8 +5,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -17,22 +15,44 @@ public class TipoSilo {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(nullable = false)
 	private Long tsicod;
-	@ManyToOne
-	@JoinColumn(name = "empcod", nullable = false)
-	private Empresa empresa;
+	@Column(length = 50, nullable = false)
+	private String tsinom;
 	@Column(length = 50, nullable = false)
 	private String tsides;
 
-	public TipoSilo tipoSiloEntity(Empresa empresa, String tsides) {
-		this.empresa = empresa;
+	public TipoSilo tipoSiloEntity(String tsinom, String tsides) {
+		this.tsinom = tsinom;
 		this.tsides = tsides;
 		return this;
 	}
 
-	public TipoSilo(Long tsicod, Empresa empresa, String tsides) {
+	public TipoSilo(Long tsicod, String tsinom, String tsides) {
+		super();
 		this.tsicod = tsicod;
-		this.empresa = empresa;
+		this.tsinom = tsinom;
 		this.tsides = tsides;
+	}
+
+	public TipoSilo() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("TipoSilo [");
+		if (tsicod != null) {
+			builder.append("tsicod=").append(tsicod).append(", ");
+		}
+		if (tsinom != null) {
+			builder.append("tsinom=").append(tsinom).append(", ");
+		}
+		if (tsides != null) {
+			builder.append("tsides=").append(tsides);
+		}
+		builder.append("]");
+		return builder.toString();
 	}
 
 	public Long getTsicod() {
@@ -43,12 +63,12 @@ public class TipoSilo {
 		this.tsicod = tsicod;
 	}
 
-	public Empresa getEmpresa() {
-		return empresa;
+	public String getTsinom() {
+		return tsinom;
 	}
 
-	public void setEmpresa(Empresa empresa) {
-		this.empresa = empresa;
+	public void setTsinom(String tsinom) {
+		this.tsinom = tsinom;
 	}
 
 	public String getTsides() {
@@ -57,19 +77,6 @@ public class TipoSilo {
 
 	public void setTsides(String tsides) {
 		this.tsides = tsides;
-	}
-
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("TipoSiloEntity [tsicod=");
-		builder.append(tsicod);
-		builder.append(", empresa=");
-		builder.append(empresa);
-		builder.append(", tsides=");
-		builder.append(tsides);
-		builder.append("]");
-		return builder.toString();
 	}
 
 }

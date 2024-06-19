@@ -7,26 +7,26 @@ import jakarta.validation.constraints.NotBlank;
 public class TipoSiloModel {
 
 	@NotBlank
-	@Schema(description = "Código da Empresa", example = "1")
-	private Long empresa;
+	@Schema(description = "Nome do tipo de Silo", example = "Tipo 1")
+	private String nome;
 	@NotBlank
-	@Schema(description = "Descrição", example = "Tipo 1")
+	@Schema(description = "Descrição", example = "Tipo 1 descrição")
 	private String descricao;
 
 	public TipoSiloModel() {
 	}
 
-	public TipoSiloModel(Long empresa, String descricao) {
-		this.empresa = empresa;
+	public TipoSiloModel(String nome, String descricao) {
+		this.nome = nome;
 		this.descricao = descricao;
 	}
 
-	public Long getEmpresa() {
-		return empresa;
+	public String getNome() {
+		return nome;
 	}
 
-	public void setEmpresa(Long empresa) {
-		this.empresa = empresa;
+	public void setNome(String nome) {
+		this.nome = nome;
 	}
 
 	public String getDescricao() {
@@ -41,8 +41,8 @@ public class TipoSiloModel {
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("TipoSiloModel [");
-		if (empresa != null) {
-			builder.append("empresa=").append(empresa).append(", ");
+		if (nome != null) {
+			builder.append("nome=").append(nome).append(", ");
 		}
 		if (descricao != null) {
 			builder.append("descricao=").append(descricao);

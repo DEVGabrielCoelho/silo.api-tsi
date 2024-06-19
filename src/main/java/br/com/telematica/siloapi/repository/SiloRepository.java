@@ -6,6 +6,6 @@ import br.com.telematica.siloapi.model.entity.Silo;
 
 public interface SiloRepository extends JpaRepository<Silo, Long> {
 
-	void deleteByPlacod(Long codigo);
+	void deleteByPlanta_Placod(Long codigo);
 
 }

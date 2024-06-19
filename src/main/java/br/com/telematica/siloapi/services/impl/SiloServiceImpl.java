@@ -57,7 +57,7 @@ public class SiloServiceImpl implements SiloServInterface {
 			if (silo == null)
 				throw new EntityNotFoundException("Não foi possível encontrar o silo com o ID " + codigo + " fornecido.");
 
-			siloRepository.deleteByPlacod(silo.getSilcod());
+			siloRepository.delete(silo);
 			return MessageResponse.success(null);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Não foi possível encontrar o silo com o ID fornecido. Error: " + e.getCause());

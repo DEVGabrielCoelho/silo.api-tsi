@@ -7,42 +7,60 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public class SiloDTO extends Codigo {
 
 	@Schema(description = "Tipo do Silo", example = "1", nullable = false)
-	private Long tipoSilo;
+	private TipoSiloDTO tipoSilo;
 	@Schema(description = "Código Planta", example = "1", nullable = true)
-	private Long codiPlanta;
+	private PlantaDTO planta;
 	@Schema(description = "Nome", example = "Silo 1", nullable = true)
 	private String nome;
 
 	public SiloDTO() {
 	}
 
-	public SiloDTO(Long codigo, Long tipoSilo, Long codiPlanta, String nome) {
-		super(codigo);
-		this.tipoSilo = tipoSilo;
-		this.codiPlanta = codiPlanta;
-		this.nome = nome;
-	}
-
 	public SiloDTO(Silo entity) {
-		this.tipoSilo = entity.getTipoSilo().getTsicod();
-		this.codiPlanta = entity.getPlanta().getPlacod();
+		this.setCodigo(entity.getSilcod());
+		this.tipoSilo = new TipoSiloDTO(entity.getTipoSilo());
+		this.planta = new PlantaDTO(entity.getPlanta());
 		this.nome = entity.getSilnom();
 	}
 
-	public Long getTipoSilo() {
+	public SiloDTO(Long codigo, TipoSiloDTO tipoSilo, PlantaDTO planta, String nome) {
+		super(codigo);
+		this.tipoSilo = tipoSilo;
+		this.planta = planta;
+		this.nome = nome;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("SiloDTO [");
+		if (tipoSilo != null) {
+			builder.append("tipoSilo=").append(tipoSilo).append(", ");
+		}
+		if (planta != null) {
+			builder.append("planta=").append(planta).append(", ");
+		}
+		if (nome != null) {
+			builder.append("nome=").append(nome);
+		}
+		builder.append("]");
+		return builder.toString();
+	}
+
+	public TipoSiloDTO getTipoSilo() {
 		return tipoSilo;
 	}
 
-	public void setTipoSilo(Long tipoSilo) {
+	public void setTipoSilo(TipoSiloDTO tipoSilo) {
 		this.tipoSilo = tipoSilo;
 	}
 
-	public Long getCodiPlanta() {
-		return codiPlanta;
+	public PlantaDTO getPlanta() {
+		return planta;
 	}
 
-	public void setCodiPlanta(Long codiPlanta) {
-		this.codiPlanta = codiPlanta;
+	public void setPlanta(PlantaDTO planta) {
+		this.planta = planta;
 	}
 
 	public String getNome() {
@@ -51,21 +69,6 @@ public class SiloDTO extends Codigo {
 
 	public void setNome(String nome) {
 		this.nome = nome;
-	}
-
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("SiloDTO [codigo=");
-		builder.append(getCodigo());
-		builder.append(" tipoSilo=");
-		builder.append(tipoSilo);
-		builder.append(", codiPlanta=");
-		builder.append(codiPlanta);
-		builder.append(", nome=");
-		builder.append(nome);
-		builder.append("]");
-		return builder.toString();
 	}
 
 }

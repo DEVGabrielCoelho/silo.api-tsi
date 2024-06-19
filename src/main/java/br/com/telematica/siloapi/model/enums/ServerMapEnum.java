@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public enum ServerMapEnum {
-	SIRENE("/sirene"), SIRENEAUTH("/sirene.auth"), SIRENEV1("/sirenev1");
+	SILOAPI("/siloapi"), SIRENEAUTH("/sirene.auth"), SIRENEV1("/sirenev1");
 
 	private static final Logger logger = LoggerFactory.getLogger(ServerMapEnum.class);
 	private final String server;

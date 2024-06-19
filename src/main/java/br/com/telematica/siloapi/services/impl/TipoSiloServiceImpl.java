@@ -29,23 +29,16 @@ public class TipoSiloServiceImpl implements TipoSiloServInterface {
 	@Autowired
 	private TipoSiloRepository tipoSiloRepository;
 
-	@Autowired
-	private EmpresaServiceImpl empresaService;
-
 	private static final String RECURSO = "Tipo Silo";
 
 	@Override
 	public ResponseEntity<TipoSiloDTO> save(TipoSiloModel tipoSiloDTO) throws RuntimeException, IOException {
-		Objects.requireNonNull(tipoSiloDTO.getEmpresa(), "Código da Empresa está nulo.");
+		Objects.requireNonNull(tipoSiloDTO.getNome(), "Nome do tipo de Silo está nulo.");
 		Objects.requireNonNull(tipoSiloDTO.getDescricao(), "Descrição está nulo.");
 
 		try {
-			var empresa = empresaService.findByIdEntity(tipoSiloDTO.getEmpresa());
-			if (empresa == null) {
-				throw new IOException("Empresa não encontrada.");
-			}
 
-			var result = tipoSiloRepository.save(new TipoSilo(null, empresa, tipoSiloDTO.getDescricao()));
+			var result = tipoSiloRepository.save(new TipoSilo(null, tipoSiloDTO.getNome(), tipoSiloDTO.getDescricao()));
 
 			logger.info("Tipo Silo salvo com sucesso. " + result);
 			return MessageResponse.success(new TipoSiloDTO(result));
@@ -83,17 +76,16 @@ public class TipoSiloServiceImpl implements TipoSiloServInterface {
 	@Override
 	public ResponseEntity<TipoSiloDTO> update(Long codigo, TipoSiloModel tipoSiloDTO) throws IOException {
 		Objects.requireNonNull(codigo, "Código do Tipo do Silo está nulo.");
-		Objects.requireNonNull(tipoSiloDTO.getEmpresa(), "Código da Empresa está nulo.");
+		Objects.requireNonNull(tipoSiloDTO.getNome(), "Código da Empresa está nulo.");
 		Objects.requireNonNull(tipoSiloDTO.getDescricao(), "Descrição está nulo.");
 
 		try {
-			var empresa = empresaService.findById(tipoSiloDTO.getEmpresa());
 
 			var resultEntity = tipoSiloRepository.findById(codigo).orElse(null);
 			if (resultEntity == null)
 				throw CustomMessageException.exceptionEntityNotFoundException(codigo, RECURSO, null);
 
-			var entity = resultEntity.tipoSiloEntity(empresa, tipoSiloDTO.getDescricao());
+			var entity = resultEntity.tipoSiloEntity(tipoSiloDTO.getNome(), tipoSiloDTO.getDescricao());
 			var result = tipoSiloRepository.save(entity);
 
 			logger.info("Tipo Silo atualizado com sucesso. " + result);

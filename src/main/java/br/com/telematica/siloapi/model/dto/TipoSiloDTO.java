@@ -6,32 +6,32 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Schema(description = "Tipo Silo")
 public class TipoSiloDTO extends Codigo {
 
-	@Schema(description = "Código da Empresa", example = "1", required = true)
-	private EmpresaDTO empresa;
+	@Schema(description = "Nome", example = "Tipo 1", required = true)
+	private String nome;
+
 	@Schema(description = "Descrição", example = "Tipo 1", required = true)
 	private String descricao;
 
 	public TipoSiloDTO() {
 	}
 
-	public TipoSiloDTO(Long codigo, EmpresaDTO empresa, String descricao) {
+	public TipoSiloDTO(Long codigo, String nome, String descricao) {
 		super(codigo);
-		this.empresa = empresa;
+		this.nome = nome;
 		this.descricao = descricao;
 	}
 
 	public TipoSiloDTO(TipoSilo entity) {
 		this.setCodigo(entity.getTsicod());
-		this.empresa = new EmpresaDTO(entity.getEmpresa());
 		this.descricao = entity.getTsides();
 	}
 
-	public EmpresaDTO getEmpresa() {
-		return empresa;
+	public String getNome() {
+		return nome;
 	}
 
-	public void setEmpresa(EmpresaDTO empresa) {
-		this.empresa = empresa;
+	public void setNome(String nome) {
+		this.nome = nome;
 	}
 
 	public String getDescricao() {
@@ -45,12 +45,13 @@ public class TipoSiloDTO extends Codigo {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("TipoSiloDTO [codigo=");
-		builder.append(getCodigo());
-		builder.append("empresa=");
-		builder.append(empresa);
-		builder.append(", descricao=");
-		builder.append(descricao);
+		builder.append("TipoSiloDTO [");
+		if (nome != null) {
+			builder.append("nome=").append(nome).append(", ");
+		}
+		if (descricao != null) {
+			builder.append("descricao=").append(descricao);
+		}
 		builder.append("]");
 		return builder.toString();
 	}
