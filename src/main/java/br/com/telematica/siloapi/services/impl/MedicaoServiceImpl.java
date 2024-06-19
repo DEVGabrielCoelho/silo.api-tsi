@@ -44,7 +44,6 @@ public class MedicaoServiceImpl implements MedicaoServInterface {
 			var result = medicaoRepository.save(entity);
 
 			logger.info("Medição salva com sucesso." + result);
-//			var stringDateMedi = Utils.sdfDateforString(result.getMsidth());
 
 			return MessageResponse.success(new MedicaoDTO(result));
 		} catch (Exception e) {
@@ -78,7 +77,6 @@ public class MedicaoServiceImpl implements MedicaoServInterface {
 			entity.updateMedicao(silo, medicaoDTO.getUmidade(), medicaoDTO.getAna(), medicaoDTO.getBarometro(), medicaoDTO.getTemperatura(), medicaoDTO.getDistancia());
 			var result = medicaoRepository.save(entity);
 			logger.info("Medição atualizado com sucesso." + result);
-//			var stringDateMedi = Utils.sdfDateforString(result.getMsidth());
 
 			return MessageResponse.success(new MedicaoDTO(result));
 		} catch (Exception e) {

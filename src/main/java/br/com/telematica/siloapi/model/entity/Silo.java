@@ -25,6 +25,10 @@ public class Silo {
 	@ManyToOne
 	@JoinColumn(name = "placod", nullable = false)
 	private Planta planta;
+	@Column(nullable = false)
+	private Double sillat;
+	@Column(nullable = false)
+	private Double sillon;
 
 	public Silo() {
 	}

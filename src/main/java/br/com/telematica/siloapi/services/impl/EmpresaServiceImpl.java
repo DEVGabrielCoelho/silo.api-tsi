@@ -47,15 +47,10 @@ public class EmpresaServiceImpl implements EmpresaServInterface {
 		Objects.requireNonNull(codigo, "Código da Empresa está nulo.");
 
 		try {
-			var empresa = empresaRepository.findById(codigo).orElseThrow(() -> new EmptyResultDataAccessException("Não foi possível encontrar a empresa com o ID fornecido.", 1));
+			var empresa = empresaRepository.findById(codigo).orElseThrow(
+					() -> new EmptyResultDataAccessException("Não foi possível encontrar a empresa com o ID fornecido.", 1));
 
-			if (empresa.getEmpdel() == 0) {
-				log.info("Empresa não encontrada ou já deletada.");
-				throw new IOException("Empresa não encontrada ou já deletada.");
-			}
-
-			empresa.empresaDel(0);
-			empresaRepository.save(empresa);
+			empresaRepository.deleteById(empresa.getEmpcod());
 
 			return MessageResponse.success(null);
 		} catch (EmptyResultDataAccessException e) {
@@ -72,14 +67,12 @@ public class EmpresaServiceImpl implements EmpresaServInterface {
 		Objects.requireNonNull(pageable, "Pageable da Empresa está nulo.");
 
 		var check = checagemFixaBarragem();
-		Integer empdel = 1;
-
 		Specification<Empresa> spec = Specification.where(null);
 
 		if (check.isHier() == 0) {
-			spec = spec.and(Empresa.filterByFields(nome, empdel, null));
+			spec = spec.and(Empresa.filterByFields(nome, null));
 		} else {
-			spec = spec.and(Empresa.filterByFields(nome, empdel, check.listAbrangencia()));
+			spec = spec.and(Empresa.filterByFields(nome, check.listAbrangencia()));
 		}
 
 		Page<Empresa> result = empresaRepository.findAll(spec, pageable);
@@ -101,9 +94,11 @@ public class EmpresaServiceImpl implements EmpresaServInterface {
 	@Override
 	public ResponseEntity<List<EmpresaDTO>> empresaFindAll() throws IOException {
 		var check = checagemFixaBarragem();
-		var result = check.isHier() == 0 ? empresaRepository.findByEmpdel(1) : empresaRepository.findByEmpdelAndEmpcodIn(1, check.listAbrangencia());
+		var result = check.isHier() == 0 ? empresaRepository.findByEmpdel(1)
+				: empresaRepository.findByEmpdelAndEmpcodIn(1, check.listAbrangencia());
 
-		return MessageResponse.success(result.stream().map(empresa -> new EmpresaDTO(empresa)).collect(Collectors.toList()));
+		return MessageResponse
+				.success(result.stream().map(empresa -> new EmpresaDTO(empresa)).collect(Collectors.toList()));
 	}
 
 	@Override
@@ -111,14 +106,15 @@ public class EmpresaServiceImpl implements EmpresaServInterface {
 		Objects.requireNonNull(codigo, "Código da Empresa está nulo.");
 		Objects.requireNonNull(empresaModel.getCnpj(), "CNPJ da Empresa está nulo.");
 		Objects.requireNonNull(empresaModel.getNome(), "Nome da Empresa está nulo.");
-		var empresa = empresaRepository.findById(codigo).orElseThrow(() -> new EmptyResultDataAccessException("Não foi possível encontrar a empresa com o ID fornecido.", 1));
-		if (empresa == null || empresa.getEmpdel() == 0) {
+		var empresa = empresaRepository.findById(codigo).orElseThrow(
+				() -> new EmptyResultDataAccessException("Não foi possível encontrar a empresa com o ID fornecido.", 1));
+		if (empresa == null ) {
 			log.info("Empresa não encontrado ou deletado.");
 			throw new IOException("Empresa não encontrado ou deletado.");
 		}
 		String nomFant = empresaModel.getNomeFantasia() == null ? empresa.getEmpfan() : empresaModel.getNomeFantasia();
 		String tel = empresaModel.getTelefone() == null ? empresa.getEmptel() : empresaModel.getTelefone();
-		var empresaEntity = new Empresa(codigo, empresaModel.getCnpj(), empresaModel.getNome(), nomFant, tel, 1);
+		var empresaEntity = new Empresa(codigo, empresaModel.getCnpj(), empresaModel.getNome(), nomFant, tel);
 		return MessageResponse.success(new EmpresaDTO(empresaRepository.save(empresaEntity)));
 
 	}
@@ -129,7 +125,8 @@ public class EmpresaServiceImpl implements EmpresaServInterface {
 		Objects.requireNonNull(empresaModel.getNome(), "Nome da Empresa está nulo.");
 		Empresa emp = null;
 		try {
-			Empresa empresa = new Empresa(null, empresaModel.getCnpj(), empresaModel.getNome(), empresaModel.getNomeFantasia(), empresaModel.getTelefone(), 1);
+			Empresa empresa = new Empresa(null, empresaModel.getCnpj(), empresaModel.getNome(),
+					empresaModel.getNomeFantasia(), empresaModel.getTelefone());
 			emp = empresaRepository.save(empresa);
 		} catch (Exception e) {
 			log.error("Erro ao realizar o cadastro de uma empresa.", e);
@@ -177,7 +174,7 @@ public class EmpresaServiceImpl implements EmpresaServInterface {
 	public Empresa empresaFindByCnpjEntity(Long codigo) throws IOException {
 		Objects.requireNonNull(codigo, "Código da Empresa está nulo.");
 		Optional<Empresa> emp = empresaRepository.findByEmpcnp(codigo);
-		if (!emp.isPresent() || emp.get().getEmpcod() == 0) {
+		if (!emp.isPresent() || emp.isEmpty()) {
 			log.info("Empresa não encontrado ou deletado.");
 			return null;
 		}
@@ -198,7 +195,7 @@ public class EmpresaServiceImpl implements EmpresaServInterface {
 	public Empresa findByIdEntity(@NonNull Long codigo) {
 		Objects.requireNonNull(codigo, "Código da Empresa está nulo.");
 		var entity = empresaRepository.findById(codigo);
-		if (entity.isEmpty() || entity.get().getEmpdel() == 0) {
+		if (entity.isEmpty()) {
 			log.info("Empresa não encontrado ou deletado.");
 			return null;
 		}

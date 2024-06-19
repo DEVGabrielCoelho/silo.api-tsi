@@ -34,8 +34,6 @@ public class Empresa {
 	@Column(name = "emptel")
 	private String emptel;
 
-	@Column(name = "empdel", nullable = false)
-	private Integer empdel;
 
 	public Long getEmpcod() {
 		return empcod;
@@ -77,13 +75,6 @@ public class Empresa {
 		this.emptel = emptel;
 	}
 
-	public Integer getEmpdel() {
-		return empdel;
-	}
-
-	public void setEmpdel(Integer empdel) {
-		this.empdel = empdel;
-	}
 
 	@Override
 	public String toString() {
@@ -98,25 +89,19 @@ public class Empresa {
 		builder.append(empfan);
 		builder.append(", emptel=");
 		builder.append(emptel);
-		builder.append(", empdel=");
-		builder.append(empdel);
+
 		builder.append("]");
 		return builder.toString();
 	}
 
-	public Empresa(Long empcod, Long empcnp, String empnom, String empfan, String emptel, Integer empdel) {
+	public Empresa(Long empcod, Long empcnp, String empnom, String empfan, String emptel) {
 		super();
 		this.empcod = empcod;
 		this.empcnp = empcnp;
 		this.empnom = empnom;
 		this.empfan = empfan;
 		this.emptel = emptel;
-		this.empdel = empdel;
-	}
 
-	public Empresa empresaDel(Integer empdel) {
-		this.empdel = empdel;
-		return this;
 	}
 
 	public Empresa() {
@@ -124,10 +109,9 @@ public class Empresa {
 		// TODO Auto-generated constructor stub
 	}
 
-	public static Specification<Empresa> filterByFields(String searchTerm, Integer empdel, List<Long> listAbrangencia) {
+	public static Specification<Empresa> filterByFields(String searchTerm, List<Long> listAbrangencia) {
 		return (root, query, criteriaBuilder) -> {
 			List<Predicate> predicates = new ArrayList<>();
-			predicates.add(criteriaBuilder.equal(root.get("empdel"), empdel));
 
 			if (listAbrangencia != null && !listAbrangencia.isEmpty()) {
 				predicates.add(root.get("empcod").in(listAbrangencia));

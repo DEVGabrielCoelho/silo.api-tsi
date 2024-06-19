@@ -1,19 +1,23 @@
 package br.com.telematica.siloapi.services;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 
+import br.com.telematica.siloapi.model.SiloModuloModel;
+import br.com.telematica.siloapi.model.dto.SiloModuloDTO;
+
 public interface SiloModuloServInterface {
 
-	ResponseEntity<Object> save(Object object);
+	ResponseEntity<SiloModuloDTO> save(SiloModuloModel object) throws IOException;
 
-	ResponseEntity<Object> deleteByPlacod(Long codigo);
+	ResponseEntity<SiloModuloDTO> deleteByPlacod(Long codigo) throws IOException;
 
-	ResponseEntity<Object> update(Long codigo, Object object);
+	ResponseEntity<SiloModuloDTO> update(Long codigo, SiloModuloModel object) throws IOException;
 
-	ResponseEntity<List<Object>> findAllSiloDTO();
+	ResponseEntity<List<SiloModuloDTO>> findAllSiloDTO();
 
-	ResponseEntity<Object> findById(Long codigo);
+	ResponseEntity<SiloModuloDTO> findById(Long codigo);
 
 }

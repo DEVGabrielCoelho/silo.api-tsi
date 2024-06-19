@@ -17,7 +17,7 @@ public enum RecursoMapEnum {
 	PLANTA("PLANTA", "/api/planta"),
 	SILO("SILO", "/api/silo"),
 	MODULO("SILO-MODULO", "/api/silo-modulo"),
-	TIPOSILO("MODULODEVICE", "/api/tipo-silo");
+	TIPOSILO("TIPO-SILO", "/api/tipo-silo");
 
 	private static final Logger logger = LoggerFactory.getLogger(RecursoMapEnum.class);
 	private final String nome;
