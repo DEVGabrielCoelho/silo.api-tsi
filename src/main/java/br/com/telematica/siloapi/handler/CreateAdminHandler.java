@@ -96,7 +96,7 @@ public class CreateAdminHandler {
 			int listItem = listaRecursos.length;
 			for (int i = 0; i < listItem; i++) {
 				RecursoMapEnum recursoEnum = RecursoMapEnum.valueOf(listaRecursos[i]);
-				var valueRecurso = perfilPermissaoService.findByPercodAndRecnomCreate(perfil, recursoService.findByIdEntity(recursoEnum.getNome()));
+				var valueRecurso = perfilPermissaoService.findByPerfilAndRecurso(perfil, recursoService.findByIdEntity(recursoEnum.getNome()));
 				PermissaoModel permissao = new PermissaoModel(recursoEnum, 1, 1, 1, 1, 1);
 				if (valueRecurso == null)
 					perfilPermissaoService.saveEntityPermissao(perfil, permissao);
@@ -118,7 +118,7 @@ public class CreateAdminHandler {
 			int listItem = listaRecursos.length;
 			for (int i = 0; i < listItem; i++) {
 				RecursoMapEnum recursoEnum = RecursoMapEnum.valueOf(listaRecursos[i]);
-				var valueRecurso = perfilPermissaoService.findByPercodAndRecnomCreate(perfil, recursoService.findByIdEntity(recursoEnum.getNome()));
+				var valueRecurso = perfilPermissaoService.findByPerfilAndRecurso(perfil, recursoService.findByIdEntity(recursoEnum.getNome()));
 				PermissaoModel permissao = new PermissaoModel(RecursoMapEnum.valueOf(listaRecursos[i]), 1, 1, 1, 1, 1);
 				if (valueRecurso == null)
 					perfilPermissaoService.saveEntityPermissao(perfil, permissao);

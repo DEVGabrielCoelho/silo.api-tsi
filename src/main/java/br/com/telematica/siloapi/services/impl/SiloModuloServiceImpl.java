@@ -3,6 +3,7 @@ package br.com.telematica.siloapi.services.impl;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -10,8 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import com.google.gson.Gson;
 
 import br.com.telematica.siloapi.model.SiloModuloModel;
 import br.com.telematica.siloapi.model.dto.SiloModuloDTO;
@@ -24,7 +23,8 @@ import jakarta.persistence.EntityNotFoundException;
 @Service
 public class SiloModuloServiceImpl implements SiloModuloServInterface {
 
-	private static Logger logger = (Logger) LoggerFactory.getLogger(SiloModuloServiceImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(SiloModuloServiceImpl.class);
+
 	@Autowired
 	private SiloModuloRepository siloModuloRepository;
 
@@ -35,34 +35,29 @@ public class SiloModuloServiceImpl implements SiloModuloServInterface {
 	public ResponseEntity<SiloModuloDTO> save(SiloModuloModel object) throws IOException {
 		try {
 			var silo = siloServiceImpl.findEntity(object.getSilo());
+			var entity = new SiloModulo(null, silo, object.getDescricao(), object.getTotalSensor(), object.getNumSerie(), object.getTimeoutKeepAlive(), object.getTimeoutMedicao(), null, null, object.getGmt(), object.getCorKeepAlive(), object.getCorMedicao(), object.getStatus().getStatus());
 
-			var entity = new SiloModulo(null, silo, object.getDescricao(), object.getTotalSensor(), object.getNumSerie(), object.getTimeoutKeepAlive(), object.getTimeoutMedicao(), null, null,  object.getGmt(), object.getCorKeepAlive(), object.getCorMedicao(), object.getStatus().getStatus());
-			var result = siloModuloRepository.save(entity);
-
-			logger.info("Módulo do Silo salvo com successo." + result);
-
+			SiloModulo result = siloModuloRepository.save(entity);
+			logger.info("Módulo do Silo salvo com sucesso: " + result);
 			return MessageResponse.success(new SiloModuloDTO(result));
 		} catch (Exception e) {
-			throw new IOException("Erro ao salvar o Módulo do Silo." + new Gson().toJson(object), e);
+			logger.error("Erro ao salvar o Módulo do Silo: ", e);
+			throw new IOException("Erro ao salvar o Módulo do Silo: " + object, e);
 		}
 	}
 
 	@Override
 	public ResponseEntity<SiloModuloDTO> delete(Long codigo) throws IOException {
-		SiloModulo siloModulo = null;
+		Objects.requireNonNull(codigo, "Código do Módulo do Silo está nulo.");
 		try {
+			var entity = siloModuloRepository.findById(codigo).orElseThrow(() -> new EntityNotFoundException("Não foi possível encontrar o módulo do silo com o ID fornecido: " + codigo));
 
-			siloModulo = siloModuloRepository.findById(codigo).orElse(null);
-			if (siloModulo == null)
-				throw new EntityNotFoundException("Não foi possível encontrar o modulo do silo com o ID " + codigo + " fornecido.");
-
-			siloModuloRepository.delete(siloModulo);
-
-			logger.info("Módulo do Silo deletado com successo." + siloModulo);
-
+			siloModuloRepository.delete(entity);
+			logger.info("Módulo do Silo deletado com sucesso: " + entity);
 			return MessageResponse.success(null);
 		} catch (Exception e) {
-			throw new IOException("Erro ao deletar o Módulo do Silo." + new Gson().toJson(siloModulo), e);
+			logger.error("Erro ao deletar o Módulo do Silo: ", e);
+			throw new IOException("Erro ao deletar o Módulo do Silo com o ID: " + codigo, e);
 		}
 	}
 
@@ -70,67 +65,55 @@ public class SiloModuloServiceImpl implements SiloModuloServInterface {
 	public ResponseEntity<SiloModuloDTO> update(Long codigo, SiloModuloModel object) throws IOException {
 		try {
 			var silo = siloServiceImpl.findEntity(object.getSilo());
-			var siloModulo = siloModuloRepository.findById(codigo);
-			if (siloModulo.isEmpty() || !siloModulo.isPresent())
-				throw new EntityNotFoundException("Não foi possível encontrar o modulo do silo com o ID " + codigo + " fornecido.");
+			var siloModulo = siloModuloRepository.findById(codigo).orElseThrow(() -> new EntityNotFoundException("Não foi possível encontrar o módulo do silo com o ID fornecido: " + codigo));
 
-			var entity = new SiloModulo(siloModulo.get().getSmocod(), silo, object.getDescricao(), object.getTotalSensor(), object.getNumSerie(), object.getTimeoutKeepAlive(), object.getTimeoutMedicao(), null, null,  object.getGmt(), object.getCorKeepAlive(), object.getCorMedicao(),
+			var entity = new SiloModulo(siloModulo.getSmocod(), silo, object.getDescricao(), object.getTotalSensor(), object.getNumSerie(), object.getTimeoutKeepAlive(), object.getTimeoutMedicao(), null, null, object.getGmt(), object.getCorKeepAlive(), object.getCorMedicao(),
 					object.getStatus().getStatus());
-			var result = siloModuloRepository.save(entity);
 
-			logger.info("Módulo do Silo atualizado com successo." + result);
-
+			SiloModulo result = siloModuloRepository.save(entity);
+			logger.info("Módulo do Silo atualizado com sucesso: " + result);
 			return MessageResponse.success(new SiloModuloDTO(result));
 		} catch (Exception e) {
-			throw new IOException("Erro ao salvar o Módulo do Silo." + new Gson().toJson(object), e);
+			logger.error("Erro ao atualizar o Módulo do Silo: ", e);
+			throw new IOException("Erro ao atualizar o Módulo do Silo: " + object, e);
 		}
 	}
 
 	@Override
 	public ResponseEntity<List<SiloModuloDTO>> findAll() {
-		List<SiloModulo> modulo = siloModuloRepository.findAll();
-		return MessageResponse.success(modulo.stream().map(SiloModuloDTO::new).collect(Collectors.toList()));
+		List<SiloModulo> modulos = siloModuloRepository.findAll();
+		List<SiloModuloDTO> dtoList = modulos.stream().map(SiloModuloDTO::new).collect(Collectors.toList());
+		return MessageResponse.success(dtoList);
 	}
 
 	@Override
 	public ResponseEntity<SiloModuloDTO> findId(Long codigo) {
-		var siloModulo = siloModuloRepository.findById(codigo);
-		if (siloModulo.isEmpty() || !siloModulo.isPresent())
-			MessageResponse.success(null);
-
-		return MessageResponse.success(new SiloModuloDTO(siloModulo.get()));
+		var siloModulo = siloModuloRepository.findById(codigo).orElseThrow(() -> new EntityNotFoundException("Módulo do Silo não encontrado com o ID: " + codigo));
+		return MessageResponse.success(new SiloModuloDTO(siloModulo));
 	}
 
 	SiloModulo findEntity(Long codigo) {
-		var result = siloModuloRepository.findById(codigo).orElse(null);
-
-		if (result == null) {
-			logger.error("Silo não encontrado.");
-			return null;
-		}
-
-		return result;
+		return siloModuloRepository.findById(codigo).orElseThrow(() -> {
+			logger.error("Módulo do Silo não encontrado com o ID: " + codigo);
+			return new EntityNotFoundException("Módulo do Silo não encontrado com o ID: " + codigo);
+		});
 	}
-	
+
 	SiloModulo findEntityNSE(String nse) {
-		var result = siloModuloRepository.findBySmonse(nse).orElse(null);
-
-		if (result == null) {
-			logger.error("Silo não encontrado.");
-			return null;
-		}
-
-		return result;
+		return siloModuloRepository.findBySmonse(nse).orElseThrow(() -> {
+			logger.error("Módulo do Silo não encontrado com o número de série: " + nse);
+			return new EntityNotFoundException("Módulo do Silo não encontrado com o número de série: " + nse);
+		});
 	}
 
-	 void registerKeepAliveInModulo(SiloModulo modulo, Date date) throws EntityNotFoundException, IOException {
+	void registerKeepAliveInModulo(SiloModulo modulo, Date date) throws EntityNotFoundException, IOException {
 		var mod = siloModuloRepository.save(modulo.sireneModuloRegisterKeep(date));
-		logger.info("Registro Ultimo KeepAlive efetuado com sucesso. " + mod.toString());
+		logger.info("Registro de último KeepAlive efetuado com sucesso: " + mod);
 	}
 
-	 void registerMedicaoInModulo(SiloModulo modulo, Date date) throws EntityNotFoundException, IOException {
+	void registerMedicaoInModulo(SiloModulo modulo, Date date) throws EntityNotFoundException, IOException {
 		var mod = siloModuloRepository.save(modulo.sireneModuloRegisterMedicao(date));
-		logger.info("Registro Ultima Medicao efetuado com sucesso. " + mod.toString());
+		logger.info("Registro de última Medição efetuado com sucesso: " + mod);
 	}
-	
+
 }

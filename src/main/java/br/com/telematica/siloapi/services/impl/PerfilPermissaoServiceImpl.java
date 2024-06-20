@@ -31,216 +31,212 @@ import jakarta.persistence.EntityNotFoundException;
 @Service
 public class PerfilPermissaoServiceImpl implements PerfilPermServInterface {
 
-	@Autowired
-	private PermissaoRepository permissaoRepository;
+    @Autowired
+    private PermissaoRepository permissaoRepository;
 
-	@Autowired
-	private RecursoServiceImpl recursoService;
+    @Autowired
+    private RecursoServiceImpl recursoService;
 
-	@Autowired
-	private PerfilRepository perfilRepository;
+    @Autowired
+    private PerfilRepository perfilRepository;
 
-	public Perfil findByIdPerfilEntity(@NonNull Long codigo) throws EntityNotFoundException, IOException {
-		var entity = perfilRepository.findById(codigo);
-		if (entity.isEmpty())
-			return null;
-		return entity.get();
-	}
+    public Perfil findByIdPerfilEntity(@NonNull Long codigo) throws EntityNotFoundException, IOException {
+        return perfilRepository.findById(codigo)
+                .orElseThrow(() -> new EntityNotFoundException("Perfil não encontrado com o código: " + codigo));
+    }
 
-	public Perfil findByIdPerfilEntity(@NonNull String codigo) {
-		var entity = perfilRepository.findByPernom(codigo);
-		if (entity.isEmpty())
-			return null;
-		return entity.get();
-	}
+    public Perfil findByIdPerfilEntity(@NonNull String nome) {
+        return perfilRepository.findByPernom(nome)
+                .orElseThrow(() -> new EntityNotFoundException("Perfil não encontrado com o nome: " + nome));
+    }
 
-	public Perfil findByIdApiPerfil(@NonNull Long codigo) throws EntityNotFoundException, IOException {
-		var entity = findByIdPerfilEntity(codigo);
-		if (entity == null)
-			return null;
+    public PerfilPermissaoDTO findByIdPerfil(Long codigo) throws EntityNotFoundException, IOException {
+        Objects.requireNonNull(codigo, "Código do Perfil está nulo.");
+        Perfil perfil = findByIdPerfilEntity(codigo);
+        List<PermissaoDTO> permissoes = permissaoRepository.findByPerfil_percod(perfil.getPercod())
+                .orElseThrow(() -> new EntityNotFoundException("Permissões não encontradas para o perfil com código: " + codigo))
+                .stream()
+                .map(PermissaoDTO::new)
+                .collect(Collectors.toList());
+        return new PerfilPermissaoDTO(perfil, permissoes);
+    }
 
-		return entity;
-	}
+    public List<PerfilPermissaoDTO> findAllPerfil() throws EntityNotFoundException, IOException {
+        return perfilRepository.findAll().stream()
+                .map(perfil -> {
+                    List<PermissaoDTO> permissoes = permissaoRepository.findByPerfil_percod(perfil.getPercod())
+                            .orElseGet(ArrayList::new)
+                            .stream()
+                            .map(PermissaoDTO::new)
+                            .collect(Collectors.toList());
+                    return new PerfilPermissaoDTO(perfil, permissoes);
+                })
+                .collect(Collectors.toList());
+    }
 
-	public Perfil findByIdApiPerfil(@NonNull String nome) throws EntityNotFoundException, IOException {
-		var entity = findByIdPerfilEntity(nome);
-		if (entity == null)
-			return null;
-		return entity;
-	}
+    public Page<PerfilPermissaoDTO> findAllPagePerfil(String nome, Pageable pageable) throws EntityNotFoundException, IOException {
+        Objects.requireNonNull(pageable, "Pageable do Perfil está nulo.");
+        Specification<Perfil> spec = Perfil.filterByFields(nome);
+        Page<Perfil> result = perfilRepository.findAll(spec, pageable);
+        return result.map(perfil -> {
+            List<PermissaoDTO> permissoes = permissaoRepository.findByPerfil_percod(perfil.getPercod())
+                    .orElseGet(ArrayList::new)
+                    .stream()
+                    .map(PermissaoDTO::new)
+                    .collect(Collectors.toList());
+            return new PerfilPermissaoDTO(perfil, permissoes);
+        });
+    }
 
-	public PerfilPermissaoDTO findByIdPerfil(Long codigo) throws EntityNotFoundException, IOException {
-		Objects.requireNonNull(codigo, "Código do Perfil está nulo.");
-		var perfil = perfilRepository.findById(codigo).get();
-		if (perfil == null)
-			return null;
-		List<PermissaoDTO> permissoes = permissaoRepository.findByPerfil_percod(perfil.getPercod()).get().stream().map(map -> new PermissaoDTO(map)).collect(Collectors.toList());
-		return new PerfilPermissaoDTO(perfil, permissoes);
-	}
+    public Permissao findByPerfilAndRecurso(Perfil perfil, Recurso recurso) {
+        return permissaoRepository.findByPerfil_percodAndRecurso_recnom(perfil.getPercod(), recurso.getRecnom())
+                .orElseThrow(() -> new EntityNotFoundException("Permissão não encontrada para o perfil " + perfil + " e recurso " + recurso + "."));
+    }
 
-	public List<PerfilPermissaoDTO> findAllPerfil() throws EntityNotFoundException, IOException {
-		List<PerfilPermissaoDTO> listPerfilAndPermission = perfilRepository.findAll().stream().map(perfil -> {
-			List<Permissao> permissoes = permissaoRepository.findByPerfil_percod(perfil.getPercod()).get();
-			List<PermissaoDTO> listDTO = permissoes.stream().map(map -> new PermissaoDTO(map)).collect(Collectors.toList());
-			return new PerfilPermissaoDTO(perfil, listDTO);
-		}).collect(Collectors.toList());
-		return listPerfilAndPermission;
-	}
+    public PermissaoDTO findByIdApi(@NonNull Long codigo) throws EntityNotFoundException, IOException {
+        Permissao permissao = findByEntity(codigo);
+        return new PermissaoDTO(permissao);
+    }
 
-	public Page<PerfilPermissaoDTO> findAllPagePerfil(String nome, Pageable pageable) throws EntityNotFoundException, IOException {
-		Objects.requireNonNull(pageable, "Pageable do Perfil está nulo.");
+    public Permissao findByEntity(@NonNull Long codigo) {
+        return permissaoRepository.findById(codigo)
+                .orElseThrow(() -> new EntityNotFoundException("Permissão não encontrada com o código: " + codigo));
+    }
 
-		Specification<Perfil> spec = Perfil.filterByFields(nome);
+    public Perfil createUpdatePerfil(@NonNull Perfil perfil) {
+        return perfilRepository.save(perfil);
+    }
 
-		Page<Perfil> result = perfilRepository.findAll(spec, pageable);
-		return result.map(perfil -> {
-			List<PermissaoDTO> permissoes = permissaoRepository.findByPerfil_percod(perfil.getPercod()).get().stream().map(map -> new PermissaoDTO(map)).collect(Collectors.toList());
-			return new PerfilPermissaoDTO(perfil, permissoes);
-		});
-	}
+    public PerfilPermissaoDTO savePerfilApi(PerfilModel perModel) throws IOException {
+        try {
+            Objects.requireNonNull(perModel.getNome(), "Nome do Perfil está nulo.");
+            Perfil perfil = createUpdatePerfil(new Perfil(null, perModel.getNome().toUpperCase(), perModel.getDescricao()));
 
-	public Permissao findByPerfilAndRecurso(Perfil codigo, Recurso recurso) {
-		var entity = permissaoRepository.findByPerfil_percodAndRecurso_recnom(codigo.getPercod(), recurso.getRecnom());
-		if (entity.isEmpty())
-			throw new EntityNotFoundException("Permissao não encontrada no banco de dados para perfil " + codigo + " e recurso " + recurso + ".");
-		return entity.get();
-	}
+            List<PermissaoDTO> permissaoList = perModel.getPermissoes().stream()
+                    .map(permissao -> saveEntityPermissao(perfil, permissao))
+                    .collect(Collectors.toList());
 
-	public Permissao findByPercodAndRecnomCreate(Perfil codigo, Recurso recurso) {
-		var entity = permissaoRepository.findByPerfil_percodAndRecurso_recnom(codigo.getPercod(), recurso.getRecnom());
-		if (entity.isEmpty())
-			return null;
-		return entity.get();
-	}
+            return new PerfilPermissaoDTO(perfil, permissaoList);
+        } catch (Exception e) {
+            throw new IOException("Erro ao criar um Perfil. " + e.getMessage(), e);
+        }
+    }
 
-	public Permissao findByEntity(@NonNull Long codigo) {
-		var entity = permissaoRepository.findById(codigo);
-		if (entity.isEmpty())
-			return null;
-		return entity.get();
-	}
+    public PerfilPermissaoDTO updatePerfilApi(Long codigo, PerfilModel perModel) throws EntityNotFoundException, IOException {
+        Objects.requireNonNull(codigo, "Código do Perfil está nulo.");
+        Objects.requireNonNull(perModel.getNome(), "Nome do Perfil está nulo.");
 
-	public PermissaoDTO findByIdApi(@NonNull Long codigo) throws EntityNotFoundException, IOException {
-		var entity = findByEntity(codigo);
-		if (entity == null)
-			return null;
-		return new PermissaoDTO(entity);
-	}
+        Perfil perfil = findByIdPerfilEntity(codigo);
+        perfil.setPernom(perModel.getNome().toUpperCase());
+        perfil.setPerdes(perModel.getDescricao());
+        Perfil perfilUp = perfilRepository.save(perfil);
 
-	public Perfil createUpdatePerfil(@NonNull Perfil perfil) {
-		return perfilRepository.save(perfil);
-	}
+        List<PermissaoDTO> permissaoList = perModel.getPermissoes().stream()
+                .map(permissao -> updateEntityPermissao(perfilUp, permissao))
+                .collect(Collectors.toList());
 
-	public PerfilPermissaoDTO savePerfilApi(PerfilModel perModel) throws IOException {
-		try {
-			Objects.requireNonNull(perModel.getNome(), "Nome do Perfil está nulo.");
-			Perfil perfil = createUpdatePerfil(new Perfil(null, perModel.getNome().toUpperCase(), perModel.getDescricao()));
+        return new PerfilPermissaoDTO(perfilUp, permissaoList);
+    }
 
-			List<PermissaoDTO> permissaoList = new ArrayList<PermissaoDTO>();
-			for (PermissaoModel permissao : perModel.getPermissoes()) {
-				permissaoList.add(saveEntityPermissao(perfil, permissao));
-			}
+    public PermissaoDTO saveEntityPermissao(Perfil perfil, @NonNull PermissaoModel permissaoModel) {
+        validatePermissaoFields(perfil, permissaoModel);
 
-			return new PerfilPermissaoDTO(perfil, permissaoList);
-		} catch (Exception e) {
-			throw new IOException("Erro ao criar um Perfil." + e.getMessage());
-		}
-	}
+        Recurso recurso = recursoService.findByIdEntity(permissaoModel.getRecurso().getNome());
+        Permissao permissao = new Permissao(
+                null,
+                perfil,
+                recurso,
+                permissaoModel.getListar(),
+                permissaoModel.getBuscar(),
+                permissaoModel.getCriar(),
+                permissaoModel.getEditar(),
+                permissaoModel.getDeletar()
+        );
 
-	public PerfilPermissaoDTO updatePerfilApi(Long codigo, PerfilModel perModel) throws EntityNotFoundException, IOException {
-		Objects.requireNonNull(codigo, "Código do Perfil está nulo.");
-		Objects.requireNonNull(perModel.getNome(), "Nome do Perfil está nulo.");
-		Perfil perfil = findByIdPerfilEntity(codigo);
-		if (perfil == null)
-			throw new IOException("Perfil não encontrado.");
-		perfil = perfilRepository.save(new Perfil(codigo, perModel.getNome().toUpperCase(), perModel.getDescricao()));
+        return new PermissaoDTO(permissaoRepository.save(permissao));
+    }
 
-		List<PermissaoDTO> permissaoList = new ArrayList<PermissaoDTO>();
-		for (PermissaoModel permissao : perModel.getPermissoes()) {
-			permissaoList.add(updateEntityPermissao(perfil, permissao));
-		}
-		return new PerfilPermissaoDTO(perfil, permissaoList);
-	}
+    public PermissaoDTO updateEntityPermissao(@NonNull Perfil perfil, @NonNull PermissaoModel permissaoModel) {
+        validatePermissaoFields(perfil, permissaoModel);
 
-	public PermissaoDTO saveEntityPermissao(Perfil perfil, @NonNull PermissaoModel permissao) throws EntityNotFoundException, IOException {
-		Objects.requireNonNull(perfil, "Perfil da Permissão está nulo.");
-		Objects.requireNonNull(permissao.getRecurso(), "Recuro da Permissão está nulo.");
-		Objects.requireNonNull(permissao.getCriar(), "Criar da Permissão está nulo.");
-		Objects.requireNonNull(permissao.getEditar(), "Editar da Permissão está nulo.");
-		Objects.requireNonNull(permissao.getDeletar(), "Deletar da Permissão está nulo.");
-		Objects.requireNonNull(permissao.getBuscar(), "Buscar da Permissão está nulo.");
-		Objects.requireNonNull(permissao.getListar(), "Listar da Permissão está nulo.");
-		var recurso = recursoService.findByIdEntity(permissao.getRecurso().getNome());
-		Permissao perm = new Permissao(null, perfil, recurso, permissao.getListar(), permissao.getBuscar(), permissao.getCriar(), permissao.getEditar(), permissao.getDeletar());
-		return new PermissaoDTO(permissaoRepository.save(perm));
-	}
+        Recurso recurso = recursoService.findByIdEntity(permissaoModel.getRecurso().getNome());
+        Permissao permissaoExistente = findByPerfilAndRecurso(perfil, recurso);
 
-	public PermissaoDTO updateEntityPermissao(@NonNull Perfil perfil, @NonNull PermissaoModel permissao) throws EntityNotFoundException, IOException {
-		Objects.requireNonNull(perfil, "Perfil da Permissão está nulo.");
-		Objects.requireNonNull(permissao.getRecurso(), "Recuro da Permissão está nulo.");
-		Objects.requireNonNull(permissao.getCriar(), "Criar da Permissão está nulo.");
-		Objects.requireNonNull(permissao.getEditar(), "Editar da Permissão está nulo.");
-		Objects.requireNonNull(permissao.getDeletar(), "Deletar da Permissão está nulo.");
-		Objects.requireNonNull(permissao.getBuscar(), "Buscar da Permissão está nulo.");
-		Objects.requireNonNull(permissao.getListar(), "Listar da Permissão está nulo.");
-		var recurso = recursoService.findByIdEntity(permissao.getRecurso().getNome());
-		var permissaoEntity = findByPerfilAndRecurso(perfil, recurso);
-		Permissao perm = new Permissao(permissaoEntity.getPemcod(), perfil, recurso, permissao.getListar(), permissao.getBuscar(), permissao.getCriar(), permissao.getEditar(), permissao.getDeletar());
-		return new PermissaoDTO(permissaoRepository.save(perm));
-	}
+        Permissao permissaoAtualizada = new Permissao(
+                permissaoExistente.getPemcod(),
+                perfil,
+                recurso,
+                permissaoModel.getListar(),
+                permissaoModel.getBuscar(),
+                permissaoModel.getCriar(),
+                permissaoModel.getEditar(),
+                permissaoModel.getDeletar()
+        );
 
-	public ResponseGlobalModel deleteEntityPerfil(@NonNull Long perfil) throws IOException {
-		try {
-			deleteEntityPermissao(perfil);
-			perfilRepository.deleteById(perfil);
-			return Utils.responseMessageSucess("Apagado com Sucesso.");
-		} catch (Exception e) {
-			throw new IOException("Erro ao apagar o perfil. Mensagem" + e.getMessage());
-		}
-	}
+        return new PermissaoDTO(permissaoRepository.save(permissaoAtualizada));
+    }
 
-	public ResponseGlobalModel deleteEntityPermissao(@NonNull Long codigo) throws IOException {
-		Objects.requireNonNull(codigo, "Código da Permissão está nulo.");
-		try {
-			permissaoRepository.deleteByPerfil_Percod(codigo);
-			return Utils.responseMessageSucess("Apagado com Sucesso.");
-		} catch (Exception e) {
-			throw new IOException("Erro ao apagar as permissões. Mensagem" + e.getMessage());
-		}
-	}
+    private void validatePermissaoFields(Perfil perfil, PermissaoModel permissaoModel) {
+        Objects.requireNonNull(perfil, "Perfil da Permissão está nulo.");
+        Objects.requireNonNull(permissaoModel.getRecurso(), "Recurso da Permissão está nulo.");
+        Objects.requireNonNull(permissaoModel.getCriar(), "Campo 'Criar' da Permissão está nulo.");
+        Objects.requireNonNull(permissaoModel.getEditar(), "Campo 'Editar' da Permissão está nulo.");
+        Objects.requireNonNull(permissaoModel.getDeletar(), "Campo 'Deletar' da Permissão está nulo.");
+        Objects.requireNonNull(permissaoModel.getBuscar(), "Campo 'Buscar' da Permissão está nulo.");
+        Objects.requireNonNull(permissaoModel.getListar(), "Campo 'Listar' da Permissão está nulo.");
+    }
 
-	public RecursoDTO getNomeRecursoDTO(@NonNull String name) throws EntityNotFoundException, IOException {
-		return new RecursoDTO(recursoService.findByIdEntity(name));
-	}
+    public ResponseGlobalModel deleteEntityPerfil(@NonNull Long perfil) throws IOException {
+        try {
+            deleteEntityPermissao(perfil);
+            perfilRepository.deleteById(perfil);
+            return Utils.responseMessageSucess("Apagado com Sucesso.");
+        } catch (Exception e) {
+            throw new IOException("Erro ao apagar o perfil. Mensagem: " + e.getMessage(), e);
+        }
+    }
 
-	@Override
-	public Page<PerfilPermissaoDTO> findAll(String nome, @NonNull Pageable pageable) throws EntityNotFoundException, IOException {
-		return findAllPagePerfil(nome, pageable);
-	}
+    public ResponseGlobalModel deleteEntityPermissao(@NonNull Long codigo) throws IOException {
+        Objects.requireNonNull(codigo, "Código da Permissão está nulo.");
+        try {
+            permissaoRepository.deleteByPerfil_Percod(codigo);
+            return Utils.responseMessageSucess("Apagado com Sucesso.");
+        } catch (Exception e) {
+            throw new IOException("Erro ao apagar as permissões. Mensagem: " + e.getMessage(), e);
+        }
+    }
 
-	@Override
-	public PerfilPermissaoDTO save(PerfilModel perModel) throws IOException {
-		return savePerfilApi(perModel);
-	}
+    public RecursoDTO getNomeRecursoDTO(@NonNull String nome) throws EntityNotFoundException, IOException {
+        return new RecursoDTO(recursoService.findByIdEntity(nome));
+    }
 
-	@Override
-	public PerfilPermissaoDTO update(@NonNull Long codigo, PerfilModel perModel) throws EntityNotFoundException, IOException {
-		return updatePerfilApi(codigo, perModel);
-	}
+    @Override
+    public Page<PerfilPermissaoDTO> findAll(String nome, @NonNull Pageable pageable) throws EntityNotFoundException, IOException {
+        return findAllPagePerfil(nome, pageable);
+    }
 
-	@Override
-	public List<PerfilPermissaoDTO> findAll() throws EntityNotFoundException, IOException {
-		return findAllPerfil();
-	}
+    @Override
+    public PerfilPermissaoDTO save(PerfilModel perModel) throws IOException {
+        return savePerfilApi(perModel);
+    }
 
-	@Override
-	public PerfilPermissaoDTO findById(@NonNull Long codigo) throws EntityNotFoundException, IOException {
-		return findByIdPerfil(codigo);
-	}
+    @Override
+    public PerfilPermissaoDTO update(@NonNull Long codigo, PerfilModel perModel) throws EntityNotFoundException, IOException {
+        return updatePerfilApi(codigo, perModel);
+    }
 
-	@Override
-	public ResponseGlobalModel delete(@NonNull Long perfil) throws IOException {
-		return deleteEntityPerfil(perfil);
-	}
+    @Override
+    public List<PerfilPermissaoDTO> findAll() throws EntityNotFoundException, IOException {
+        return findAllPerfil();
+    }
 
+    @Override
+    public PerfilPermissaoDTO findById(@NonNull Long codigo) throws EntityNotFoundException, IOException {
+        return findByIdPerfil(codigo);
+    }
+
+    @Override
+    public ResponseGlobalModel delete(@NonNull Long perfil) throws IOException {
+        return deleteEntityPerfil(perfil);
+    }
 }

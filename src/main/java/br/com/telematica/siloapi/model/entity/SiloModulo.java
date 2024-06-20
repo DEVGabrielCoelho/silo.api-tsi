@@ -2,7 +2,6 @@ package br.com.telematica.siloapi.model.entity;
 
 import java.util.Date;
 
-import br.com.telematica.sirene.models.entitys.SireneModulo;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -30,17 +29,17 @@ public class SiloModulo {
 	@Column(nullable = false, unique = true)
 	private String smonse;
 	@Column(nullable = false)
-	private Long smotke;
+	private Long smotke = Long.valueOf(0);
 	@Column(nullable = false)
-	private Long smotme;
+	private Long smotme = Long.valueOf(0);
+	@Column(nullable = false)
+	private Integer smogmt;
 	private Date smohke;
 	private Date smohme;
 	@Column(nullable = false)
-	private Integer smogmt;
+	private String smocke = "#ff0000";
 	@Column(nullable = false)
-	private String smocke;
-	@Column(nullable = false)
-	private String smocme;
+	private String smocme = "#ffff00";
 	@Column(nullable = false)
 	private String smosta;
 

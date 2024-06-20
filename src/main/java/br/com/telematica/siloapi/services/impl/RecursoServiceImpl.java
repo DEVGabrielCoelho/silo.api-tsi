@@ -26,105 +26,119 @@ import jakarta.persistence.EntityNotFoundException;
 @Service
 public class RecursoServiceImpl implements RecursoServInterface {
 
-	@Autowired
-	private RecursoRepository recursoRepository;
+    @Autowired
+    private RecursoRepository recursoRepository;
 
-	public Recurso findByIdEntity(@NonNull Long codigo) {
-		var entity = recursoRepository.findById(codigo);
-		if (entity.isEmpty())
-			return null;
-		return entity.get();
-	}
+    public Recurso findByIdEntity(@NonNull Long codigo) {
+        return recursoRepository.findById(codigo)
+                .orElseThrow(() -> new EntityNotFoundException("Recurso não encontrado com o código: " + codigo));
+    }
 
-	public Recurso findByIdEntity(@NonNull String nome) {
-		var entity = recursoRepository.findByRecnom(nome);
-		if (entity.isEmpty())
-			return null;
-		return entity.get();
-	}
+    public Recurso findByIdEntity(@NonNull String nome) {
+        return recursoRepository.findByRecnom(nome)
+                .orElseThrow(() -> new EntityNotFoundException("Recurso não encontrado com o nome: " + nome));
+    }
 
-	public RecursoDTO findByIdApi(@NonNull String codigo) throws EntityNotFoundException, IOException {
-		var entity = findByIdEntity(codigo);
-		if (entity == null)
-			return null;
+    public RecursoDTO findByIdApi(@NonNull String nome) throws EntityNotFoundException, IOException {
+        Recurso recurso = findByIdEntity(nome);
+        return new RecursoDTO(recurso);
+    }
 
-		return new RecursoDTO(entity);
-	}
+    public RecursoDTO findByIdApi(@NonNull Long codigo) throws EntityNotFoundException, IOException {
+        Recurso recurso = findByIdEntity(codigo);
+        return new RecursoDTO(recurso);
+    }
 
-	public RecursoDTO findByIdApi(@NonNull Long codigo) throws EntityNotFoundException, IOException {
-		var entity = findByIdEntity(codigo);
-		if (entity == null)
-			return null;
+    public Recurso saveEntity(RecursoModel recursoModel) {
+        validateRecursoModelFields(recursoModel);
+        Recurso recurso = new Recurso(
+                null,
+                RecursoMapEnum.mapDescricaoToNome(recursoModel.getNome().getNome()),
+                recursoModel.getDescricao()
+        );
+        return recursoRepository.save(recurso);
+    }
 
-		return new RecursoDTO(entity);
-	}
+    public Recurso updateEntity(Long codigo, RecursoModel recursoModel) {
+        Objects.requireNonNull(codigo, "Código do Recurso está nulo.");
+        validateRecursoModelFields(recursoModel);
+        Recurso recurso = new Recurso(
+                codigo,
+                recursoModel.getNome().getNome(),
+                recursoModel.getDescricao()
+        );
+        return recursoRepository.save(recurso);
+    }
 
-	public Recurso saveEntity(RecursoModel recursoModel) {
-		Objects.requireNonNull(recursoModel.getNome(), "Nome do Recurso está nulo.");
-		return recursoRepository.save(new Recurso(null, RecursoMapEnum.mapDescricaoToNome(recursoModel.getNome().getNome()), recursoModel.getDescricao()));
-	}
+    public List<Recurso> findAllEntity() throws EntityNotFoundException, IOException {
+        return recursoRepository.findAll();
+    }
 
-	public Recurso updateEntity(Long codigo, RecursoModel recursoModel) {
-		Objects.requireNonNull(codigo, "Código do Recurso está nulo.");
-		Objects.requireNonNull(recursoModel.getNome(), "Nome do Recurso está nulo.");
-		return recursoRepository.save(new Recurso(codigo, recursoModel.getNome().getNome(), recursoModel.getDescricao()));
-	}
+    public ResponseGlobalModel deleteEntity(@NonNull Long codigo) throws IOException {
+        Objects.requireNonNull(codigo, "Código do Recurso está nulo.");
+        try {
+            recursoRepository.deleteById(codigo);
+            return Utils.responseMessageSucess("Apagado com sucesso.");
+        } catch (Exception e) {
+            throw new IOException("Erro ao apagar o item. Mensagem: " + e.getMessage(), e);
+        }
+    }
 
-	public List<Recurso> findAllEntity() throws EntityNotFoundException, IOException {
-		return recursoRepository.findAll();
-	}
+    public Page<Recurso> findAllEntity(String nome, Pageable pageable) throws EntityNotFoundException, IOException {
+        Objects.requireNonNull(pageable, "Pageable do Recurso está nulo.");
+        if (nome == null) {
+            return recursoRepository.findAll(pageable);
+        } else {
+            return recursoRepository.findByRecnomLike(nome, pageable);
+        }
+    }
 
-	public ResponseGlobalModel deleteEntity(@NonNull Long perfil) throws IOException {
-		try {
-			recursoRepository.deleteById(perfil);
-			return Utils.responseMessageSucess("Apagado com Sucesso.");
-		} catch (Exception e) {
-			throw new IOException("Erro ao apagar o item. Mensagem" + e.getMessage());
-		}
-	}
+    @Override
+    public ResponseEntity<Page<RecursoDTO>> findAll(String nome, Pageable pageable) throws EntityNotFoundException, IOException {
+        Page<Recurso> recursos = findAllEntity(nome, pageable);
+        return MessageResponse.success(recursos.map(RecursoDTO::new));
+    }
 
-	public Page<Recurso> findAllEntity(String nome, Pageable pageable) throws EntityNotFoundException, IOException {
-		Objects.requireNonNull(pageable, "Pageable do Recurso está nulo.");
-		Page<Recurso> result;
-		if (nome == null)
-			result = recursoRepository.findAll(pageable);
-		else
-			result = recursoRepository.findByRecnomLike(nome, pageable);
-		return result;
-	}
+    @Override
+    public ResponseEntity<RecursoDTO> save(RecursoModel recursoModel) {
+        Recurso recurso = saveEntity(recursoModel);
+        return MessageResponse.success(new RecursoDTO(recurso));
+    }
 
-	@Override
-	public ResponseEntity<Page<RecursoDTO>> findAll(String nome, Pageable pageable) throws EntityNotFoundException, IOException {
-		return MessageResponse.success(findAllEntity(nome, pageable).map(map -> new RecursoDTO(map)));
-	}
+    @Override
+    public ResponseEntity<RecursoDTO> update(Long codigo, RecursoModel recursoModel) {
+        Recurso recurso = updateEntity(codigo, recursoModel);
+        return MessageResponse.success(new RecursoDTO(recurso));
+    }
 
-	@Override
-	public ResponseEntity<RecursoDTO> save(RecursoModel recursoModel) {
-		return MessageResponse.success(new RecursoDTO(saveEntity(recursoModel)));
-	}
+    @Override
+    public ResponseEntity<List<RecursoDTO>> findAll() throws EntityNotFoundException, IOException {
+        List<RecursoDTO> recursos = findAllEntity().stream()
+                .map(RecursoDTO::new)
+                .collect(Collectors.toList());
+        return MessageResponse.success(recursos);
+    }
 
-	@Override
-	public ResponseEntity<RecursoDTO> update(Long codigo, RecursoModel recursoModel) {
-		return MessageResponse.success(new RecursoDTO(updateEntity(codigo, recursoModel)));
-	}
+    @Override
+    public ResponseEntity<RecursoDTO> findById(@NonNull Long codigo) throws EntityNotFoundException, IOException {
+        RecursoDTO recursoDTO = findByIdApi(codigo);
+        return MessageResponse.success(recursoDTO);
+    }
 
-	@Override
-	public ResponseEntity<List<RecursoDTO>> findAll() throws EntityNotFoundException, IOException {
-		return MessageResponse.success(findAllEntity().stream().map(map -> new RecursoDTO(map)).collect(Collectors.toList()));
-	}
+    @Override
+    public ResponseEntity<RecursoDTO> findByString(@NonNull String nome) throws EntityNotFoundException, IOException {
+        RecursoDTO recursoDTO = findByIdApi(nome);
+        return MessageResponse.success(recursoDTO);
+    }
 
-	@Override
-	public ResponseEntity<RecursoDTO> findById(@NonNull Long codigo) throws EntityNotFoundException, IOException {
-		return MessageResponse.success(findByIdApi(codigo));
-	}
+    @Override
+    public ResponseEntity<ResponseGlobalModel> delete(@NonNull Long codigo) throws IOException {
+        ResponseGlobalModel response = deleteEntity(codigo);
+        return MessageResponse.success(response);
+    }
 
-	@Override
-	public ResponseEntity<RecursoDTO> findByString(@NonNull String nome) throws EntityNotFoundException, IOException {
-		return MessageResponse.success(findByIdApi(nome));
-	}
-
-	@Override
-	public ResponseEntity<ResponseGlobalModel> delete(@NonNull Long codigo) throws IOException {
-		return MessageResponse.success(deleteEntity(codigo));
-	}
+    private void validateRecursoModelFields(RecursoModel recursoModel) {
+        Objects.requireNonNull(recursoModel.getNome(), "Nome do Recurso está nulo.");
+        Objects.requireNonNull(recursoModel.getDescricao(), "Descrição do Recurso está nulo.");
+    }
 }
