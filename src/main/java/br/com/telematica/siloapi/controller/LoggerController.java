@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.telematica.siloapi.model.LoggerModel;
 import br.com.telematica.siloapi.model.dto.LoggerDTO;
+import br.com.telematica.siloapi.services.LoggerServInterface;
 import br.com.telematica.siloapi.services.impl.LoggerServiceImpl;
 import br.com.telematica.siloapi.utils.Utils;
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,7 +31,7 @@ import jakarta.persistence.EntityNotFoundException;
 public class LoggerController extends SecurityRestController {
 
     @Autowired
-    private LoggerServiceImpl logServ;
+    private LoggerServInterface logServ;
 
     @GetMapping("/v1/paginado")
     @Operation(description = "Busca paginada de logs. Retorna uma lista paginada de logs com opções de filtragem e ordenação.")
@@ -43,19 +44,19 @@ public class LoggerController extends SecurityRestController {
             return ResponseEntity.badRequest().body(Page.empty());
         }
 
-        Page<LoggerDTO> result = logServ.findByAllPaginado(null, filtro, startDate, endDate, Utils.consultaPage(ordenarEntity, direcao, pagina, tamanho));
-        return ResponseEntity.ok(result);
+        
+        return logServ.findByAllPaginado(null, filtro, startDate, endDate, Utils.consultaPage(ordenarEntity, direcao, pagina, tamanho));
     }
 
     @GetMapping("/v1/listar")
     @Operation(description = "Listar todos os logs cadastrados. Retorna uma lista de todos os logs existentes.")
     public ResponseEntity<List<LoggerDTO>> buscarListaLogger() throws EntityNotFoundException, IOException {
-        return ResponseEntity.ok(logServ.findByAll());
+        return logServ.findByAll();
     }
 
     @PostMapping("/v1/cadastrar")
     @Operation(description = "Cadastrar um novo log. Recebe os detalhes do log e o armazena no sistema.")
     public ResponseEntity<LoggerDTO> cadastrarLogger(@RequestBody LoggerModel entity) throws EntityNotFoundException, IOException {
-        return ResponseEntity.ok(logServ.save(entity));
+        return logServ.save(entity);
     }
 }

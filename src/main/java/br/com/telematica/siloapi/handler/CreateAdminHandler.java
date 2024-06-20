@@ -54,7 +54,7 @@ public class CreateAdminHandler {
 	public void createAdminHandler() {
 		try {
 			logs.debug("CreateAdminHandler Start... ");
-			var user = usuarioService.findByIdEntity("ADMIN");
+			var user = usuarioService.findLoginEntity("ADMIN");
 			if (user == null) {
 				createEmpresa();
 				createRecurso();
@@ -196,7 +196,7 @@ public class CreateAdminHandler {
 			var perfil = perfilPermissaoService.findByIdPerfilEntity("ADMIN");
 			var abrangencia = abrangenciaService.findByIdEntity("ADMIN");
 			UsuarioModel usuario = new UsuarioModel("ADMIN", Long.valueOf(0), "admin", "admin", "admin@admin.com", empresa.getEmpcod(), perfil.getPercod(), abrangencia.getAbrcod());
-			var userCheck = usuarioService.findByIdEntity("admin");
+			var userCheck = usuarioService.findLoginEntity("admin");
 			if (userCheck == null)
 				usuarioService.saveUpdateEntity(usuario);
 		} catch (Exception e) {
@@ -211,7 +211,7 @@ public class CreateAdminHandler {
 			var perfil = perfilPermissaoService.findByIdPerfilEntity("DEVICE");
 			var abrangencia = abrangenciaService.findByIdEntity("DEVICE");
 			UsuarioModel usuario = new UsuarioModel("DEVICE", Long.valueOf(0), "device", "device", "DEVICE@DEVICE.com", empresa.getEmpcod(), perfil.getPercod(), abrangencia.getAbrcod());
-			var userCheck = usuarioService.findByIdEntity("device");
+			var userCheck = usuarioService.findLoginEntity("device");
 			if (userCheck == null)
 				usuarioService.saveUpdateEntity(usuario);
 		} catch (Exception e) {

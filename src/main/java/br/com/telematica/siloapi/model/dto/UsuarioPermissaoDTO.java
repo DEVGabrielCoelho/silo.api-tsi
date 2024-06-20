@@ -110,15 +110,14 @@ public class UsuarioPermissaoDTO extends Codigo {
 		this.abrangencia = abrangencia;
 	}
 
-	public UsuarioPermissaoDTO(Usuario user, EmpresaDTO empresa, AbrangenciaDTO abrangencia, PerfilPermissaoDTO perfil) {
+	public UsuarioPermissaoDTO(Usuario user, PerfilPermissaoDTO perfil) {
 		super();
 		this.setCodigo(user.getUsucod());
 		this.login = user.getUsulog();
 		this.senha = user.getUsusen();
 		this.email = user.getUsuema();
-		this.empresa = empresa;
-		;
-		this.abrangencia = abrangencia;
+		this.empresa = new EmpresaDTO(user.getEmpresa());
+		this.abrangencia = new AbrangenciaDTO(user.getAbrangencia());
 		this.perfil = perfil;
 	}
 

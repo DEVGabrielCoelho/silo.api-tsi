@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -32,6 +33,7 @@ import br.com.telematica.siloapi.model.entity.Usuario;
 import br.com.telematica.siloapi.records.GenerateTokenRecords;
 import br.com.telematica.siloapi.services.AuthServInterface;
 import br.com.telematica.siloapi.utils.JWTUtil;
+import br.com.telematica.siloapi.utils.message.MessageResponse;
 
 @Service
 public class AuthServiceImpl implements AuthServInterface {
@@ -51,17 +53,18 @@ public class AuthServiceImpl implements AuthServInterface {
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		Usuario usuario = userService.findLoginEntity(username);
-		if (usuario == null)
+		if (usuario == null) {
 			log.info("Usuário não encontrado: " + username);
-//			throw new UsernameNotFoundException("Usuário não encontrado: " + username);
-		return (UserDetails) new Usuario(usuario);
-
+			throw new UsernameNotFoundException("Usuário não encontrado: " + username);
+		}
+		return usuario;
 	}
 
 	@Override
 	public GenerateTokenRecords getToken(AuthModel authToken) throws IOException {
 		Objects.requireNonNull(authToken.getLogin(), "Login está nulo.");
-		Objects.requireNonNull(authToken.getSenha(), "Senha está nulo.");
+		Objects.requireNonNull(authToken.getSenha(), "Senha está nula.");
+
 		Usuario user = userService.findLoginEntity(authToken.getLogin());
 		return jwtUtil.generateToken(user);
 	}
@@ -71,9 +74,10 @@ public class AuthServiceImpl implements AuthServInterface {
 		try {
 			return jwtUtil.validateToken(token);
 		} catch (TokenExpiredException e) {
-			throw new TokenExpiredException(e.getMessage(), null);
+			throw new TokenExpiredException("Token expirado.", null);
 		} catch (JWTVerificationException | JWTCreationException e) {
-			throw new AccessDeniedException(e.getMessage());
+			log.error("Erro ao validar o token: {}", e.getMessage(), e);
+			throw new AccessDeniedException("Token inválido.");
 		}
 	}
 
@@ -82,51 +86,59 @@ public class AuthServiceImpl implements AuthServInterface {
 		try {
 			return jwtUtil.getExpirationDateFromToken(token);
 		} catch (JWTVerificationException e) {
-			throw new JWTVerificationException(e.getMessage());
+			log.error("Erro ao validar o tempo do token: {}", e.getMessage(), e);
+			throw new JWTVerificationException("Erro ao validar o tempo do token.");
 		}
 	}
 
 	@Override
-	public ResponseAuthDTO refreshToken(String token) {
+	public ResponseEntity<ResponseAuthDTO> refreshToken(String token) {
 		try {
 			var refresh = jwtUtil.validateOrRefreshToken(token);
 			Usuario userCheck = userService.findLoginEntity(refresh.username());
-			return new ResponseAuthDTO(refresh.token(), refresh.date(), refresh.expiryIn(), userCheck.getUsucod(), new PerfilDTO(userCheck.getPerfil()));
+			return MessageResponse.success(new ResponseAuthDTO(refresh.token(), refresh.date(), refresh.expiryIn(),
+					userCheck.getUsucod(), new PerfilDTO(userCheck.getPerfil())));
 		} catch (JWTVerificationException e) {
-			throw new JWTVerificationException(e.getMessage());
+			log.error("Erro ao atualizar o token: {}", e.getMessage(), e);
+			throw new JWTVerificationException("Erro ao atualizar o token.");
 		}
 	}
 
 	@Override
-	public ResponseAuthDTO authLogin(@NonNull AuthModel authReq) throws Exception {
+	public ResponseEntity<ResponseAuthDTO> authLogin(@NonNull AuthModel authReq) throws Exception {
+		Objects.requireNonNull(authReq.getLogin(), "Login está nulo.");
+		Objects.requireNonNull(authReq.getSenha(), "Senha está nula.");
+
 		Usuario userCheck = userService.findLoginEntity(authReq.getLogin());
 
 		try {
-			var userAutheticationToken = new UsernamePasswordAuthenticationToken(authReq.getLogin(), authReq.getSenha());
-			authenticationManager.authenticate(userAutheticationToken);
+			var userAuthenticationToken = new UsernamePasswordAuthenticationToken(authReq.getLogin(), authReq.getSenha());
+			authenticationManager.authenticate(userAuthenticationToken);
 
 			GenerateTokenRecords tokenGenerate = getToken(authReq);
-			return new ResponseAuthDTO(tokenGenerate.token(), tokenGenerate.date(), tokenGenerate.expiryIn(), userCheck.getUsucod(), new PerfilDTO(userCheck.getPerfil()));
+			return MessageResponse.success(new ResponseAuthDTO(tokenGenerate.token(), tokenGenerate.date(),
+					tokenGenerate.expiryIn(), userCheck.getUsucod(), new PerfilDTO(userCheck.getPerfil())));
 		} catch (AuthenticationException e) {
+			log.error("Erro na autenticação: {}", e.getMessage(), e);
 			throw new RuntimeException("Erro na autenticação: " + e.getMessage());
 		}
 	}
 
 	@Override
-	public TokenValidationResponseDTO validateAndParseToken(@NonNull String token) {
+	public ResponseEntity<TokenValidationResponseDTO> validateAndParseToken(@NonNull String token) {
 		Objects.requireNonNull(token, "Token está nulo.");
+
 		String username = validToken(token);
 		if (username == null) {
-			throw new JWTVerificationException("Invalid token");
+			log.error("Token inválido: {}", token);
+			throw new JWTVerificationException("Token inválido.");
 		}
 
 		Instant expiration = validateTimeToken(token);
 		long timeToExpiry = Duration.between(Instant.now(), expiration).toMillis();
-
 		LocalDateTime expirationLocalDateTime = expiration.atZone(ZoneId.systemDefault()).toLocalDateTime();
 
-		return new TokenValidationResponseDTO(true, timeToExpiry, expirationLocalDateTime.toString());
-
+		return MessageResponse
+				.success(new TokenValidationResponseDTO(true, timeToExpiry, expirationLocalDateTime.toString()));
 	}
-
 }

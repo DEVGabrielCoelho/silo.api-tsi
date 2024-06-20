@@ -88,7 +88,7 @@ public class FirmwareDTO extends Codigo {
 		this.modelo = firm.getFirmod();
 		this.nome = firm.getFirnam();
 		this.descricao = firm.getFirdesc();
-		this.arquivo = "Arquivo de audio.";
+		this.arquivo = "Arquivo de audio. Size: " + firm.getFirarq().length;
 	}
 
 	public FirmwareDTO() {

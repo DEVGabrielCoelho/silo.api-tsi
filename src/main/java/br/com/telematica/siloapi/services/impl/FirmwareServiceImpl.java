@@ -6,7 +6,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,88 +18,103 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import br.com.telematica.siloapi.exception.ResponseGlobalModel;
 import br.com.telematica.siloapi.model.dto.FirmwareDTO;
 import br.com.telematica.siloapi.model.entity.Firmware;
 import br.com.telematica.siloapi.repository.FirmwareRepository;
-import br.com.telematica.siloapi.utils.Utils;
+import br.com.telematica.siloapi.services.FirmwareServInterface;
+import br.com.telematica.siloapi.utils.message.MessageResponse;
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
-public class FirmwareServiceImpl {
+public class FirmwareServiceImpl implements FirmwareServInterface {
 
 	@Autowired
-	private FirmwareRepository firmRepository;
+	private FirmwareRepository firmwareRepository;
 
-	public FirmwareDTO update(Long codigo, MultipartFile file, String modelo) throws IOException {
+	@Override
+	public ResponseEntity<FirmwareDTO> update(Long codigo, MultipartFile file, String modelo) throws IOException {
 		Objects.requireNonNull(codigo, "Código do Firmware está nulo.");
 		Objects.requireNonNull(file, "Arquivo do Firmware está nulo.");
-		Objects.requireNonNull(modelo, "Modelo está nulo");
-		byte[] arq = file.getBytes();
-		var firm = new Firmware(codigo, modelo, file.getContentType(), file.getOriginalFilename(), arq);
-		return new FirmwareDTO(firmRepository.save(firm));
+		Objects.requireNonNull(modelo, "Modelo está nulo.");
+
+		byte[] fileBytes = file.getBytes();
+		Firmware firmware = new Firmware(codigo, modelo, file.getOriginalFilename(), file.getContentType(), fileBytes);
+		Firmware savedFirmware = firmwareRepository.save(firmware);
+
+		return MessageResponse.success(new FirmwareDTO(savedFirmware));
 	}
 
-	public FirmwareDTO save(MultipartFile file, String modelo) throws IOException {
+	@Override
+	public ResponseEntity<FirmwareDTO> save(MultipartFile file, String modelo) throws IOException {
 		Objects.requireNonNull(file, "Arquivo do Firmware está nulo.");
-		Objects.requireNonNull(modelo, "Número de série está nulo");
-		byte[] arq = file.getBytes();
-		var firm = new Firmware(null, modelo, file.getContentType(), file.getOriginalFilename(), arq);
-		return new FirmwareDTO(firmRepository.save(firm));
+		Objects.requireNonNull(modelo, "Modelo está nulo.");
+
+		byte[] fileBytes = file.getBytes();
+		Firmware firmware = new Firmware(null, modelo, file.getOriginalFilename(), file.getContentType(), fileBytes);
+		Firmware savedFirmware = firmwareRepository.save(firmware);
+
+		return MessageResponse.success(new FirmwareDTO(savedFirmware));
 	}
 
-	public ResponseGlobalModel delete(Long codigo) throws IOException {
-		Objects.requireNonNull(codigo, "Código está nulo");
-		var firmId = firmRepository.findById(codigo);
-		if (firmId.isEmpty())
-			throw new EntityNotFoundException("Firmware não encontrado ou já está deletado.");
-		firmRepository.deleteById(codigo);
-		return Utils.responseMessageSucess("Firmware apagado com sucesso. Código do Firmware: " + codigo);
+	@Override
+	public ResponseEntity<FirmwareDTO> delete(Long codigo) throws IOException {
+		Objects.requireNonNull(codigo, "Código está nulo.");
+
+		Firmware firmware = firmwareRepository.findById(codigo)
+				.orElseThrow(() -> new EntityNotFoundException("Firmware não encontrado ou já está deletado."));
+		firmwareRepository.deleteById(firmware.getFircod());
+
+		return MessageResponse.success(null);
 	}
 
+	@Override
 	public ResponseEntity<Resource> findByIdDownload(Long codigo) throws NoSuchAlgorithmException {
-		Objects.requireNonNull(codigo, "Código do Audio da Medição está nulo.");
+		Objects.requireNonNull(codigo, "Código do Firmware está nulo.");
 
-		Firmware firm = firmRepository.findById(codigo).orElseThrow(() -> new EntityNotFoundException("Firmware não encontrado ou deletado."));
+		Firmware firmware = firmwareRepository.findById(codigo)
+				.orElseThrow(() -> new EntityNotFoundException("Firmware não encontrado ou deletado."));
 
-		byte[] arquivoBytes = firm.getFirarq();
-		if (arquivoBytes == null)
-			throw new EntityNotFoundException("Erro ao obter o Bytes do arquivo");
-
-		byte[] hash = MessageDigest.getInstance("SHA-256").digest(arquivoBytes);
-		String checksum = new BigInteger(1, hash).toString(16);
-		Resource arquivoResource = new ByteArrayResource(arquivoBytes);
-
-		String nomeArquivo = firm.getFirdesc().toString();
-		HttpHeaders headers = new HttpHeaders();
-		headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + nomeArquivo + "\"");
-		headers.add(HttpHeaders.CONTENT_TYPE, firm.getFirnam());
-		headers.add(HttpHeaders.CONTENT_LENGTH, String.valueOf(arquivoBytes.length));
-		headers.add("CheckSum", checksum);
-
-		return ResponseEntity.ok().headers(headers).body(arquivoResource);
-	}
-
-	public Page<FirmwareDTO> findAllPaginado(Pageable pageable) {
-		Objects.requireNonNull(pageable, "Pageable da Firmware está nulo.");
-		Page<Firmware> result = firmRepository.findAll(pageable);
-
-		return result.map(medicaoAudio -> new FirmwareDTO(medicaoAudio));
-	}
-
-	public List<FirmwareDTO> findByAll() {
-		List<Firmware> result = firmRepository.findAll();
-
-		return result.stream().map(firmware -> new FirmwareDTO(firmware)).collect(Collectors.toList());
-	}
-
-	public FirmwareDTO findById(Long codigo) {
-		Objects.requireNonNull(codigo, "Pageable da Firmware está nulo.");
-		Optional<Firmware> result = firmRepository.findById(codigo);
-		if (!result.isPresent() || result.isEmpty()) {
-			throw new EntityNotFoundException("Firmware não encontrada ou deletada.");
+		byte[] fileBytes = firmware.getFirarq();
+		if (fileBytes == null) {
+			throw new EntityNotFoundException("Erro ao obter os bytes do arquivo");
 		}
-		return result.map(medicaoAudio -> new FirmwareDTO(medicaoAudio)).get();
 
+		byte[] hash = MessageDigest.getInstance("SHA-256").digest(fileBytes);
+		String checksum = new BigInteger(1, hash).toString(16);
+		Resource resource = new ByteArrayResource(fileBytes);
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + firmware.getFirnam() + "\"");
+		headers.add(HttpHeaders.CONTENT_TYPE, firmware.getFirdesc());
+		headers.add(HttpHeaders.CONTENT_LENGTH, String.valueOf(fileBytes.length));
+		headers.add("Checksum", checksum);
+
+		return ResponseEntity.ok().headers(headers).body(resource);
+	}
+
+	@Override
+	public ResponseEntity<Page<FirmwareDTO>> findAllPaginado(Pageable pageable) {
+		Objects.requireNonNull(pageable, "Pageable do Firmware está nulo.");
+
+		Page<Firmware> result = firmwareRepository.findAll(pageable);
+		return MessageResponse.success(result.map(FirmwareDTO::new));
+	}
+
+	@Override
+	public ResponseEntity<List<FirmwareDTO>> findAll() {
+		List<Firmware> firmwares = firmwareRepository.findAll();
+		List<FirmwareDTO> firmwareDTOs = firmwares.stream().map(FirmwareDTO::new).collect(Collectors.toList());
+
+		return MessageResponse.success(firmwareDTOs);
+	}
+
+	@Override
+	public ResponseEntity<FirmwareDTO> findById(Long codigo) {
+		Objects.requireNonNull(codigo, "Código do Firmware está nulo.");
+
+		Firmware firmware = firmwareRepository.findById(codigo)
+				.orElseThrow(() -> new EntityNotFoundException("Firmware não encontrada ou deletada."));
+
+		return MessageResponse.success(new FirmwareDTO(firmware));
 	}
 }

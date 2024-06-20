@@ -1,7 +1,5 @@
 package br.com.telematica.siloapi.model.dto;
 
-import br.com.telematica.siloapi.model.entity.Empresa;
-import br.com.telematica.siloapi.model.entity.Perfil;
 import br.com.telematica.siloapi.model.entity.Usuario;
 
 public class UsuarioDTO extends Codigo {
@@ -142,20 +140,8 @@ public class UsuarioDTO extends Codigo {
 		this.abrangencia = abrangencia;
 	}
 
-	public UsuarioDTO(Usuario user, EmpresaDTO empresa, Perfil perfil, AbrangenciaDTO abrangencia) {
-		super();
-		this.setCodigo(user.getUsucod());
-		this.nome = user.getUsunom();
-		this.cpf = user.getUsucpf();
-		this.login = user.getUsulog();
-		this.senha = user.getUsusen();
-		this.email = user.getUsuema();
-		this.empresa = empresa;
-		this.perfil = new PerfilDTO(perfil);
-		this.abrangencia = abrangencia;
-	}
 
-	public UsuarioDTO(Usuario user, Empresa empresa, Perfil perfil, AbrangenciaDTO abrangencia) {
+	public UsuarioDTO(Usuario user) {
 		super();
 		this.setCodigo(user.getUsucod());
 		this.nome = user.getUsunom();
@@ -163,9 +149,9 @@ public class UsuarioDTO extends Codigo {
 		this.login = user.getUsulog();
 		this.senha = user.getUsusen();
 		this.email = user.getUsuema();
-		this.empresa = new EmpresaDTO(empresa);
-		this.perfil = new PerfilDTO(perfil);
-		this.abrangencia = abrangencia;
+		this.empresa = new EmpresaDTO(user.getEmpresa());
+		this.perfil = new PerfilDTO(user.getPerfil());
+		this.abrangencia = new AbrangenciaDTO(user.getAbrangencia());
 	}
 
 	public UsuarioDTO() {

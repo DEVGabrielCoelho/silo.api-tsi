@@ -3,6 +3,7 @@ package br.com.telematica.siloapi.services;
 import java.io.IOException;
 import java.time.Instant;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
@@ -18,9 +19,9 @@ public interface AuthServInterface extends UserDetailsService {
 
 	public Instant validateTimeToken(String token);
 
-	ResponseAuthDTO refreshToken(String token);
+	ResponseEntity<ResponseAuthDTO> refreshToken(String token);
 
-	TokenValidationResponseDTO validateAndParseToken(@NonNull String token);
+	ResponseEntity<TokenValidationResponseDTO> validateAndParseToken(@NonNull String token);
 
-	ResponseAuthDTO authLogin(@NonNull AuthModel authReq) throws Exception;
+	ResponseEntity<ResponseAuthDTO> authLogin(@NonNull AuthModel authReq) throws Exception;
 }
