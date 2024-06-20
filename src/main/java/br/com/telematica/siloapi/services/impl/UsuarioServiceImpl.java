@@ -58,6 +58,10 @@ public class UsuarioServiceImpl implements UsuarioServInterface {
 	public Usuario findLoginEntity(String login) {
 		return userRepository.findByUsulog(login).orElseThrow(() -> new EntityNotFoundException("Usuário não existe!"));
 	}
+	
+	public Usuario findLoginEntityNull(String login) {
+		return userRepository.findByUsulog(login).orElse(null);
+	}
 
 	public Page<Usuario> findAllEntity(String nome, @NonNull Pageable pageable) throws EntityNotFoundException, IOException {
 		Objects.requireNonNull(pageable, "Pageable do Usuário está nulo.");

@@ -36,7 +36,7 @@ public class RecursoServiceImpl implements RecursoServInterface {
 
     public Recurso findByIdEntity(@NonNull String nome) {
         return recursoRepository.findByRecnom(nome)
-                .orElseThrow(() -> new EntityNotFoundException("Recurso não encontrado com o nome: " + nome));
+        		 .orElse(null);
     }
 
     public RecursoDTO findByIdApi(@NonNull String nome) throws EntityNotFoundException, IOException {

@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 
 import br.com.telematica.siloapi.model.EmpresaModel;
 import br.com.telematica.siloapi.model.dto.EmpresaDTO;
-import jakarta.persistence.EntityNotFoundException;
 
 public interface EmpresaServInterface {
 
@@ -23,7 +22,7 @@ public interface EmpresaServInterface {
 
 	ResponseEntity<EmpresaDTO> empresaSave(EmpresaModel empresaModel) throws IOException;
 
-	ResponseEntity<EmpresaDTO> findByIdApi(Long codigo) throws EntityNotFoundException, IOException;
+	ResponseEntity<EmpresaDTO> findByIdApi(Long codigo) throws IOException;
 
 	ResponseEntity<EmpresaDTO> empresaFindByCnpjApi(Long codigo) throws IOException;
 

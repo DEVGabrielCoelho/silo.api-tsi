@@ -79,18 +79,18 @@ public class EmpresaServiceImpl implements EmpresaServInterface {
 
 	public List<EmpresaDTO> findByEmpresa() {
 		try {
-			var result = empresaRepository.findByEmpdel(1);
+			var result = empresaRepository.findAll();
 			return result.stream().map(EmpresaDTO::new).collect(Collectors.toList());
 		} catch (Exception e) {
 			log.error("Erro ao buscar empresas.", e);
-			return List.of(); // Retornar uma lista vazia em caso de erro.
+			return List.of();
 		}
 	}
 
 	@Override
 	public ResponseEntity<List<EmpresaDTO>> empresaFindAll() throws IOException {
 		var check = checagemFixaBarragem();
-		var result = check.isHier() == 0 ? empresaRepository.findByEmpdel(1) : empresaRepository.findByEmpdelAndEmpcodIn(1, check.listAbrangencia());
+		var result = check.isHier() == 0 ? empresaRepository.findAll() : empresaRepository.findByEmpcodIn(check.listAbrangencia());
 
 		return MessageResponse.success(result.stream().map(EmpresaDTO::new).collect(Collectors.toList()));
 	}
@@ -122,7 +122,7 @@ public class EmpresaServiceImpl implements EmpresaServInterface {
 		try {
 			Empresa empresa = new Empresa(null, empresaModel.getCnpj(), empresaModel.getNome(), empresaModel.getNomeFantasia(), empresaModel.getTelefone());
 			Empresa savedEmpresa = empresaRepository.save(empresa);
-			return MessageResponse.success(new EmpresaDTO(savedEmpresa));
+			return MessageResponse.create(new EmpresaDTO(savedEmpresa));
 		} catch (Exception e) {
 			log.error("Erro ao realizar o cadastro de uma empresa.", e);
 			throw new IOException("Erro ao realizar o cadastro de uma empresa.", e);
@@ -130,10 +130,10 @@ public class EmpresaServiceImpl implements EmpresaServInterface {
 	}
 
 	@Override
-	public ResponseEntity<EmpresaDTO> findByIdApi(Long codigo) throws EntityNotFoundException, IOException {
+	public ResponseEntity<EmpresaDTO> findByIdApi(Long codigo) throws IOException {
 		var empresa = findById(codigo);
 		if (empresa == null) {
-			throw new EntityNotFoundException("Empresa não encontrada ou sem abrangência.");
+			return MessageResponse.success(null);
 		}
 		return MessageResponse.success(new EmpresaDTO(empresa));
 	}
@@ -143,12 +143,21 @@ public class EmpresaServiceImpl implements EmpresaServInterface {
 		Objects.requireNonNull(codigo, "Código da Empresa está nulo.");
 		EmpresaDTO empresa = empresaFindByCnpjAbrangencia(codigo);
 		if (empresa == null) {
-			throw new IOException("Sem abrangência para essa empresa.");
+			return MessageResponse.success(null);
 		}
 		return MessageResponse.success(empresa);
 	}
 
-	public Empresa findByIdAbrangencia(Empresa emp) throws EntityNotFoundException, IOException {
+	public Empresa findById(Long codigo) throws IOException {
+		Objects.requireNonNull(codigo, "Código da Empresa está nulo.");
+		Empresa emp = empresaRepository.findById(codigo).orElse(null);
+		if (emp == null) {
+			return null;
+		}
+		return findByIdAbrangencia(emp);
+	}
+
+	public Empresa findByIdAbrangencia(Empresa emp) throws IOException {
 		var check = checagemFixaBarragem();
 		var findIdAbrangencia = abrangenciaHandler.findIdAbrangenciaPermi(check, emp.getEmpcod());
 		if (findIdAbrangencia == null) {
@@ -157,18 +166,9 @@ public class EmpresaServiceImpl implements EmpresaServInterface {
 		return emp;
 	}
 
-	public Empresa findById(Long codigo) throws EntityNotFoundException, IOException {
-		Objects.requireNonNull(codigo, "Código da Empresa está nulo.");
-		var emp = empresaRepository.findById(codigo).orElseThrow(() -> new EntityNotFoundException("Empresa não encontrada ou sem abrangência."));
-		return findByIdAbrangencia(emp);
-	}
-
 	public Empresa empresaFindByCnpjEntity(Long codigo) throws IOException {
 		Objects.requireNonNull(codigo, "Código da Empresa está nulo.");
-		return empresaRepository.findByEmpcnp(codigo).orElseThrow(() -> {
-			log.info("Empresa não encontrada ou deletada.");
-			return new EntityNotFoundException("Empresa não encontrada ou deletada.");
-		});
+		return empresaRepository.findByEmpcnp(codigo).orElse(null);
 	}
 
 	public EmpresaDTO empresaFindByCnpjAbrangencia(Long codigo) throws IOException {

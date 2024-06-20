@@ -15,16 +15,12 @@ public interface EmpresaRepository extends JpaRepository<Empresa, Long>, JpaSpec
 
 	Optional<Empresa> findByEmpcnp(Long empcnp);
 
-	Page<Empresa> findByEmpdel(Integer empdel, Pageable pageable);
+	Page<Empresa> findByEmpcodIn(Pageable pageable, Collection<Long> list);
 
-	Page<Empresa> findByEmpdelAndEmpcodIn(Integer empdel, Pageable pageable, Collection<Long> list);
+	Page<Empresa> findByEmpnomLike(String empnom, Pageable pageable);
 
-	Page<Empresa> findByEmpnomLikeAndEmpdel(String empnom, Integer empdel, Pageable pageable);
+	Page<Empresa> findByEmpnomLikeAndEmpcodIn(String empnom, Pageable pageable, Collection<Long> list);
 
-	Page<Empresa> findByEmpnomLikeAndEmpdelAndEmpcodIn(String empnom, Integer candel, Pageable pageable, Collection<Long> list);
-
-	List<Empresa> findByEmpdel(Integer empdel);
-
-	List<Empresa> findByEmpdelAndEmpcodIn(Integer empdel, Collection<Long> abdcods);
+	List<Empresa> findByEmpcodIn(Collection<Long> abdcods);
 
 }

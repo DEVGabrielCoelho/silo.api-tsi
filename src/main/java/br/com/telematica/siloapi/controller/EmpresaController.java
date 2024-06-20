@@ -1,7 +1,6 @@
 package br.com.telematica.siloapi.controller;
 
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +24,6 @@ import br.com.telematica.siloapi.services.EmpresaServInterface;
 import br.com.telematica.siloapi.utils.Utils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.persistence.EntityNotFoundException;
 
 @CrossOrigin
 @RestController
@@ -49,37 +47,37 @@ public class EmpresaController extends SecurityRestController {
 
 	@GetMapping("/v1/buscar/{codigo}")
 	@Operation(description = "Buscar empresa pelo código. Retorna os detalhes de uma empresa específica com base no código fornecido.")
-	public ResponseEntity<EmpresaDTO> buscarEmpresaPorCodigo(@PathVariable Long codigo) throws ParseException, EntityNotFoundException, IOException {
+	public ResponseEntity<EmpresaDTO> buscarEmpresaPorCodigo(@PathVariable Long codigo) throws IOException {
 		return empresaService.findByIdApi(codigo);
 	}
 
 	@GetMapping("/v1/buscar-cnpj/{cnpj}")
 	@Operation(description = "Buscar empresa pelo CNPJ. Retorna os detalhes de uma empresa específica com base no CNPJ fornecido.")
-	public ResponseEntity<EmpresaDTO> buscarEmpresaPorCnpj(@PathVariable Long cnpj) throws ParseException, IOException {
+	public ResponseEntity<EmpresaDTO> buscarEmpresaPorCnpj(@PathVariable Long cnpj) throws IOException {
 		return empresaService.empresaFindByCnpjApi(cnpj);
 	}
 
 	@GetMapping("/v1/listar")
 	@Operation(description = "Listar todas as empresas cadastradas. Retorna uma lista de todas as empresas existentes.")
-	public ResponseEntity<List<EmpresaDTO>> buscarListaEmpresa() throws ParseException, IOException {
+	public ResponseEntity<List<EmpresaDTO>> buscarListaEmpresa() throws IOException {
 		return empresaService.empresaFindAll();
 	}
 
 	@PostMapping("/v1/cadastrar")
 	@Operation(description = "Cadastrar uma nova empresa. Recebe os detalhes da empresa e a armazena no sistema.")
-	public ResponseEntity<EmpresaDTO> cadastrarEmpresa(@RequestBody EmpresaModel entity) throws ParseException, IOException {
+	public ResponseEntity<EmpresaDTO> cadastrarEmpresa(@RequestBody EmpresaModel entity) throws IOException {
 		return empresaService.empresaSave(entity);
 	}
 
 	@PutMapping("/v1/atualizar/{codigo}")
 	@Operation(description = "Atualizar o cadastro de uma empresa. Atualiza os detalhes de uma empresa com base no código fornecido.")
-	public ResponseEntity<EmpresaDTO> atualizarEmpresa(@PathVariable Long codigo, @RequestBody EmpresaModel entity) throws ParseException, IOException {
+	public ResponseEntity<EmpresaDTO> atualizarEmpresa(@PathVariable Long codigo, @RequestBody EmpresaModel entity) throws IOException {
 		return empresaService.empresaUpdate(codigo, entity);
 	}
 
 	@DeleteMapping("/v1/deletar/{codigo}")
 	@Operation(description = "Deletar uma empresa pelo código. Remove uma empresa específica com base no código fornecido.")
-	public ResponseEntity<EmpresaDTO> deletarEmpresa(@PathVariable Long codigo) throws ParseException, EntityNotFoundException, IOException {
+	public ResponseEntity<EmpresaDTO> deletarEmpresa(@PathVariable Long codigo) throws IOException {
 		return empresaService.empresaDeleteById(codigo);
 	}
 }

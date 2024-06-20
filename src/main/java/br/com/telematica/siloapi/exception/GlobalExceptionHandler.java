@@ -29,61 +29,61 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(AccessDeniedException.class)
 	public ResponseEntity<ResponseGlobalModel> handleAccessDeniedException(AccessDeniedException ex) {
-		log.error("AccessDeniedException: " + ex.getMessage());
+		log.error("AccessDeniedException: " + ex);
 		return MessageResponse.notAuthorize(MessageResponse.responseGlobalModelError(ex.getMessage()));
 	}
 
 	@ExceptionHandler(AuthenticationException.class)
 	public ResponseEntity<ResponseGlobalModel> handleAuthenticationException(AuthenticationException ex) {
-		log.error("AuthenticationException: " + ex.getMessage());
+		log.error("AuthenticationException: " + ex);
 		return MessageResponse.notAuthorize(MessageResponse.responseGlobalModelError(ex.getMessage()));
 	}
 
 	@ExceptionHandler(EntityNotFoundException.class)
 	public ResponseEntity<ResponseGlobalModel> handleEntityNotFoundException(EntityNotFoundException ex) {
-		log.error("EntityNotFoundException: " + ex.getMessage());
+		log.error("EntityNotFoundException: " + ex);
 		return MessageResponse.badRequest(MessageResponse.responseGlobalModelError(ex.getMessage()));
 	}
 
 	@ExceptionHandler(IOException.class)
 	public ResponseEntity<ResponseGlobalModel> handleIOException(IOException ex) {
-		log.error("IOException: " + ex.getMessage());
+		log.error("IOException: " + ex);
 		return MessageResponse.badRequest(MessageResponse.responseGlobalModelError(ex.getMessage()));
 	}
 
 	@ExceptionHandler(NoSuchAlgorithmException.class)
 	public ResponseEntity<ResponseGlobalModel> handleNoSuchAlgorithmException(NoSuchAlgorithmException ex) {
-		log.error("NoSuchAlgorithmException: " + ex.getMessage());
+		log.error("NoSuchAlgorithmException: " + ex);
 		return MessageResponse.badRequest(MessageResponse.responseGlobalModelError(ex.getMessage()));
 	}
 
 	@ExceptionHandler(NullPointerException.class)
 	public ResponseEntity<ResponseGlobalModel> handleNullPointerException(NullPointerException ex) {
-		log.error("NullPointerException: " + ex.getMessage());
+		log.error("NullPointerException: " + ex);
 		return MessageResponse.badRequest(MessageResponse.responseGlobalModelError(ex.getMessage()));
 	}
 
 	@ExceptionHandler(TokenExpiredException.class)
 	public ResponseEntity<ResponseGlobalModel> handleTokenExpiredException(TokenExpiredException ex) {
-		log.error("TokenExpiredException: " + ex.getMessage());
+		log.error("TokenExpiredException: " + ex);
 		return MessageResponse.badRequest(MessageResponse.responseGlobalModelError(ex.getMessage()));
 	}
 
 	@ExceptionHandler(JWTVerificationException.class)
 	public ResponseEntity<ResponseGlobalModel> handleJWTVerificationException(JWTVerificationException ex) {
-		log.error("JWTVerificationException: " + ex.getMessage());
+		log.error("JWTVerificationException: " + ex);
 		return MessageResponse.badRequest(MessageResponse.responseGlobalModelError(ex.getMessage()));
 	}
 
 	@ExceptionHandler(JWTCreationException.class)
 	public ResponseEntity<ResponseGlobalModel> handleJWTCreationException(JWTCreationException ex) {
-		log.error("JWTCreationException: " + ex.getMessage());
+		log.error("JWTCreationException: " + ex);
 		return MessageResponse.badRequest(MessageResponse.responseGlobalModelError(ex.getMessage()));
 	}
 
 	@ExceptionHandler(RuntimeException.class)
 	public ResponseEntity<ResponseGlobalModel> handleRuntimeException(RuntimeException ex) {
-		log.error("RuntimeException: " + ex.getMessage());
+		log.error("RuntimeException: " + ex);
 		return MessageResponse.badRequest(MessageResponse.responseGlobalModelError(ex.getMessage()));
 	}
 
