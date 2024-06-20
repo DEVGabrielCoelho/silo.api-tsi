@@ -42,27 +42,19 @@ public class PendencyController extends SecurityRestController {
 
 	@GetMapping("/v1/keepAlive/{numero_de_serie}")
 	@Operation(description = "KeepAlive do módulo. Atualiza a DataHora e verifica pendências do módulo pelo número de série.")
-	public ResponseEntity<KeepAliveDTO> buscarPendenciaDeModuloPorNumSerie(
-			@Valid @PathVariable @NonNull String numero_de_serie) throws EntityNotFoundException, IOException {
+	public ResponseEntity<KeepAliveDTO> buscarPendenciaDeModuloPorNumSerie(@Valid @PathVariable @NonNull String numero_de_serie) throws EntityNotFoundException, IOException {
 		return pendenciaService.findByKeepAlive(numero_de_serie);
 	}
 
 	@GetMapping("/v1/paginado")
 	@Operation(description = "Busca paginada de pendências. Retorna uma lista paginada de pendências com opções de filtragem e ordenação.")
-	public ResponseEntity<Page<PendenciasDTO>> buscarPendenciaPaginado(
-			@RequestParam(value = "pagina", defaultValue = "0") Integer pagina,
-			@RequestParam(value = "tamanho", defaultValue = "10") Integer tamanho,
-			@RequestParam(value = "filtro", required = false) String filtro,
-			@RequestParam(value = "modulo", required = false) Long modulo,
-			@RequestParam(value = "ordenarPor", defaultValue = "id") String ordenarPor,
-			@RequestParam(value = "direcao", defaultValue = "ASC", required = false) String direcao)
-			throws EntityNotFoundException, IOException {
+	public ResponseEntity<Page<PendenciasDTO>> buscarPendenciaPaginado(@RequestParam(value = "pagina", defaultValue = "0") Integer pagina, @RequestParam(value = "tamanho", defaultValue = "10") Integer tamanho, @RequestParam(value = "filtro", required = false) String filtro,
+			@RequestParam(value = "modulo", required = false) Long modulo, @RequestParam(value = "ordenarPor", defaultValue = "id") String ordenarPor, @RequestParam(value = "direcao", defaultValue = "ASC", required = false) String direcao) throws EntityNotFoundException, IOException {
 		String ordenarEntity = PendenciasDTO.consultaPagable(ordenarPor);
 		if (ordenarEntity == null) {
 			return ResponseEntity.badRequest().body(Page.empty());
 		}
-		return pendenciaService.findAllPaginado(filtro, modulo,
-				Utils.consultaPage(ordenarEntity, direcao, pagina, tamanho));
+		return pendenciaService.findAllPaginado(filtro, modulo, Utils.consultaPage(ordenarEntity, direcao, pagina, tamanho));
 	}
 
 	@GetMapping("/v1/listar")
@@ -73,22 +65,19 @@ public class PendencyController extends SecurityRestController {
 
 	@PostMapping("/v1/cadastrar")
 	@Operation(description = "Cadastrar uma nova pendência. Recebe os detalhes da pendência e a armazena no sistema.")
-	public ResponseEntity<PendenciasDTO> cadastrarPendencia(@Valid @RequestBody PendenciaModel entity)
-			throws EntityNotFoundException, IOException {
+	public ResponseEntity<PendenciasDTO> cadastrarPendencia(@Valid @RequestBody PendenciaModel entity) throws EntityNotFoundException, IOException {
 		return pendenciaService.save(entity);
 	}
 
 	@PutMapping("/v1/atualizar")
 	@Operation(description = "Atualizar uma pendência existente. Atualiza o status de uma pendência com base no ID fornecido.")
-	public ResponseEntity<PendenciasDTO> atualizarPendencia(@Valid @RequestParam("idPendencia") Long idPendencia,
-			@Valid @RequestParam("status") StatusEnum status) throws ParseException {
+	public ResponseEntity<PendenciasDTO> atualizarPendencia(@Valid @RequestParam("idPendencia") Long idPendencia, @Valid @RequestParam("status") StatusEnum status) throws ParseException {
 		return pendenciaService.update(idPendencia, status);
 	}
 
 	@DeleteMapping("/v1/deletar")
 	@Operation(description = "Deletar uma pendência existente. Remove uma pendência com base no ID fornecido.")
-	public ResponseEntity<PendenciasDTO> deletarPendencia(@RequestBody PendenciaDelete delete)
-			throws ParseException, IOException {
+	public ResponseEntity<PendenciasDTO> deletarPendencia(@RequestBody PendenciaDelete delete) throws ParseException, IOException {
 		return pendenciaService.delete(delete);
 	}
 }

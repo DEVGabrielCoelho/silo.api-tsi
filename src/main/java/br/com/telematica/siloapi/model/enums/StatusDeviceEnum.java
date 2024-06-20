@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public enum StatusDeviceEnum {
-  ONLINE("ONLINE"), OFFLINE("OFFLINE"), ATIVO("ATIVO"), INATIVO("INATIVO");
+	ONLINE("ONLINE"), OFFLINE("OFFLINE"), ATIVO("ATIVO"), INATIVO("INATIVO");
 
 	private static final Logger logger = LoggerFactory.getLogger(StatusDeviceEnum.class);
 	private final String status;
@@ -27,7 +27,7 @@ public enum StatusDeviceEnum {
 		return null;
 	}
 
-  public static StatusDeviceEnum mapDescricaoToStatusDevice(String descricao) {
+	public static StatusDeviceEnum mapDescricaoToStatusDevice(String descricao) {
 		for (StatusDeviceEnum du : StatusDeviceEnum.values()) {
 			if (du.getStatus().equalsIgnoreCase(descricao)) {
 				return du;

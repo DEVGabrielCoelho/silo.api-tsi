@@ -14,14 +14,17 @@ import br.com.telematica.siloapi.model.dto.FirmwareDTO;
 
 public interface FirmwareServInterface {
 
-  ResponseEntity<FirmwareDTO> update(Long codigo, MultipartFile file, String modelo) throws IOException;
+	ResponseEntity<FirmwareDTO> update(Long codigo, MultipartFile file, String modelo) throws IOException;
 
-  ResponseEntity<FirmwareDTO> save(MultipartFile file, String modelo) throws  IOException;
+	ResponseEntity<FirmwareDTO> save(MultipartFile file, String modelo) throws IOException;
 
-  ResponseEntity<FirmwareDTO> delete(Long codigo) throws IOException;
+	ResponseEntity<FirmwareDTO> delete(Long codigo) throws IOException;
 
-  ResponseEntity<Resource> findByIdDownload(Long codigo) throws NoSuchAlgorithmException;
-  ResponseEntity<Page<FirmwareDTO>> findAllPaginado(Pageable pageable);
-  ResponseEntity<List<FirmwareDTO>> findAll();
-  ResponseEntity<FirmwareDTO> findById(Long codigo);
+	ResponseEntity<Resource> findByIdDownload(Long codigo) throws NoSuchAlgorithmException;
+
+	ResponseEntity<Page<FirmwareDTO>> findAllPaginado(Pageable pageable);
+
+	ResponseEntity<List<FirmwareDTO>> findAll();
+
+	ResponseEntity<FirmwareDTO> findById(Long codigo);
 }

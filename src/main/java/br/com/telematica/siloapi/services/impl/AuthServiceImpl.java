@@ -96,8 +96,7 @@ public class AuthServiceImpl implements AuthServInterface {
 		try {
 			var refresh = jwtUtil.validateOrRefreshToken(token);
 			Usuario userCheck = userService.findLoginEntity(refresh.username());
-			return MessageResponse.success(new ResponseAuthDTO(refresh.token(), refresh.date(), refresh.expiryIn(),
-					userCheck.getUsucod(), new PerfilDTO(userCheck.getPerfil())));
+			return MessageResponse.success(new ResponseAuthDTO(refresh.token(), refresh.date(), refresh.expiryIn(), userCheck.getUsucod(), new PerfilDTO(userCheck.getPerfil())));
 		} catch (JWTVerificationException e) {
 			log.error("Erro ao atualizar o token: {}", e.getMessage(), e);
 			throw new JWTVerificationException("Erro ao atualizar o token.");
@@ -116,8 +115,7 @@ public class AuthServiceImpl implements AuthServInterface {
 			authenticationManager.authenticate(userAuthenticationToken);
 
 			GenerateTokenRecords tokenGenerate = getToken(authReq);
-			return MessageResponse.success(new ResponseAuthDTO(tokenGenerate.token(), tokenGenerate.date(),
-					tokenGenerate.expiryIn(), userCheck.getUsucod(), new PerfilDTO(userCheck.getPerfil())));
+			return MessageResponse.success(new ResponseAuthDTO(tokenGenerate.token(), tokenGenerate.date(), tokenGenerate.expiryIn(), userCheck.getUsucod(), new PerfilDTO(userCheck.getPerfil())));
 		} catch (AuthenticationException e) {
 			log.error("Erro na autenticação: {}", e.getMessage(), e);
 			throw new RuntimeException("Erro na autenticação: " + e.getMessage());
@@ -138,7 +136,6 @@ public class AuthServiceImpl implements AuthServInterface {
 		long timeToExpiry = Duration.between(Instant.now(), expiration).toMillis();
 		LocalDateTime expirationLocalDateTime = expiration.atZone(ZoneId.systemDefault()).toLocalDateTime();
 
-		return MessageResponse
-				.success(new TokenValidationResponseDTO(true, timeToExpiry, expirationLocalDateTime.toString()));
+		return MessageResponse.success(new TokenValidationResponseDTO(true, timeToExpiry, expirationLocalDateTime.toString()));
 	}
 }

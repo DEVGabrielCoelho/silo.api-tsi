@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -46,38 +47,24 @@ public class AbrangenciaServiceImpl implements AbrangenciaServInterface {
 	private EmpresaServiceImpl empresaService;
 
 	public AbrangenciaDetalhes findByAbrangenciaAndRecursoContaining(Abrangencia codigo, Recurso nome) {
-		return abrangenciaDetalhesRepository
-				.findByAbrangencia_abrcodAndRecurso_recnomContaining(codigo.getAbrcod(), nome.getRecnom())
-				.orElseThrow(() -> new EntityNotFoundException("Detalhes de Abrangencia não encontrada no banco de dados."));
+		return abrangenciaDetalhesRepository.findByAbrangencia_abrcodAndRecurso_recnomContaining(codigo.getAbrcod(), nome.getRecnom()).orElseThrow(() -> new EntityNotFoundException("Detalhes de Abrangencia não encontrada no banco de dados."));
 	}
 
 	public AbrangenciaDetalhes findByAbrangenciaAndRecursoContainingAbrangencia(Abrangencia codigo, Recurso nome) {
-		return abrangenciaDetalhesRepository
-				.findByAbrangencia_abrcodAndRecurso_recnomContaining(codigo.getAbrcod(), nome.getRecnom())
-				.orElse(null);
+		return abrangenciaDetalhesRepository.findByAbrangencia_abrcodAndRecurso_recnomContaining(codigo.getAbrcod(), nome.getRecnom()).orElse(null);
 	}
 
 	public Abrangencia findByIdEntity(@NonNull Long codigo) throws EntityNotFoundException, IOException {
-		return abrangenciaRepository.findById(codigo)
-				.orElseThrow(() -> new EntityNotFoundException("Abrangência não encontrada com o código: " + codigo));
+		return abrangenciaRepository.findById(codigo).orElseThrow(() -> new EntityNotFoundException("Abrangência não encontrada com o código: " + codigo));
 	}
 
 	public Abrangencia findByIdEntity(String nome) {
-		return abrangenciaRepository.findByAbrnomLike(nome)
-				.orElse(null);
+		return abrangenciaRepository.findByAbrnomLike(nome).orElse(null);
 	}
 
 	public AbrangenciaDTO findByIdSimples(@NonNull Long codigo) throws EntityNotFoundException, IOException {
 		Abrangencia abrangencia = findByIdEntity(codigo);
 		return new AbrangenciaDTO(abrangencia);
-	}
-
-	public Abrangencia createUpdateAbrangencia(@NonNull Abrangencia abrangencia) {
-		return abrangenciaRepository.save(abrangencia);
-	}
-
-	public AbrangenciaDetalhes createDetalhesAbrangencia(@NonNull AbrangenciaDetalhes detalhes) {
-		return abrangenciaDetalhesRepository.save(detalhes);
 	}
 
 	public ItensAbrangentes findByItemAbrangenceEntity() {
@@ -91,8 +78,7 @@ public class AbrangenciaServiceImpl implements AbrangenciaServInterface {
 	}
 
 	@Override
-	public ResponseEntity<Page<AbrangenciaListaDetalhesDTO>> findAll(String nome, Pageable pageable)
-			throws EntityNotFoundException, IOException {
+	public ResponseEntity<Page<AbrangenciaListaDetalhesDTO>> findAll(String nome, Pageable pageable) throws EntityNotFoundException, IOException {
 		Objects.requireNonNull(pageable, "Pageable da Abrangência está nulo.");
 		Specification<Abrangencia> spec = Specification.where(null);
 		spec = spec.and(Abrangencia.filterByFields(nome));
@@ -108,23 +94,35 @@ public class AbrangenciaServiceImpl implements AbrangenciaServInterface {
 
 	@Override
 	public ResponseEntity<AbrangenciaListaDetalhesDTO> save(AbrangenciaModel abrangenciaModel) throws IOException {
-		long codigo = 0;
-		Objects.requireNonNull(abrangenciaModel.getNome(), "Nome da Abrangência está nulo.");
+		Abrangencia abrangencia = null;
 		try {
-			Abrangencia abrangencia = createUpdateAbrangencia(
-					new Abrangencia(null, abrangenciaModel.getNome(), abrangenciaModel.getDescricao()));
-			codigo = abrangencia.getAbrcod();
+			Objects.requireNonNull(abrangenciaModel.getNome(), "Nome da Abrangência está nulo.");
+			// Verifica se a descrição também não é nula, caso seja obrigatória.
+			Objects.requireNonNull(abrangenciaModel.getDescricao(), "Descrição da Abrangência está nula.");
 
-			List<AbrangenciaDetalhesDTO> abrangenciaDetalhesDTOList = abrangenciaModel.getRecursos() == null ? null
-					: abrangenciaModel.getRecursos().stream().map(recurso -> createAbrangenciaDetalhes(abrangencia, recurso))
-							.collect(Collectors.toList());
+			abrangencia = abrangenciaRepository.save(new Abrangencia(null, abrangenciaModel.getNome(), abrangenciaModel.getDescricao()));
 
-			return MessageResponse.create(new AbrangenciaListaDetalhesDTO(abrangencia, abrangenciaDetalhesDTOList));
+			var detalhes = createAbrangenciaDetalhesList(abrangencia, abrangenciaModel.getRecursos());
+
+			return MessageResponse.create(new AbrangenciaListaDetalhesDTO(abrangencia, detalhes));
+		} catch (DataIntegrityViolationException e) {
+			log.error("Erro de integridade ao criar a Abrangência: ", e);
+			if (abrangencia != null && abrangencia.getAbrcod() != null)
+				abrangenciaRepository.deleteById(abrangencia.getAbrcod());
+
+			throw new IOException("Erro de integridade ao criar a Abrangência.", e);
 		} catch (Exception e) {
 			log.error("Erro ao criar a Abrangência e seus detalhes: ", e);
-			abrangenciaRepository.deleteById(codigo);
-			throw new IOException(e);
+			if (abrangencia != null && abrangencia.getAbrcod() != null)
+				abrangenciaRepository.deleteById(abrangencia.getAbrcod());
+
+			throw new IOException("Erro inesperado ao criar a Abrangência.", e);
 		}
+	}
+
+	public List<AbrangenciaDetalhesDTO> createAbrangenciaDetalhesList(Abrangencia abrangencia, List<AbrangenciaDetalhesModel> recursos) {
+		return recursos == null ? List.of() // Retorna uma lista vazia em vez de null.
+				: recursos.stream().map(recurso -> createAbrangenciaDetalhes(abrangencia, recurso)).collect(Collectors.toList());
 	}
 
 	@Override
@@ -132,12 +130,9 @@ public class AbrangenciaServiceImpl implements AbrangenciaServInterface {
 		Objects.requireNonNull(codigo, "Código da Abrangência está nulo.");
 		Objects.requireNonNull(abrangenciaModel.getNome(), "Nome da Abrangência está nulo.");
 
-		Abrangencia abrangencia = createUpdateAbrangencia(
-				new Abrangencia(codigo, abrangenciaModel.getNome(), abrangenciaModel.getDescricao()));
+		Abrangencia abrangencia = abrangenciaRepository.save(new Abrangencia(codigo, abrangenciaModel.getNome(), abrangenciaModel.getDescricao()));
 
-		List<AbrangenciaDetalhesDTO> abrangenciaDetalhesDTOList = abrangenciaModel.getRecursos() == null ? null
-				: abrangenciaModel.getRecursos().stream().map(recurso -> updateAbrangenciaDetalhes(abrangencia, recurso))
-						.collect(Collectors.toList());
+		List<AbrangenciaDetalhesDTO> abrangenciaDetalhesDTOList = abrangenciaModel.getRecursos() == null ? null : abrangenciaModel.getRecursos().stream().map(recurso -> updateAbrangenciaDetalhes(abrangencia, recurso)).collect(Collectors.toList());
 
 		if (abrangenciaDetalhesDTOList == null || abrangenciaDetalhesDTOList.isEmpty()) {
 			abrangenciaDetalhesRepository.deleteById(codigo);
@@ -160,16 +155,12 @@ public class AbrangenciaServiceImpl implements AbrangenciaServInterface {
 	}
 
 	@Override
-	public ResponseEntity<AbrangenciaListaDetalhesDTO> findById(@NonNull Long codigo)
-			throws EntityNotFoundException, IOException {
+	public ResponseEntity<AbrangenciaListaDetalhesDTO> findById(@NonNull Long codigo) throws EntityNotFoundException, IOException {
 		Abrangencia abrangencia = findByIdEntity(codigo);
 
-		List<AbrangenciaDetalhesDTO> detailsDTOList = abrangenciaDetalhesRepository
-				.findByAbrangencia_Abrcod(abrangencia.getAbrcod()).stream().map(AbrangenciaDetalhesDTO::new)
-				.collect(Collectors.toList());
+		List<AbrangenciaDetalhesDTO> detailsDTOList = abrangenciaDetalhesRepository.findByAbrangencia_Abrcod(abrangencia.getAbrcod()).stream().map(AbrangenciaDetalhesDTO::new).collect(Collectors.toList());
 
-		return MessageResponse
-				.success(new AbrangenciaListaDetalhesDTO(abrangencia, detailsDTOList.isEmpty() ? null : detailsDTOList));
+		return MessageResponse.success(new AbrangenciaListaDetalhesDTO(abrangencia, detailsDTOList.isEmpty() ? null : detailsDTOList));
 	}
 
 	@Override
@@ -177,8 +168,7 @@ public class AbrangenciaServiceImpl implements AbrangenciaServInterface {
 		try {
 			Abrangencia entityAbrangencia = findByIdEntity(codigo);
 
-			var listAbrangenciaDetalhes = abrangenciaDetalhesRepository
-					.findByAbrangencia_Abrcod(entityAbrangencia.getAbrcod());
+			var listAbrangenciaDetalhes = abrangenciaDetalhesRepository.findByAbrangencia_Abrcod(entityAbrangencia.getAbrcod());
 
 			listAbrangenciaDetalhes.forEach(map -> {
 				Long abdcod = map.getAbdcod();
@@ -203,8 +193,7 @@ public class AbrangenciaServiceImpl implements AbrangenciaServInterface {
 
 		Recurso recursoEntity = recursoService.findByIdEntity(recursoNome);
 		JsonNodeConverter jsonNode = new JsonNodeConverter();
-		AbrangenciaDetalhes detalhes = new AbrangenciaDetalhes(null, abrangencia, recursoEntity, recurso.getHierarquia(),
-				jsonNode.convertToDatabaseColumn(recurso.getDados()));
+		AbrangenciaDetalhes detalhes = new AbrangenciaDetalhes(null, abrangencia, recursoEntity, recurso.getHierarquia(), jsonNode.convertToDatabaseColumn(recurso.getDados()));
 		return new AbrangenciaDetalhesDTO(abrangenciaDetalhesRepository.save(detalhes));
 	}
 
@@ -213,12 +202,10 @@ public class AbrangenciaServiceImpl implements AbrangenciaServInterface {
 		Objects.requireNonNull(recurso.getHierarquia(), "Valor da Hierarquia está nulo.");
 
 		Recurso recursoEntity = recursoService.findByIdEntity(recursoNome);
-		var detalhesOpt = abrangenciaDetalhesRepository
-				.findByAbrangencia_abrcodAndRecurso_recnomContaining(abrangencia.getAbrcod(), recursoEntity.getRecnom());
+		var detalhesOpt = abrangenciaDetalhesRepository.findByAbrangencia_abrcodAndRecurso_recnomContaining(abrangencia.getAbrcod(), recursoEntity.getRecnom());
 
 		JsonNodeConverter jsonNode = new JsonNodeConverter();
-		AbrangenciaDetalhes detalhes = new AbrangenciaDetalhes(detalhesOpt.map(AbrangenciaDetalhes::getAbdcod).orElse(null),
-				abrangencia, recursoEntity, recurso.getHierarquia(), jsonNode.convertToDatabaseColumn(recurso.getDados()));
+		AbrangenciaDetalhes detalhes = new AbrangenciaDetalhes(detalhesOpt.map(AbrangenciaDetalhes::getAbdcod).orElse(null), abrangencia, recursoEntity, recurso.getHierarquia(), jsonNode.convertToDatabaseColumn(recurso.getDados()));
 		return new AbrangenciaDetalhesDTO(abrangenciaDetalhesRepository.save(detalhes));
 	}
 

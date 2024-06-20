@@ -16,11 +16,17 @@ import jakarta.persistence.EntityNotFoundException;
 public interface RecursoServInterface {
 
 	ResponseEntity<RecursoDTO> save(RecursoModel perModel);
+
 	ResponseEntity<RecursoDTO> update(Long codigo, RecursoModel perModel);
+
 	ResponseEntity<List<RecursoDTO>> findAll() throws EntityNotFoundException, IOException;
+
 	ResponseEntity<RecursoDTO> findById(@NonNull Long codigo) throws EntityNotFoundException, IOException;
+
 	ResponseEntity<ResponseGlobalModel> delete(@NonNull Long perfil) throws IOException;
+
 	ResponseEntity<Page<RecursoDTO>> findAll(String nome, Pageable pageable) throws EntityNotFoundException, IOException;
+
 	ResponseEntity<RecursoDTO> findByString(@NonNull String nome) throws EntityNotFoundException, IOException;
 
 }

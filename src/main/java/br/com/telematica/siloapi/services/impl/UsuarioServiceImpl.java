@@ -52,18 +52,14 @@ public class UsuarioServiceImpl implements UsuarioServInterface {
 	private EmpresaServiceImpl empresaService;
 
 	public UsuarioDTO findLogin(String login) throws EntityNotFoundException, IOException {
-		return userRepository.findByUsulog(login)
-				.map(UsuarioDTO::new)
-				.orElseThrow(() -> new EntityNotFoundException("Usuário não existe!"));
+		return userRepository.findByUsulog(login).map(UsuarioDTO::new).orElseThrow(() -> new EntityNotFoundException("Usuário não existe!"));
 	}
 
 	public Usuario findLoginEntity(String login) {
-		return userRepository.findByUsulog(login)
-				.orElseThrow(() -> new EntityNotFoundException("Usuário não existe!"));
+		return userRepository.findByUsulog(login).orElseThrow(() -> new EntityNotFoundException("Usuário não existe!"));
 	}
 
-	public Page<Usuario> findAllEntity(String nome, @NonNull Pageable pageable)
-			throws EntityNotFoundException, IOException {
+	public Page<Usuario> findAllEntity(String nome, @NonNull Pageable pageable) throws EntityNotFoundException, IOException {
 		Objects.requireNonNull(pageable, "Pageable do Usuário está nulo.");
 		Specification<Usuario> spec = Usuario.filterByFields(nome);
 		return userRepository.findAll(spec, pageable);
@@ -74,8 +70,7 @@ public class UsuarioServiceImpl implements UsuarioServInterface {
 	}
 
 	public Usuario findByIdEntity(Long cod) throws EntityNotFoundException, IOException {
-		return userRepository.findById(cod)
-				.orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado com o código: " + cod));
+		return userRepository.findById(cod).orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado com o código: " + cod));
 	}
 
 	public UsuarioDTO findByUsuario(Long codigo) throws EntityNotFoundException, IOException {
@@ -83,10 +78,8 @@ public class UsuarioServiceImpl implements UsuarioServInterface {
 		return new UsuarioDTO(user);
 	}
 
-	public Usuario saveUpdateEntity(@NonNull Long codigo, @NonNull UsuarioModel userModel)
-			throws EntityNotFoundException, IOException {
-		Usuario existingUser = userRepository.findById(codigo)
-				.orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado com o código: " + codigo));
+	public Usuario saveUpdateEntity(@NonNull Long codigo, @NonNull UsuarioModel userModel) throws EntityNotFoundException, IOException {
+		Usuario existingUser = userRepository.findById(codigo).orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado com o código: " + codigo));
 
 		if ("admin".equalsIgnoreCase(existingUser.getUsulog())) {
 			log.info("Usuário admin não pode ser alterado: " + existingUser);
@@ -111,8 +104,7 @@ public class UsuarioServiceImpl implements UsuarioServInterface {
 	}
 
 	@Override
-	public ResponseEntity<Page<UsuarioDTO>> findAll(String nome, @NonNull Pageable pageable)
-			throws EntityNotFoundException, IOException {
+	public ResponseEntity<Page<UsuarioDTO>> findAll(String nome, @NonNull Pageable pageable) throws EntityNotFoundException, IOException {
 		Page<Usuario> users = findAllEntity(nome, pageable);
 		return MessageResponse.success(users.map(UsuarioDTO::new));
 	}
@@ -120,9 +112,7 @@ public class UsuarioServiceImpl implements UsuarioServInterface {
 	@Override
 	public ResponseEntity<List<UsuarioDTO>> findAll() throws EntityNotFoundException, IOException {
 		List<Usuario> users = findAllEntity();
-		List<UsuarioDTO> userDTOs = users.stream()
-				.map(UsuarioDTO::new)
-				.collect(Collectors.toList());
+		List<UsuarioDTO> userDTOs = users.stream().map(UsuarioDTO::new).collect(Collectors.toList());
 		return MessageResponse.success(userDTOs);
 	}
 
@@ -132,24 +122,19 @@ public class UsuarioServiceImpl implements UsuarioServInterface {
 	}
 
 	@Override
-	public ResponseEntity<UsuarioPermissaoDTO> findByIdPermission(@NonNull Long codigo)
-			throws EntityNotFoundException, IOException {
+	public ResponseEntity<UsuarioPermissaoDTO> findByIdPermission(@NonNull Long codigo) throws EntityNotFoundException, IOException {
 		Usuario user = findByIdEntity(codigo);
-		return MessageResponse.success(new UsuarioPermissaoDTO(
-				user,
-				permissaoService.findByIdPerfil(user.getPerfil().getPercod())));
+		return MessageResponse.success(new UsuarioPermissaoDTO(user, permissaoService.findByIdPerfil(user.getPerfil().getPercod())));
 	}
 
 	@Override
-	public ResponseEntity<UsuarioDTO> saveUpdateEncodePassword(@NonNull UsuarioModel userModel)
-			throws EntityNotFoundException, IOException {
+	public ResponseEntity<UsuarioDTO> saveUpdateEncodePassword(@NonNull UsuarioModel userModel) throws EntityNotFoundException, IOException {
 		Usuario user = saveUpdateEntity(userModel);
 		return MessageResponse.create(new UsuarioDTO(user));
 	}
 
 	@Override
-	public ResponseEntity<UsuarioDTO> saveUpdateEncodePassword(@NonNull Long codigo, @NonNull UsuarioModel userModel)
-			throws EntityNotFoundException, IOException {
+	public ResponseEntity<UsuarioDTO> saveUpdateEncodePassword(@NonNull Long codigo, @NonNull UsuarioModel userModel) throws EntityNotFoundException, IOException {
 		Usuario user = saveUpdateEntity(codigo, userModel);
 		return MessageResponse.success(new UsuarioDTO(user));
 	}

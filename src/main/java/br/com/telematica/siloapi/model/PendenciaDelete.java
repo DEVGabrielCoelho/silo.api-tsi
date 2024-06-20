@@ -7,17 +7,17 @@ import jakarta.validation.constraints.NotBlank;
 @Schema(description = "Modelo para deletar uma pendência")
 public class PendenciaDelete {
 
-    @NotBlank(message = "O campo 'idPendencia' é obrigatório e não pode estar em branco.")
-    @Schema(name = "idPendencia", description = "ID da pendência", example = "1", format = "Long")
-    private Long idPendencia;
+	@NotBlank(message = "O campo 'idPendencia' é obrigatório e não pode estar em branco.")
+	@Schema(name = "idPendencia", description = "ID da pendência", example = "1", format = "Long")
+	private Long idPendencia;
 
-    @NotBlank(message = "O campo 'status' é obrigatório e não pode estar em branco.")
-    @Schema(name = "status", description = "Status da Pendência", example = "EXECUTANDO", format = "String")
-    private StatusEnum status;
+	@NotBlank(message = "O campo 'status' é obrigatório e não pode estar em branco.")
+	@Schema(name = "status", description = "Status da Pendência", example = "EXECUTANDO", format = "String")
+	private StatusEnum status;
 
-    @NotBlank(message = "O campo 'descricao' é obrigatório e não pode estar em branco.")
-    @Schema(name = "descricao", description = "Descrição da pendência", example = "Descrição", format = "String")
-    private String descricao;
+	@NotBlank(message = "O campo 'descricao' é obrigatório e não pode estar em branco.")
+	@Schema(name = "descricao", description = "Descrição da pendência", example = "Descrição", format = "String")
+	private String descricao;
 
 	public Long getIdPendencia() {
 		return idPendencia;

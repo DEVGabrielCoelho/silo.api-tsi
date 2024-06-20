@@ -6,13 +6,14 @@ import jakarta.validation.constraints.NotBlank;
 @Schema(description = "Modelo de Autorização")
 public class AuthModel {
 
-    @NotBlank(message = "O campo 'login' é obrigatório e não pode estar em branco.")
-    @Schema(name = "login", description = "Login", example = "admin")
-    private String login;
+	@NotBlank(message = "O campo 'login' é obrigatório e não pode estar em branco.")
+	@Schema(name = "login", description = "Login", example = "admin")
+	private String login;
 
-    @NotBlank(message = "O campo 'senha' é obrigatório e não pode estar em branco.")
-    @Schema(name = "senha", description = "Senha", example = "admin")
-    private String senha;
+	@NotBlank(message = "O campo 'senha' é obrigatório e não pode estar em branco.")
+	@Schema(name = "senha", description = "Senha", example = "admin")
+	private String senha;
+
 	public AuthModel() {
 	}
 

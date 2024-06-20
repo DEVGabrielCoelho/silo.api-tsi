@@ -34,7 +34,6 @@ public class Empresa {
 	@Column(name = "emptel")
 	private String emptel;
 
-
 	public Long getEmpcod() {
 		return empcod;
 	}
@@ -74,7 +73,6 @@ public class Empresa {
 	public void setEmptel(String emptel) {
 		this.emptel = emptel;
 	}
-
 
 	@Override
 	public String toString() {

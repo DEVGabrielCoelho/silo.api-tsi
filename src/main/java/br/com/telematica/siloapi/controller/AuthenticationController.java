@@ -43,8 +43,7 @@ public class AuthenticationController {
 		try {
 			return userServImpl.validateAndParseToken(token);
 		} catch (JWTVerificationException e) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-					.body(new TokenValidationResponseDTO(false, 0L, "Unauthorized token."));
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new TokenValidationResponseDTO(false, 0L, "Unauthorized token."));
 		}
 	}
 

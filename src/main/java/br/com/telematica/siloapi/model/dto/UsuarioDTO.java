@@ -140,7 +140,6 @@ public class UsuarioDTO extends Codigo {
 		this.abrangencia = abrangencia;
 	}
 
-
 	public UsuarioDTO(Usuario user) {
 		super();
 		this.setCodigo(user.getUsucod());

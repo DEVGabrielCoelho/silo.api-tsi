@@ -47,9 +47,7 @@ public class EmpresaServiceImpl implements EmpresaServInterface {
 		Objects.requireNonNull(codigo, "Código da Empresa está nulo.");
 
 		try {
-			var empresa = empresaRepository.findById(codigo)
-					.orElseThrow(() -> new EmptyResultDataAccessException(
-							"Não foi possível encontrar a empresa com o ID fornecido.", 1));
+			var empresa = empresaRepository.findById(codigo).orElseThrow(() -> new EmptyResultDataAccessException("Não foi possível encontrar a empresa com o ID fornecido.", 1));
 
 			empresaRepository.deleteById(empresa.getEmpcod());
 			return MessageResponse.success(null);
@@ -92,9 +90,7 @@ public class EmpresaServiceImpl implements EmpresaServInterface {
 	@Override
 	public ResponseEntity<List<EmpresaDTO>> empresaFindAll() throws IOException {
 		var check = checagemFixaBarragem();
-		var result = check.isHier() == 0
-				? empresaRepository.findByEmpdel(1)
-				: empresaRepository.findByEmpdelAndEmpcodIn(1, check.listAbrangencia());
+		var result = check.isHier() == 0 ? empresaRepository.findByEmpdel(1) : empresaRepository.findByEmpdelAndEmpcodIn(1, check.listAbrangencia());
 
 		return MessageResponse.success(result.stream().map(EmpresaDTO::new).collect(Collectors.toList()));
 	}
@@ -105,9 +101,7 @@ public class EmpresaServiceImpl implements EmpresaServInterface {
 		Objects.requireNonNull(empresaModel.getCnpj(), "CNPJ da Empresa está nulo.");
 		Objects.requireNonNull(empresaModel.getNome(), "Nome da Empresa está nulo.");
 
-		var empresa = empresaRepository.findById(codigo)
-				.orElseThrow(() -> new EmptyResultDataAccessException(
-						"Não foi possível encontrar a empresa com o ID fornecido.", 1));
+		var empresa = empresaRepository.findById(codigo).orElseThrow(() -> new EmptyResultDataAccessException("Não foi possível encontrar a empresa com o ID fornecido.", 1));
 
 		String nomeFantasia = Optional.ofNullable(empresaModel.getNomeFantasia()).orElse(empresa.getEmpfan());
 		String telefone = Optional.ofNullable(empresaModel.getTelefone()).orElse(empresa.getEmptel());
@@ -126,12 +120,7 @@ public class EmpresaServiceImpl implements EmpresaServInterface {
 		Objects.requireNonNull(empresaModel.getNome(), "Nome da Empresa está nulo.");
 
 		try {
-			Empresa empresa = new Empresa(
-					null,
-					empresaModel.getCnpj(),
-					empresaModel.getNome(),
-					empresaModel.getNomeFantasia(),
-					empresaModel.getTelefone());
+			Empresa empresa = new Empresa(null, empresaModel.getCnpj(), empresaModel.getNome(), empresaModel.getNomeFantasia(), empresaModel.getTelefone());
 			Empresa savedEmpresa = empresaRepository.save(empresa);
 			return MessageResponse.success(new EmpresaDTO(savedEmpresa));
 		} catch (Exception e) {
@@ -170,18 +159,16 @@ public class EmpresaServiceImpl implements EmpresaServInterface {
 
 	public Empresa findById(Long codigo) throws EntityNotFoundException, IOException {
 		Objects.requireNonNull(codigo, "Código da Empresa está nulo.");
-		var emp = empresaRepository.findById(codigo)
-				.orElseThrow(() -> new EntityNotFoundException("Empresa não encontrada ou sem abrangência."));
+		var emp = empresaRepository.findById(codigo).orElseThrow(() -> new EntityNotFoundException("Empresa não encontrada ou sem abrangência."));
 		return findByIdAbrangencia(emp);
 	}
 
 	public Empresa empresaFindByCnpjEntity(Long codigo) throws IOException {
 		Objects.requireNonNull(codigo, "Código da Empresa está nulo.");
-		return empresaRepository.findByEmpcnp(codigo)
-				.orElseThrow(() -> {
-					log.info("Empresa não encontrada ou deletada.");
-					return new EntityNotFoundException("Empresa não encontrada ou deletada.");
-				});
+		return empresaRepository.findByEmpcnp(codigo).orElseThrow(() -> {
+			log.info("Empresa não encontrada ou deletada.");
+			return new EntityNotFoundException("Empresa não encontrada ou deletada.");
+		});
 	}
 
 	public EmpresaDTO empresaFindByCnpjAbrangencia(Long codigo) throws IOException {
@@ -199,11 +186,10 @@ public class EmpresaServiceImpl implements EmpresaServInterface {
 
 	public Empresa findByIdEntity(@NonNull Long codigo) {
 		Objects.requireNonNull(codigo, "Código da Empresa está nulo.");
-		return empresaRepository.findById(codigo)
-				.orElseThrow(() -> {
-					log.info("Empresa não encontrada ou deletada.");
-					return new EntityNotFoundException("Empresa não encontrada ou deletada.");
-				});
+		return empresaRepository.findById(codigo).orElseThrow(() -> {
+			log.info("Empresa não encontrada ou deletada.");
+			return new EntityNotFoundException("Empresa não encontrada ou deletada.");
+		});
 	}
 
 }

@@ -8,24 +8,24 @@ import jakarta.validation.constraints.NotBlank;
 @Schema(description = "Modelo de Pendência")
 public class PendenciaModel {
 
-    @NotBlank(message = "O campo 'numSerie' é obrigatório e não pode estar em branco.")
-    @Schema(name = "numSerie", description = "Número de Série do Módulo", example = "N123124", format = "String")
-    private String numSerie;
+	@NotBlank(message = "O campo 'numSerie' é obrigatório e não pode estar em branco.")
+	@Schema(name = "numSerie", description = "Número de Série do Módulo", example = "N123124", format = "String")
+	private String numSerie;
 
-    @NotBlank(message = "O campo 'tipoPendencia' é obrigatório e não pode estar em branco.")
-    @Schema(name = "tipoPendencia", description = "Tipo da Pendência", example = "DATA_HORA", format = "String")
-    private PendenciaEnum tipoPendencia;
+	@NotBlank(message = "O campo 'tipoPendencia' é obrigatório e não pode estar em branco.")
+	@Schema(name = "tipoPendencia", description = "Tipo da Pendência", example = "DATA_HORA", format = "String")
+	private PendenciaEnum tipoPendencia;
 
-    @NotBlank(message = "O campo 'status' é obrigatório e não pode estar em branco.")
-    @Schema(name = "status", description = "Status da Pendência", example = "PENDENCIA", format = "String")
-    private StatusEnum status;
+	@NotBlank(message = "O campo 'status' é obrigatório e não pode estar em branco.")
+	@Schema(name = "status", description = "Status da Pendência", example = "PENDENCIA", format = "String")
+	private StatusEnum status;
 
-    @NotBlank(message = "O campo 'descricao' é obrigatório e não pode estar em branco.")
-    @Schema(name = "descricao", description = "Descrição da Pendência", example = "Descrição", format = "String")
-    private String descricao;
+	@NotBlank(message = "O campo 'descricao' é obrigatório e não pode estar em branco.")
+	@Schema(name = "descricao", description = "Descrição da Pendência", example = "Descrição", format = "String")
+	private String descricao;
 
-    @Schema(name = "firmware", description = "Se for pendência, coloque o código do firmware cadastrado.", example = "1", format = "Long")
-    private Long firmware;
+	@Schema(name = "firmware", description = "Se for pendência, coloque o código do firmware cadastrado.", example = "1", format = "Long")
+	private Long firmware;
 
 	public String getNumSerie() {
 		return numSerie;

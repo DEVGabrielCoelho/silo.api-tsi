@@ -7,14 +7,14 @@ import jakarta.validation.constraints.NotNull;
 @Schema(name = "PlantaDTO", description = "Objeto de transferência de dados de Planta")
 public class PlantaModel {
 
-    @NotNull(message = "O campo 'empresa' é obrigatório e não pode estar nulo.")
-    @Schema(description = "Código da empresa", example = "1", nullable = false)
-    private Long empresa;
+	@NotNull(message = "O campo 'empresa' é obrigatório e não pode estar nulo.")
+	@Schema(description = "Código da empresa", example = "1", nullable = false)
+	private Long empresa;
 
-    @NotBlank(message = "O campo 'nome' é obrigatório e não pode estar em branco.")
-    @Schema(description = "Nome da planta", example = "Planta 1", nullable = false)
-    private String nome;
-    
+	@NotBlank(message = "O campo 'nome' é obrigatório e não pode estar em branco.")
+	@Schema(description = "Nome da planta", example = "Planta 1", nullable = false)
+	private String nome;
+
 	public PlantaModel() {
 	}
 

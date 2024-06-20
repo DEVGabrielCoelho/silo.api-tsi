@@ -37,9 +37,7 @@ public class FirmwareController extends SecurityRestController {
 
 	@GetMapping("/v1/paginado")
 	@Operation(description = "Busca paginada de firmware. Retorna uma lista paginada de firmware com opções de filtragem.")
-	public ResponseEntity<Page<FirmwareDTO>> buscarFirmwarePaginado(
-			@RequestParam(value = "pagina", defaultValue = "0") Integer pagina,
-			@RequestParam(value = "tamanho", defaultValue = "10") Integer tamanho) {
+	public ResponseEntity<Page<FirmwareDTO>> buscarFirmwarePaginado(@RequestParam(value = "pagina", defaultValue = "0") Integer pagina, @RequestParam(value = "tamanho", defaultValue = "10") Integer tamanho) {
 		return firmService.findAllPaginado(PageRequest.of(pagina, tamanho));
 	}
 
@@ -57,23 +55,20 @@ public class FirmwareController extends SecurityRestController {
 
 	@GetMapping("/v1/download/{codigo}")
 	@Operation(description = "Download do firmware pelo código. Permite o download de um firmware específico com base no código fornecido.")
-	public ResponseEntity<Resource> buscarFirmwareParaDownload(@PathVariable Long codigo)
-			throws ParseException, NoSuchAlgorithmException {
+	public ResponseEntity<Resource> buscarFirmwareParaDownload(@PathVariable Long codigo) throws ParseException, NoSuchAlgorithmException {
 		return firmService.findByIdDownload(codigo);
 	}
 
 	@PostMapping(path = "/v1/cadastrar", consumes = { "multipart/form-data" })
 	@Operation(description = "Cadastrar um novo firmware. Recebe o arquivo e os detalhes do firmware e o armazena no sistema.")
-	public ResponseEntity<FirmwareDTO> cadastrarFirmware(@RequestParam("arquivo") MultipartFile arquivo,
-			@RequestParam(name = "modelo") String modelo) throws IOException {
+	public ResponseEntity<FirmwareDTO> cadastrarFirmware(@RequestParam("arquivo") MultipartFile arquivo, @RequestParam(name = "modelo") String modelo) throws IOException {
 		var save = firmService.save(arquivo, modelo);
 		return save;
 	}
 
 	@PutMapping(path = "/v1/atualizar", consumes = { "multipart/form-data" })
 	@Operation(description = "Atualizar um firmware existente. Recebe o código, o novo arquivo e os detalhes do firmware e os atualiza no sistema.")
-	public ResponseEntity<FirmwareDTO> atualizarFirmware(@RequestParam("codigo") Long codigo,
-			@RequestParam("arquivo") MultipartFile arquivo, @RequestParam("numSerie") String numSerie) throws IOException {
+	public ResponseEntity<FirmwareDTO> atualizarFirmware(@RequestParam("codigo") Long codigo, @RequestParam("arquivo") MultipartFile arquivo, @RequestParam("numSerie") String numSerie) throws IOException {
 		var save = firmService.update(codigo, arquivo, numSerie);
 		return save;
 	}

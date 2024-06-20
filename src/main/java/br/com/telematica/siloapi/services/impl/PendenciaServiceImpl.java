@@ -75,24 +75,21 @@ public class PendenciaServiceImpl implements PendenciaServInterface {
 	@Override
 	public ResponseEntity<List<PendenciasDTO>> findByAll() {
 		var pendList = pendenciaRepository.findByPendel(1);
-		return MessageResponse
-				.success(pendList.stream().map(pendDto -> new PendenciasDTO(pendDto)).collect(Collectors.toList()));
+		return MessageResponse.success(pendList.stream().map(pendDto -> new PendenciasDTO(pendDto)).collect(Collectors.toList()));
 	}
 
 	@Override
 	public ResponseEntity<List<PendenciasDTO>> findByPentipAndpendel(String tipo) {
 		Objects.requireNonNull(tipo, "Tipo está nulo.");
 		var pendList = pendenciaRepository.findByPentipAndPendel(tipo, 1);
-		return MessageResponse
-				.success(pendList.stream().map(pendDto -> new PendenciasDTO(pendDto)).collect(Collectors.toList()));
+		return MessageResponse.success(pendList.stream().map(pendDto -> new PendenciasDTO(pendDto)).collect(Collectors.toList()));
 	}
 
 	@Override
 	public ResponseEntity<List<PendenciasDTO>> findByPenStaAndpendel(String status) {
 		Objects.requireNonNull(status, "Tipo está nulo.");
 		var pendList = pendenciaRepository.findByPenstaAndPendel(status, 1);
-		return MessageResponse
-				.success(pendList.stream().map(pendDto -> new PendenciasDTO(pendDto)).collect(Collectors.toList()));
+		return MessageResponse.success(pendList.stream().map(pendDto -> new PendenciasDTO(pendDto)).collect(Collectors.toList()));
 	}
 
 	@Override
@@ -107,8 +104,7 @@ public class PendenciaServiceImpl implements PendenciaServInterface {
 		Objects.requireNonNull(tipo, "Tipo está nulo.");
 		Objects.requireNonNull(status, "Status está nulo.");
 		var pendList = pendenciaRepository.findByPentipAndPenstaAndPendel(tipo, status, 1);
-		return MessageResponse
-				.success(pendList.stream().map(pendDto -> new PendenciasDTO(pendDto)).collect(Collectors.toList()));
+		return MessageResponse.success(pendList.stream().map(pendDto -> new PendenciasDTO(pendDto)).collect(Collectors.toList()));
 	}
 
 	@Override
@@ -128,10 +124,8 @@ public class PendenciaServiceImpl implements PendenciaServInterface {
 		Long id = delete.getIdPendencia();
 		Objects.requireNonNull(id, "Id da Pendência está nulo.");
 
-		var pendList = pendenciaRepository.findByPencodAndPendel(id, 1)
-				.orElseThrow(() -> new IOException("Pendência não encontrada com o ID: " + id));
-		var pend = new Pendencia(id, pendList.getPentip(), delete.getStatus().toString(), delete.getDescricao(),
-				pendList.getPenini(), new Date(), pendList.getSmocod(), null, 0);
+		var pendList = pendenciaRepository.findByPencodAndPendel(id, 1).orElseThrow(() -> new IOException("Pendência não encontrada com o ID: " + id));
+		var pend = new Pendencia(id, pendList.getPentip(), delete.getStatus().toString(), delete.getDescricao(), pendList.getPenini(), new Date(), pendList.getSmocod(), null, 0);
 
 		pendenciaRepository.save(pend);
 		return MessageResponse.success(new PendenciasDTO());
@@ -145,24 +139,20 @@ public class PendenciaServiceImpl implements PendenciaServInterface {
 		Firmware pendCheck = null;
 		if (pendenciaModulo == StatusEnum.FINALIZADO || pendenciaModulo == StatusEnum.PENDENCIA)
 			pendCheck = null;
-		var pend = new Pendencia(id, pendList.getPentip(), pendenciaModulo.toString(), pendList.getPendes(),
-				pendList.getPenini(), pendenciaModulo == StatusEnum.FINALIZADO ? new Date() : null, pendList.getSmocod(),
-				pendCheck, pendList.getPendel());
+		var pend = new Pendencia(id, pendList.getPentip(), pendenciaModulo.toString(), pendList.getPendes(), pendList.getPenini(), pendenciaModulo == StatusEnum.FINALIZADO ? new Date() : null, pendList.getSmocod(), pendCheck, pendList.getPendel());
 		return MessageResponse.success(new PendenciasDTO(pendenciaRepository.save(pend)));
 
 	}
 
 	@Override
-	public ResponseEntity<PendenciasDTO> save(PendenciaModel pendenciaModulo)
-			throws EntityNotFoundException, IOException {
+	public ResponseEntity<PendenciasDTO> save(PendenciaModel pendenciaModulo) throws EntityNotFoundException, IOException {
 		String numSerie = pendenciaModulo.getNumSerie();
 		Objects.requireNonNull(pendenciaModulo.getStatus(), "Status da pendencia está nulo.");
 		Objects.requireNonNull(pendenciaModulo.getTipoPendencia(), "Tipo da Pendência está nulo.");
 		Objects.requireNonNull(pendenciaModulo.getDescricao(), "Descrição da Pendência está nulo.");
 		Objects.requireNonNull(numSerie, "Número de Série está nulo.");
 		// var modulo = sireneModuloService.findByNumSerie(numSerie);
-		var pend = new Pendencia(null, pendenciaModulo.getTipoPendencia().toString(),
-				pendenciaModulo.getStatus().toString(), pendenciaModulo.getDescricao(), new Date(), null, null, null, 1);
+		var pend = new Pendencia(null, pendenciaModulo.getTipoPendencia().toString(), pendenciaModulo.getStatus().toString(), pendenciaModulo.getDescricao(), new Date(), null, null, null, 1);
 		return MessageResponse.success(new PendenciasDTO(pendenciaRepository.save(pend)));
 	}
 

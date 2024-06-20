@@ -6,33 +6,33 @@ import jakarta.validation.constraints.NotBlank;
 @Schema(description = "Medição")
 public class MedicaoModel {
 
-    @NotBlank(message = "O campo 'dataMedicao' é obrigatório e não pode estar em branco.")
-    @Schema(description = "Data", example = "2021-08-01T00:00:00.000Z")
-    private String dataMedicao;
+	@NotBlank(message = "O campo 'dataMedicao' é obrigatório e não pode estar em branco.")
+	@Schema(description = "Data", example = "2021-08-01T00:00:00.000Z")
+	private String dataMedicao;
 
-    @NotBlank(message = "O campo 'silo' é obrigatório e não pode estar em branco.")
-    @Schema(description = "Código", example = "1")
-    private Long silo;
+	@NotBlank(message = "O campo 'silo' é obrigatório e não pode estar em branco.")
+	@Schema(description = "Código", example = "1")
+	private Long silo;
 
-    @NotBlank(message = "O campo 'umidade' é obrigatório e não pode estar em branco.")
-    @Schema(description = "Umidade", example = "1.0")
-    private Double umidade;
+	@NotBlank(message = "O campo 'umidade' é obrigatório e não pode estar em branco.")
+	@Schema(description = "Umidade", example = "1.0")
+	private Double umidade;
 
-    @NotBlank(message = "O campo 'ana' é obrigatório e não pode estar em branco.")
-    @Schema(description = "Ana", example = "1.0")
-    private Double ana;
+	@NotBlank(message = "O campo 'ana' é obrigatório e não pode estar em branco.")
+	@Schema(description = "Ana", example = "1.0")
+	private Double ana;
 
-    @NotBlank(message = "O campo 'barometro' é obrigatório e não pode estar em branco.")
-    @Schema(description = "Barômetro", example = "1.0")
-    private Double barometro;
+	@NotBlank(message = "O campo 'barometro' é obrigatório e não pode estar em branco.")
+	@Schema(description = "Barômetro", example = "1.0")
+	private Double barometro;
 
-    @NotBlank(message = "O campo 'temperatura' é obrigatório e não pode estar em branco.")
-    @Schema(description = "Temperatura", example = "1.0")
-    private Double temperatura;
+	@NotBlank(message = "O campo 'temperatura' é obrigatório e não pode estar em branco.")
+	@Schema(description = "Temperatura", example = "1.0")
+	private Double temperatura;
 
-    @NotBlank(message = "O campo 'distancia' é obrigatório e não pode estar em branco.")
-    @Schema(description = "Distância", example = "1.0")
-    private Double distancia;
+	@NotBlank(message = "O campo 'distancia' é obrigatório e não pode estar em branco.")
+	@Schema(description = "Distância", example = "1.0")
+	private Double distancia;
 
 	public MedicaoModel() {
 	}

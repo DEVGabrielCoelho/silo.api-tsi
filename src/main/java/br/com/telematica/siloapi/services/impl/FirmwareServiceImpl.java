@@ -60,8 +60,7 @@ public class FirmwareServiceImpl implements FirmwareServInterface {
 	public ResponseEntity<FirmwareDTO> delete(Long codigo) throws IOException {
 		Objects.requireNonNull(codigo, "Código está nulo.");
 
-		Firmware firmware = firmwareRepository.findById(codigo)
-				.orElseThrow(() -> new EntityNotFoundException("Firmware não encontrado ou já está deletado."));
+		Firmware firmware = firmwareRepository.findById(codigo).orElseThrow(() -> new EntityNotFoundException("Firmware não encontrado ou já está deletado."));
 		firmwareRepository.deleteById(firmware.getFircod());
 
 		return MessageResponse.success(null);
@@ -71,8 +70,7 @@ public class FirmwareServiceImpl implements FirmwareServInterface {
 	public ResponseEntity<Resource> findByIdDownload(Long codigo) throws NoSuchAlgorithmException {
 		Objects.requireNonNull(codigo, "Código do Firmware está nulo.");
 
-		Firmware firmware = firmwareRepository.findById(codigo)
-				.orElseThrow(() -> new EntityNotFoundException("Firmware não encontrado ou deletado."));
+		Firmware firmware = firmwareRepository.findById(codigo).orElseThrow(() -> new EntityNotFoundException("Firmware não encontrado ou deletado."));
 
 		byte[] fileBytes = firmware.getFirarq();
 		if (fileBytes == null) {
@@ -112,8 +110,7 @@ public class FirmwareServiceImpl implements FirmwareServInterface {
 	public ResponseEntity<FirmwareDTO> findById(Long codigo) {
 		Objects.requireNonNull(codigo, "Código do Firmware está nulo.");
 
-		Firmware firmware = firmwareRepository.findById(codigo)
-				.orElseThrow(() -> new EntityNotFoundException("Firmware não encontrada ou deletada."));
+		Firmware firmware = firmwareRepository.findById(codigo).orElseThrow(() -> new EntityNotFoundException("Firmware não encontrada ou deletada."));
 
 		return MessageResponse.success(new FirmwareDTO(firmware));
 	}

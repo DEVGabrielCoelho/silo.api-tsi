@@ -7,12 +7,12 @@ import jakarta.validation.constraints.NotBlank;
 @Schema(description = "Recurso modelo")
 public class RecursoModel {
 
-    @NotBlank(message = "O campo 'nome' é obrigatório e não pode estar em branco.")
-    @Schema(name = "nome", description = "Lista dos níveis de permissão. Permissões: SIRENE, MODULO, PENDENCIA, FIRMWARE, MEDICAO, AUDIO, LOGGER, EMPRESA, CANAL, BARRAGEM, USUARIO, PERFIL, PERMISSAO, RECURSO, ABRANGENCIA.", example = "BARRAGEM")
-    private RecursoMapEnum nome;
+	@NotBlank(message = "O campo 'nome' é obrigatório e não pode estar em branco.")
+	@Schema(name = "nome", description = "Lista dos níveis de permissão. Permissões: SIRENE, MODULO, PENDENCIA, FIRMWARE, MEDICAO, AUDIO, LOGGER, EMPRESA, CANAL, BARRAGEM, USUARIO, PERFIL, PERMISSAO, RECURSO, ABRANGENCIA.", example = "BARRAGEM")
+	private RecursoMapEnum nome;
 
-    @Schema(name = "descricao", description = "Descrição do Recurso")
-    private String descricao;
+	@Schema(name = "descricao", description = "Descrição do Recurso")
+	private String descricao;
 
 	public RecursoMapEnum getNome() {
 		return nome;

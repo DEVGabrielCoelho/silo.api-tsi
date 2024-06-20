@@ -17,23 +17,23 @@ import jakarta.persistence.EntityNotFoundException;
 
 public interface PendenciaServInterface {
 
-  ResponseEntity<KeepAliveDTO> findByKeepAlive(String num) throws EntityNotFoundException, IOException;
+	ResponseEntity<KeepAliveDTO> findByKeepAlive(String num) throws EntityNotFoundException, IOException;
 
-  ResponseEntity<List<PendenciasDTO>> findByAll();
+	ResponseEntity<List<PendenciasDTO>> findByAll();
 
-  ResponseEntity<List<PendenciasDTO>> findByPentipAndpendel(String tipo);
+	ResponseEntity<List<PendenciasDTO>> findByPentipAndpendel(String tipo);
 
-  ResponseEntity<List<PendenciasDTO>> findByPenStaAndpendel(String status);
+	ResponseEntity<List<PendenciasDTO>> findByPenStaAndpendel(String status);
 
-  ResponseEntity<PendenciasDTO> findById(Long id);
+	ResponseEntity<PendenciasDTO> findById(Long id);
 
-  ResponseEntity<List<PendenciasDTO>> findByPentipAndPenstaAndpendel(String tipo, String status);
+	ResponseEntity<List<PendenciasDTO>> findByPentipAndPenstaAndpendel(String tipo, String status);
 
-  ResponseEntity<Page<PendenciasDTO>> findAllPaginado(String nome, Long modulo, Pageable pageable);
+	ResponseEntity<Page<PendenciasDTO>> findAllPaginado(String nome, Long modulo, Pageable pageable);
 
-  ResponseEntity<PendenciasDTO> delete(PendenciaDelete delete) throws ParseException, IOException;
+	ResponseEntity<PendenciasDTO> delete(PendenciaDelete delete) throws ParseException, IOException;
 
-  ResponseEntity<PendenciasDTO> update(Long id, StatusEnum pendenciaModulo) throws ParseException ;
+	ResponseEntity<PendenciasDTO> update(Long id, StatusEnum pendenciaModulo) throws ParseException;
 
-  ResponseEntity<PendenciasDTO> save(PendenciaModel pendenciaModulo) throws EntityNotFoundException, IOException;
+	ResponseEntity<PendenciasDTO> save(PendenciaModel pendenciaModulo) throws EntityNotFoundException, IOException;
 }

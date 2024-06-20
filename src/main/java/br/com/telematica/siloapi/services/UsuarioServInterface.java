@@ -16,11 +16,17 @@ import jakarta.persistence.EntityNotFoundException;
 public interface UsuarioServInterface {
 
 	ResponseEntity<UsuarioDTO> findById(@NonNull Long codigo) throws EntityNotFoundException, IOException;
+
 	ResponseEntity<List<UsuarioDTO>> findAll() throws EntityNotFoundException, IOException;
+
 	ResponseEntity<UsuarioDTO> saveUpdateEncodePassword(@NonNull Long codigo, @NonNull UsuarioModel userModel) throws EntityNotFoundException, IOException;
+
 	ResponseEntity<UsuarioDTO> saveUpdateEncodePassword(@NonNull UsuarioModel userModel) throws EntityNotFoundException, IOException;
+
 	ResponseEntity<Page<UsuarioDTO>> findAll(String nome, @NonNull Pageable pageable) throws EntityNotFoundException, IOException;
+
 	ResponseEntity<UsuarioDTO> delete(@NonNull Long perfil) throws IOException;
+
 	ResponseEntity<UsuarioPermissaoDTO> findByIdPermission(@NonNull Long codigo) throws EntityNotFoundException, IOException;
 
 }

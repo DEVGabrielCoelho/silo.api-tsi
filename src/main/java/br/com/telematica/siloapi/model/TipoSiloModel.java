@@ -6,13 +6,13 @@ import jakarta.validation.constraints.NotBlank;
 @Schema(description = "Tipo Silo")
 public class TipoSiloModel {
 
-    @NotBlank(message = "O campo 'nome' é obrigatório e não pode estar em branco.")
-    @Schema(description = "Nome do tipo de Silo", example = "Tipo 1")
-    private String nome;
+	@NotBlank(message = "O campo 'nome' é obrigatório e não pode estar em branco.")
+	@Schema(description = "Nome do tipo de Silo", example = "Tipo 1")
+	private String nome;
 
-    @NotBlank(message = "O campo 'descricao' é obrigatório e não pode estar em branco.")
-    @Schema(description = "Descrição", example = "Tipo 1 descrição")
-    private String descricao;
+	@NotBlank(message = "O campo 'descricao' é obrigatório e não pode estar em branco.")
+	@Schema(description = "Descrição", example = "Tipo 1 descrição")
+	private String descricao;
 
 	public TipoSiloModel() {
 	}

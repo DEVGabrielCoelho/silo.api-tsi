@@ -24,5 +24,4 @@ public interface PlantaServInterface {
 
 	ResponseEntity<PlantaDTO> findById(Long codigo) throws IOException, EmptyResultDataAccessException;
 
-	
 }
