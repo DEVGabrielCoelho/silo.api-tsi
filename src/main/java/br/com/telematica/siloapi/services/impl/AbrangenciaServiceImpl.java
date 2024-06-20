@@ -3,6 +3,7 @@ package br.com.telematica.siloapi.services.impl;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -122,7 +123,7 @@ public class AbrangenciaServiceImpl implements AbrangenciaServInterface {
 
 	public List<AbrangenciaDetalhesDTO> createAbrangenciaDetalhesList(Abrangencia abrangencia, List<AbrangenciaDetalhesModel> recursos) {
 		return recursos == null ? List.of() // Retorna uma lista vazia em vez de null.
-				: recursos.stream().map(recurso -> createAbrangenciaDetalhes(abrangencia, recurso)).collect(Collectors.toList());
+				: recursos.stream().map(recurso -> new AbrangenciaDetalhesDTO(saveOrUpdateAbrangenciaDetalhes(abrangencia, recurso))).collect(Collectors.toList());
 	}
 
 	@Override
@@ -132,7 +133,7 @@ public class AbrangenciaServiceImpl implements AbrangenciaServInterface {
 
 		Abrangencia abrangencia = abrangenciaRepository.save(new Abrangencia(codigo, abrangenciaModel.getNome(), abrangenciaModel.getDescricao()));
 
-		List<AbrangenciaDetalhesDTO> abrangenciaDetalhesDTOList = abrangenciaModel.getRecursos() == null ? null : abrangenciaModel.getRecursos().stream().map(recurso -> updateAbrangenciaDetalhes(abrangencia, recurso)).collect(Collectors.toList());
+		List<AbrangenciaDetalhesDTO> abrangenciaDetalhesDTOList = abrangenciaModel.getRecursos() == null ? null : abrangenciaModel.getRecursos().stream().map(recurso -> new AbrangenciaDetalhesDTO(saveOrUpdateAbrangenciaDetalhes(abrangencia, recurso))).collect(Collectors.toList());
 
 		if (abrangenciaDetalhesDTOList == null || abrangenciaDetalhesDTOList.isEmpty()) {
 			abrangenciaDetalhesRepository.deleteById(codigo);
@@ -187,26 +188,56 @@ public class AbrangenciaServiceImpl implements AbrangenciaServInterface {
 		}
 	}
 
-	private AbrangenciaDetalhesDTO createAbrangenciaDetalhes(Abrangencia abrangencia, AbrangenciaDetalhesModel recurso) {
-		String recursoNome = Objects.requireNonNull(recurso.getRecurso().getNome(), "Nome do recurso está nulo.");
-		Objects.requireNonNull(recurso.getHierarquia(), "Valor da Hierarquia está nulo.");
+	public AbrangenciaDetalhes saveOrUpdateAbrangenciaDetalhes(Abrangencia abrangencia, AbrangenciaDetalhesModel recurso) {
+	    String recursoNome = Objects.requireNonNull(recurso.getRecurso().getNome(), "Nome do recurso está nulo.");
+	    Objects.requireNonNull(recurso.getHierarquia(), "Valor da Hierarquia está nulo.");
 
-		Recurso recursoEntity = recursoService.findByIdEntity(recursoNome);
-		JsonNodeConverter jsonNode = new JsonNodeConverter();
-		AbrangenciaDetalhes detalhes = new AbrangenciaDetalhes(null, abrangencia, recursoEntity, recurso.getHierarquia(), jsonNode.convertToDatabaseColumn(recurso.getDados()));
-		return new AbrangenciaDetalhesDTO(abrangenciaDetalhesRepository.save(detalhes));
+	    Recurso recursoEntity = recursoService.findByIdEntity(recursoNome);
+
+	    Optional<AbrangenciaDetalhes> detalhesOpt = abrangenciaDetalhesRepository
+	            .findByAbrangencia_abrcodAndRecurso_recnomContaining(abrangencia.getAbrcod(), recursoEntity.getRecnom());
+
+	    JsonNodeConverter jsonNode = new JsonNodeConverter();
+	    AbrangenciaDetalhes detalhes = new AbrangenciaDetalhes(
+	            detalhesOpt.map(AbrangenciaDetalhes::getAbdcod).orElse(null),
+	            abrangencia,
+	            recursoEntity,
+	            recurso.getHierarquia(),
+	            jsonNode.convertToDatabaseColumn(recurso.getDados())
+	    );
+
+	    return abrangenciaDetalhesRepository.save(detalhes);
 	}
 
-	private AbrangenciaDetalhesDTO updateAbrangenciaDetalhes(Abrangencia abrangencia, AbrangenciaDetalhesModel recurso) {
-		String recursoNome = Objects.requireNonNull(recurso.getRecurso().getNome(), "Nome do recurso está nulo.");
-		Objects.requireNonNull(recurso.getHierarquia(), "Valor da Hierarquia está nulo.");
+	public AbrangenciaDetalhes saveOrUpdateAbrangenciaDetalhes(Abrangencia abrangencia, AbrangenciaDetalhes detalhes) {
+	    Objects.requireNonNull(abrangencia, "Abrangência está nula.");
+	    Objects.requireNonNull(detalhes, "Detalhes estão nulos.");
+	    Objects.requireNonNull(detalhes.getRecurso(), "Recurso está nulo.");
+	    Objects.requireNonNull(detalhes.getAbdhie(), "Hierarquia está nula.");
+	    Objects.requireNonNull(detalhes.getAbddat(), "Dados estão nulos.");
 
-		Recurso recursoEntity = recursoService.findByIdEntity(recursoNome);
-		var detalhesOpt = abrangenciaDetalhesRepository.findByAbrangencia_abrcodAndRecurso_recnomContaining(abrangencia.getAbrcod(), recursoEntity.getRecnom());
+	    Recurso recurso = detalhes.getRecurso();
+	    Long abrangenciaId = abrangencia.getAbrcod();
+	    String recursoNome = recurso.getRecnom();
 
-		JsonNodeConverter jsonNode = new JsonNodeConverter();
-		AbrangenciaDetalhes detalhes = new AbrangenciaDetalhes(detalhesOpt.map(AbrangenciaDetalhes::getAbdcod).orElse(null), abrangencia, recursoEntity, recurso.getHierarquia(), jsonNode.convertToDatabaseColumn(recurso.getDados()));
-		return new AbrangenciaDetalhesDTO(abrangenciaDetalhesRepository.save(detalhes));
+	    Optional<AbrangenciaDetalhes> detalhesOpt = abrangenciaDetalhesRepository
+	            .findByAbrangencia_abrcodAndRecurso_recnomContaining(abrangenciaId, recursoNome);
+
+	    Long detalhesId = detalhesOpt.map(AbrangenciaDetalhes::getAbdcod).orElse(null);
+	    AbrangenciaDetalhes abrangenciaDetalhes = new AbrangenciaDetalhes(
+	            detalhesId,
+	            abrangencia,
+	            recurso,
+	            detalhes.getAbdhie(),
+	            detalhes.getAbddat()
+	    );
+
+	    return abrangenciaDetalhesRepository.save(abrangenciaDetalhes);
+	}
+
+
+	public Abrangencia createUpdateAbrangencia(Abrangencia abrangencia) {
+		return abrangenciaRepository.save(abrangencia);
 	}
 
 }

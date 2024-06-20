@@ -16,6 +16,7 @@ import br.com.telematica.siloapi.model.UsuarioModel;
 import br.com.telematica.siloapi.model.entity.Abrangencia;
 import br.com.telematica.siloapi.model.entity.AbrangenciaDetalhes;
 import br.com.telematica.siloapi.model.entity.Perfil;
+import br.com.telematica.siloapi.model.entity.Recurso;
 import br.com.telematica.siloapi.model.enums.RecursoMapEnum;
 import br.com.telematica.siloapi.services.impl.AbrangenciaServiceImpl;
 import br.com.telematica.siloapi.services.impl.EmpresaServiceImpl;
@@ -145,49 +146,56 @@ public class CreateAdminHandler {
 	}
 
 	public void createAbrangencia() throws Exception {
-		try {
-			logs.debug("createAbrangencia Start... ");
-			var abrangencia = abrangenciaService.findByIdEntity("ADMIN");
-			if (abrangencia == null)
-				abrangencia = abrangenciaService.createUpdateAbrangencia(new Abrangencia(null, "ADMIN", "Descrição Abrangencia ADMIN"));
-			else
-				abrangencia = abrangenciaService.createUpdateAbrangencia(new Abrangencia(abrangencia.getAbrcod(), "ADMIN", "Descrição Abrangencia ADMIN"));
-//			List<AbrangenciaDetalhesModel> listAbrangencia = new ArrayList<>();
-			int listItem = listaAbrangencia.length;
-			for (int i = 0; i < listItem; i++) {
-				RecursoMapEnum recursoEnum = RecursoMapEnum.valueOf(listaAbrangencia[i]);
-				var recurso = recursoService.findByIdEntity(recursoEnum.getNome());
-				var detalhes = abrangenciaService.findByAbrangenciaAndRecursoContainingAbrangencia(abrangencia, recurso);
-				JsonNodeConverter jsonNode = new JsonNodeConverter();
-				String data = jsonNode.convertToDatabaseColumn(new ObjectMapper().createArrayNode());
-				abrangenciaService.createDetalhesAbrangencia(new AbrangenciaDetalhes(detalhes == null ? null : detalhes.getAbdcod(), abrangencia, recurso, 0, data));
-			}
-//				if (detalhes == null)
-//					listAbrangencia.add(new AbrangenciaDetalhesModel(recursoEnum, 1, 0, new ObjectMapper().createArrayNode()));
-//			AbrangenciaModel abrangenciaModel = new AbrangenciaModel("ADMIN", "Descrição Abrangencia ADMIN", listAbrangencia);
-//			if (abrangencia == null)
-//				abrangenciaService.save(abrangenciaModel);
-//			else
-//				abrangenciaService.update(abrangencia.getAbrcod(), abrangenciaModel);
+	    try {
+	        logs.debug("createAbrangencia Start...");
+	        
+	        Abrangencia abrangencia = abrangenciaService.findByIdEntity("ADMIN");
+	        
+	        if (abrangencia == null) {
+	            abrangencia = abrangenciaService.createUpdateAbrangencia(new Abrangencia(null, "ADMIN", "Descrição Abrangencia ADMIN"));
+	        } else {
+	            abrangencia = abrangenciaService.createUpdateAbrangencia(new Abrangencia(abrangencia.getAbrcod(), "ADMIN", "Descrição Abrangencia ADMIN"));
+	        }
 
-		} catch (Exception e) {
-			logs.error("createAbrangencia: ", e);
-		}
+	        int listItem = listaAbrangencia.length;
+	        for (int i = 0; i < listItem; i++) {
+	            RecursoMapEnum recursoEnum = RecursoMapEnum.valueOf(listaAbrangencia[i]);
+	            Recurso recurso = recursoService.findByIdEntity(recursoEnum.getNome());
+	            
+	            JsonNodeConverter jsonNode = new JsonNodeConverter();
+	            String data = jsonNode.convertToDatabaseColumn(new ObjectMapper().createArrayNode());
+
+	            abrangenciaService.saveOrUpdateAbrangenciaDetalhes(abrangencia, new AbrangenciaDetalhes(
+	                null,
+	                abrangencia,
+	                recurso,
+	                0, 
+	                data
+	            ));
+	        }
+	    } catch (Exception e) {
+	        logs.error("createAbrangencia: ", e);
+	    }
 	}
+
+
 
 	public void createAbrangenciaDevice() throws Exception {
-		try {
-			logs.debug("createAbrangencia Start... ");
-			var abrangencia = abrangenciaService.findByIdEntity("DEVICE");
-			if (abrangencia == null)
-				abrangencia = abrangenciaService.createUpdateAbrangencia(new Abrangencia(null, "DEVICE", "Descrição Abrangencia DEVICE"));
-			else
-				abrangencia = abrangenciaService.createUpdateAbrangencia(new Abrangencia(abrangencia.getAbrcod(), "DEVICE", "Descrição Abrangencia DEVICE"));
-
-		} catch (Exception e) {
-			logs.error("createAbrangencia: ", e);
-		}
+	    try {
+	        logs.debug("createAbrangenciaDevice Start...");
+	        
+	        Abrangencia abrangencia = abrangenciaService.findByIdEntity("DEVICE");
+	        
+	        if (abrangencia == null) {
+	            abrangencia = abrangenciaService.createUpdateAbrangencia(new Abrangencia(null, "DEVICE", "Descrição Abrangencia DEVICE"));
+	        } else {
+	            abrangencia = abrangenciaService.createUpdateAbrangencia(new Abrangencia(abrangencia.getAbrcod(), "DEVICE", "Descrição Abrangencia DEVICE"));
+	        }
+	    } catch (Exception e) {
+	        logs.error("createAbrangenciaDevice: ", e);
+	    }
 	}
+
 
 	public void createUsuario() throws ParseException {
 		try {

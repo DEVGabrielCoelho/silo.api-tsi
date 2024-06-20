@@ -1,5 +1,8 @@
 package br.com.telematica.siloapi.model.entity;
 
+import java.util.Date;
+
+import br.com.telematica.sirene.models.entitys.SireneModulo;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -30,6 +33,8 @@ public class SiloModulo {
 	private Long smotke;
 	@Column(nullable = false)
 	private Long smotme;
+	private Date smohke;
+	private Date smohme;
 	@Column(nullable = false)
 	private Integer smogmt;
 	@Column(nullable = false)
@@ -39,7 +44,7 @@ public class SiloModulo {
 	@Column(nullable = false)
 	private String smosta;
 
-	public SiloModulo(Long smocod, Silo silo, String smodes, Long smotse, String smonse, Long smotke, Long smotme, Integer smogmt, String smocke, String smocme, String smosta) {
+	public SiloModulo(Long smocod, Silo silo, String smodes, Long smotse, String smonse, Long smotke, Long smotme, Date smohke, Date smohme, Integer smogmt, String smocke, String smocme, String smosta) {
 		super();
 		this.smocod = smocod;
 		this.silo = silo;
@@ -48,6 +53,8 @@ public class SiloModulo {
 		this.smonse = smonse;
 		this.smotke = smotke;
 		this.smotme = smotme;
+		this.smohke = smohke;
+		this.smohme = smohme;
 		this.smogmt = smogmt;
 		this.smocke = smocke;
 		this.smocme = smocme;
@@ -57,6 +64,16 @@ public class SiloModulo {
 	public SiloModulo() {
 		super();
 		// TODO Auto-generated constructor stub
+	}
+
+	public SiloModulo sireneModuloRegisterKeep(Date keepalive) {
+		this.smohke = keepalive;
+		return this;
+	}
+
+	public SiloModulo sireneModuloRegisterMedicao(Date medicao) {
+		this.smohme = medicao;
+		return this;
 	}
 
 	@Override
@@ -70,10 +87,10 @@ public class SiloModulo {
 			builder.append("silo=").append(silo).append(", ");
 		}
 		if (smodes != null) {
-			builder.append("smocdes=").append(smodes).append(", ");
+			builder.append("smodes=").append(smodes).append(", ");
 		}
 		if (smotse != null) {
-			builder.append("smoctse=").append(smotse).append(", ");
+			builder.append("smotse=").append(smotse).append(", ");
 		}
 		if (smonse != null) {
 			builder.append("smonse=").append(smonse).append(", ");
@@ -83,6 +100,12 @@ public class SiloModulo {
 		}
 		if (smotme != null) {
 			builder.append("smotme=").append(smotme).append(", ");
+		}
+		if (smohke != null) {
+			builder.append("smohke=").append(smohke).append(", ");
+		}
+		if (smohme != null) {
+			builder.append("smohme=").append(smohme).append(", ");
 		}
 		if (smogmt != null) {
 			builder.append("smogmt=").append(smogmt).append(", ");
@@ -128,8 +151,8 @@ public class SiloModulo {
 		return smotse;
 	}
 
-	public void setSmotse(Long smoctse) {
-		this.smotse = smoctse;
+	public void setSmotse(Long smotse) {
+		this.smotse = smotse;
 	}
 
 	public String getSmonse() {
@@ -154,6 +177,22 @@ public class SiloModulo {
 
 	public void setSmotme(Long smotme) {
 		this.smotme = smotme;
+	}
+
+	public Date getSmohke() {
+		return smohke;
+	}
+
+	public void setSmohke(Date smohke) {
+		this.smohke = smohke;
+	}
+
+	public Date getSmohme() {
+		return smohme;
+	}
+
+	public void setSmohme(Date smohme) {
+		this.smohme = smohme;
 	}
 
 	public Integer getSmogmt() {

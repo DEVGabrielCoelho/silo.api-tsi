@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.telematica.siloapi.exception.ResponseGlobalModel;
 import br.com.telematica.siloapi.model.UsuarioModel;
 import br.com.telematica.siloapi.model.dto.UsuarioDTO;
 import br.com.telematica.siloapi.model.dto.UsuarioPermissaoDTO;
@@ -81,7 +80,7 @@ public class UsuarioController extends SecurityRestController {
 
 	@DeleteMapping("/v1/deletar/{codigo}")
 	@Operation(description = "Deletar um usuário pelo código. Remove um usuário específico com base no código fornecido.")
-	public ResponseEntity<ResponseGlobalModel> deletar(@Valid @PathVariable @NonNull Long codigo) throws IOException {
+	public ResponseEntity<UsuarioDTO> deletar(@Valid @PathVariable @NonNull Long codigo) throws IOException {
 		return userServImpl.delete(codigo);
 	}
 }

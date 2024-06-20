@@ -1,6 +1,7 @@
 package br.com.telematica.siloapi.services.impl;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,7 +36,7 @@ public class SiloModuloServiceImpl implements SiloModuloServInterface {
 		try {
 			var silo = siloServiceImpl.findEntity(object.getSilo());
 
-			var entity = new SiloModulo(null, silo, object.getDescricao(), object.getTotalSensor(), object.getNumSerie(), object.getTimeoutKeepAlive(), object.getTimeoutMedicao(), object.getGmt(), object.getCorKeepAlive(), object.getCorMedicao(), object.getStatus().getStatus());
+			var entity = new SiloModulo(null, silo, object.getDescricao(), object.getTotalSensor(), object.getNumSerie(), object.getTimeoutKeepAlive(), object.getTimeoutMedicao(), null, null,  object.getGmt(), object.getCorKeepAlive(), object.getCorMedicao(), object.getStatus().getStatus());
 			var result = siloModuloRepository.save(entity);
 
 			logger.info("Módulo do Silo salvo com successo." + result);
@@ -73,7 +74,7 @@ public class SiloModuloServiceImpl implements SiloModuloServInterface {
 			if (siloModulo.isEmpty() || !siloModulo.isPresent())
 				throw new EntityNotFoundException("Não foi possível encontrar o modulo do silo com o ID " + codigo + " fornecido.");
 
-			var entity = new SiloModulo(siloModulo.get().getSmocod(), silo, object.getDescricao(), object.getTotalSensor(), object.getNumSerie(), object.getTimeoutKeepAlive(), object.getTimeoutMedicao(), object.getGmt(), object.getCorKeepAlive(), object.getCorMedicao(),
+			var entity = new SiloModulo(siloModulo.get().getSmocod(), silo, object.getDescricao(), object.getTotalSensor(), object.getNumSerie(), object.getTimeoutKeepAlive(), object.getTimeoutMedicao(), null, null,  object.getGmt(), object.getCorKeepAlive(), object.getCorMedicao(),
 					object.getStatus().getStatus());
 			var result = siloModuloRepository.save(entity);
 
@@ -110,5 +111,26 @@ public class SiloModuloServiceImpl implements SiloModuloServInterface {
 
 		return result;
 	}
+	
+	SiloModulo findEntityNSE(String nse) {
+		var result = siloModuloRepository.findBySmonse(nse).orElse(null);
 
+		if (result == null) {
+			logger.error("Silo não encontrado.");
+			return null;
+		}
+
+		return result;
+	}
+
+	 void registerKeepAliveInModulo(SiloModulo modulo, Date date) throws EntityNotFoundException, IOException {
+		var mod = siloModuloRepository.save(modulo.sireneModuloRegisterKeep(date));
+		logger.info("Registro Ultimo KeepAlive efetuado com sucesso. " + mod.toString());
+	}
+
+	 void registerMedicaoInModulo(SiloModulo modulo, Date date) throws EntityNotFoundException, IOException {
+		var mod = siloModuloRepository.save(modulo.sireneModuloRegisterMedicao(date));
+		logger.info("Registro Ultima Medicao efetuado com sucesso. " + mod.toString());
+	}
+	
 }

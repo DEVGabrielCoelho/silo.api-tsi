@@ -23,7 +23,7 @@ public interface PendenciaServInterface {
 
 	ResponseEntity<List<PendenciasDTO>> findByPentipAndpendel(String tipo);
 
-	ResponseEntity<List<PendenciasDTO>> findByPenStaAndpendel(String status);
+//	ResponseEntity<List<PendenciasDTO>> findByPenStaAndpendel(String status);
 
 	ResponseEntity<PendenciasDTO> findById(Long id);
 

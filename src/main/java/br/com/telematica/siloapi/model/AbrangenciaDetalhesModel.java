@@ -9,8 +9,8 @@ import jakarta.validation.constraints.NotNull;
 
 public class AbrangenciaDetalhesModel {
 
-	@NotBlank(message = "O recurso é obrigatório e não pode estar em branco. Escolha entre: BARRAGEM, CANAL, EMPRESA, PENDENCIA, FIRMWARE, LOGGER, MEDICAO, AUDIO, SIRENE, MODULO, USUARIO.")
-	@Schema(name = "recurso", description = "Lista dos níveis de permissão. Permissões: BARRAGEM, CANAL, EMPRESA, PENDENCIA, FIRMWARE, LOGGER, MEDICAO, AUDIO, SIRENE, MODULO, USUARIO", example = "BARRAGEM")
+	@NotBlank(message = "O recurso é obrigatório e não pode estar em branco.")
+	@Schema(name = "recurso", description = "Lista dos níveis de permissão.", example = "EMPRESA")
 	private RecursoMapEnum recurso;
 
 	@NotNull(message = "A hierarquia é obrigatória e não pode ser nula. Defina o nível de hierarquia como 0 (não) ou 1 (sim).")
