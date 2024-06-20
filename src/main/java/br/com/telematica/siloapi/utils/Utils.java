@@ -138,4 +138,18 @@ public class Utils {
 		}
 	}
 
+    public static double calcularVolumeVertical(double raio, double altura) {
+        if (raio < 0 || altura < 0) {
+            throw new IllegalArgumentException("O raio e a altura devem ser positivos.");
+        }
+        return Math.PI * Math.pow(raio, 2) * altura;
+    }
+
+    public static double calcularVolumeHorizontal(double comprimento, double largura, double altura) {
+        if (comprimento < 0 || largura < 0 || altura < 0) {
+            throw new IllegalArgumentException("O comprimento, a largura e a altura devem ser positivos.");
+        }
+        return comprimento * largura * altura;
+    }
+	
 }

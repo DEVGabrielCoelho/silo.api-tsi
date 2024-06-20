@@ -15,22 +15,43 @@ public class TipoSilo {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(nullable = false)
 	private Long tsicod;
-	@Column(length = 50, nullable = false)
+	@Column(nullable = false)
 	private String tsinom;
-	@Column(length = 50, nullable = false)
+	@Column(nullable = false)
 	private String tsides;
+	@Column(nullable = false)
+	private String tsitip;
+	@Column(nullable = false)
+	private Double tsidse;
+	@Column(nullable = false)
+	private Double tsiach;
 
-	public TipoSilo tipoSiloEntity(String tsinom, String tsides) {
-		this.tsinom = tsinom;
-		this.tsides = tsides;
-		return this;
-	}
+	private Double tsirai = Double.valueOf(0);;
+	private Double tsilar = Double.valueOf(0);;
+	private Double tsicom = Double.valueOf(0);;
 
-	public TipoSilo(Long tsicod, String tsinom, String tsides) {
+	public TipoSilo(Long tsicod, String tsinom, String tsides, String tsitip, Double tsidse, Double tsiach, Double tsirai, Double tsilar, Double tsicom) {
 		super();
 		this.tsicod = tsicod;
 		this.tsinom = tsinom;
 		this.tsides = tsides;
+		this.tsitip = tsitip;
+		this.tsidse = tsidse;
+		this.tsiach = tsiach;
+		this.tsirai = tsirai;
+		this.tsilar = tsilar;
+		this.tsicom = tsicom;
+	}
+
+	public TipoSilo tipoSiloVertical(Double tsirai) {
+		this.tsirai = tsirai;
+		return this;
+	}
+
+	public TipoSilo tipoSiloHorizontal(Double tsilar, Double tsicom) {
+		this.tsilar = tsilar;
+		this.tsicom = tsicom;
+		return this;
 	}
 
 	public TipoSilo() {
@@ -49,7 +70,25 @@ public class TipoSilo {
 			builder.append("tsinom=").append(tsinom).append(", ");
 		}
 		if (tsides != null) {
-			builder.append("tsides=").append(tsides);
+			builder.append("tsides=").append(tsides).append(", ");
+		}
+		if (tsitip != null) {
+			builder.append("tsitip=").append(tsitip).append(", ");
+		}
+		if (tsidse != null) {
+			builder.append("tsidse=").append(tsidse).append(", ");
+		}
+		if (tsiach != null) {
+			builder.append("tsiach=").append(tsiach).append(", ");
+		}
+		if (tsirai != null) {
+			builder.append("tsirai=").append(tsirai).append(", ");
+		}
+		if (tsilar != null) {
+			builder.append("tsilar=").append(tsilar).append(", ");
+		}
+		if (tsicom != null) {
+			builder.append("tsicom=").append(tsicom);
 		}
 		builder.append("]");
 		return builder.toString();
@@ -77,6 +116,54 @@ public class TipoSilo {
 
 	public void setTsides(String tsides) {
 		this.tsides = tsides;
+	}
+
+	public String getTsitip() {
+		return tsitip;
+	}
+
+	public void setTsitip(String tsitip) {
+		this.tsitip = tsitip;
+	}
+
+	public Double getTsidse() {
+		return tsidse;
+	}
+
+	public void setTsidse(Double tsidse) {
+		this.tsidse = tsidse;
+	}
+
+	public Double getTsiach() {
+		return tsiach;
+	}
+
+	public void setTsiach(Double tsiach) {
+		this.tsiach = tsiach;
+	}
+
+	public Double getTsirai() {
+		return tsirai;
+	}
+
+	public void setTsirai(Double tsirai) {
+		this.tsirai = tsirai;
+	}
+
+	public Double getTsilar() {
+		return tsilar;
+	}
+
+	public void setTsilar(Double tsilar) {
+		this.tsilar = tsilar;
+	}
+
+	public Double getTsicom() {
+		return tsicom;
+	}
+
+	public void setTsicom(Double tsicom) {
+		this.tsicom = tsicom;
 	}
 
 }

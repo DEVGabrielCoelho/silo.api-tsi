@@ -16,9 +16,6 @@ public class Medicao {
 	@Id
 	@Column(nullable = false)
 	private Date msidth;
-//	@ManyToOne
-//	@JoinColumn(name = "silcod", nullable = false)
-//	private Silo silo;
 	@ManyToOne
 	@JoinColumn(name = "smocod", nullable = false)
 	private SiloModulo silomodulo;
@@ -52,6 +49,8 @@ public class Medicao {
 		this.msidis = msidis;
 		return this;
 	}
+	
+	
 
 	public Date getMsidth() {
 		return msidth;

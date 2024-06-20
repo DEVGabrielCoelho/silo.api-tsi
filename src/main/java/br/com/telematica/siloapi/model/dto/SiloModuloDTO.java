@@ -15,8 +15,10 @@ public class SiloModuloDTO extends Codigo {
 	private String corKeepAlive;
 	private String corMedicao;
 	private StatusDeviceEnum status;
+	private Double volumeCheio = Double.valueOf(0);;
+	private Double volumeStatus = Double.valueOf(0);;
 
-	public SiloModuloDTO(Long codigo, SiloDTO silo, String descricao, Long totalSensor, String numSerie, Long timeoutKeepAlive, Long timeoutMedicao, Integer gmt, String corKeepAlive, String corMedicao, StatusDeviceEnum status) {
+	public SiloModuloDTO(Long codigo, SiloDTO silo, String descricao, Long totalSensor, String numSerie, Long timeoutKeepAlive, Long timeoutMedicao, Integer gmt, String corKeepAlive, String corMedicao, StatusDeviceEnum status, Double volumeCheio, Double volumeStatus) {
 		super(codigo);
 		this.silo = silo;
 		this.descricao = descricao;
@@ -28,6 +30,8 @@ public class SiloModuloDTO extends Codigo {
 		this.corKeepAlive = corKeepAlive;
 		this.corMedicao = corMedicao;
 		this.status = status;
+		this.volumeCheio = volumeCheio;
+		this.volumeStatus = volumeStatus;
 	}
 
 	public SiloModuloDTO(SiloModulo silomodulo) {
@@ -42,6 +46,66 @@ public class SiloModuloDTO extends Codigo {
 		this.corKeepAlive = silomodulo.getSmocke();
 		this.corMedicao = silomodulo.getSmocme();
 		this.status = StatusDeviceEnum.mapDescricaoToStatusDevice(silomodulo.getSmosta());
+	}
+
+	public SiloModuloDTO volumeSilo(Double volumeCheio, Double volumeStatus) {
+		this.volumeCheio = volumeCheio;
+		this.volumeStatus = volumeStatus;
+		return this;
+	}
+
+	public SiloModuloDTO() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public SiloModuloDTO(Long codigo) {
+		super(codigo);
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("SiloModuloDTO [");
+		if (silo != null) {
+			builder.append("silo=").append(silo).append(", ");
+		}
+		if (descricao != null) {
+			builder.append("descricao=").append(descricao).append(", ");
+		}
+		if (totalSensor != null) {
+			builder.append("totalSensor=").append(totalSensor).append(", ");
+		}
+		if (numSerie != null) {
+			builder.append("numSerie=").append(numSerie).append(", ");
+		}
+		if (timeoutKeepAlive != null) {
+			builder.append("timeoutKeepAlive=").append(timeoutKeepAlive).append(", ");
+		}
+		if (timeoutMedicao != null) {
+			builder.append("timeoutMedicao=").append(timeoutMedicao).append(", ");
+		}
+		if (gmt != null) {
+			builder.append("gmt=").append(gmt).append(", ");
+		}
+		if (corKeepAlive != null) {
+			builder.append("corKeepAlive=").append(corKeepAlive).append(", ");
+		}
+		if (corMedicao != null) {
+			builder.append("corMedicao=").append(corMedicao).append(", ");
+		}
+		if (status != null) {
+			builder.append("status=").append(status).append(", ");
+		}
+		if (volumeCheio != null) {
+			builder.append("volumeCheio=").append(volumeCheio).append(", ");
+		}
+		if (volumeStatus != null) {
+			builder.append("volumeStatus=").append(volumeStatus);
+		}
+		builder.append("]");
+		return builder.toString();
 	}
 
 	public SiloDTO getSilo() {
@@ -122,6 +186,22 @@ public class SiloModuloDTO extends Codigo {
 
 	public void setStatus(StatusDeviceEnum status) {
 		this.status = status;
+	}
+
+	public Double getVolumeCheio() {
+		return volumeCheio;
+	}
+
+	public void setVolumeCheio(Double volumeCheio) {
+		this.volumeCheio = volumeCheio;
+	}
+
+	public Double getVolumeStatus() {
+		return volumeStatus;
+	}
+
+	public void setVolumeStatus(Double volumeStatus) {
+		this.volumeStatus = volumeStatus;
 	}
 
 }

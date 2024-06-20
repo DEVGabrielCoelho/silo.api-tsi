@@ -15,6 +15,7 @@ import br.com.telematica.siloapi.exception.CustomMessageException;
 import br.com.telematica.siloapi.model.TipoSiloModel;
 import br.com.telematica.siloapi.model.dto.TipoSiloDTO;
 import br.com.telematica.siloapi.model.entity.TipoSilo;
+import br.com.telematica.siloapi.model.enums.TipoSiloEnum;
 import br.com.telematica.siloapi.repository.TipoSiloRepository;
 import br.com.telematica.siloapi.services.TipoSiloServInterface;
 import br.com.telematica.siloapi.utils.message.MessageResponse;
@@ -32,7 +33,18 @@ public class TipoSiloServiceImpl implements TipoSiloServInterface {
 	@Override
 	public ResponseEntity<TipoSiloDTO> save(TipoSiloModel tipoSiloModel) throws RuntimeException, IOException {
 		try {
-			TipoSilo entity = new TipoSilo(null, tipoSiloModel.getNome(), tipoSiloModel.getDescricao());
+			TipoSilo entity = new TipoSilo();
+			entity.setTsinom(tipoSiloModel.getNome());
+			entity.setTsides(tipoSiloModel.getDescricao());
+			entity.setTsitip(tipoSiloModel.getTipoSilo().getTipo());
+			entity.setTsiach(tipoSiloModel.getAlturaCheio());
+			entity.setTsidse(tipoSiloModel.getDistanciaSensor());
+			
+			if (tipoSiloModel.getTipoSilo() == TipoSiloEnum.HORIZONTAL)
+				entity.tipoSiloHorizontal(tipoSiloModel.getLargura(), tipoSiloModel.getComprimento());
+			if (tipoSiloModel.getTipoSilo() == TipoSiloEnum.VERTICAL)
+				entity.tipoSiloVertical(tipoSiloModel.getRaio());
+			
 			TipoSilo result = tipoSiloRepository.save(entity);
 
 			logger.info("Tipo Silo salvo com sucesso: " + result);
@@ -66,8 +78,17 @@ public class TipoSiloServiceImpl implements TipoSiloServInterface {
 		try {
 			TipoSilo resultEntity = tipoSiloRepository.findById(codigo).orElseThrow(() -> CustomMessageException.exceptionEntityNotFoundException(codigo, RECURSO, null));
 
-			TipoSilo entity = resultEntity.tipoSiloEntity(tipoSiloModel.getNome(), tipoSiloModel.getDescricao());
-			TipoSilo result = tipoSiloRepository.save(entity);
+			resultEntity.setTsinom(tipoSiloModel.getNome());
+			resultEntity.setTsides(tipoSiloModel.getDescricao());
+			resultEntity.setTsitip(tipoSiloModel.getTipoSilo().getTipo());
+			resultEntity.setTsiach(tipoSiloModel.getAlturaCheio());
+			resultEntity.setTsidse(tipoSiloModel.getDistanciaSensor());
+			
+			if (tipoSiloModel.getTipoSilo() == TipoSiloEnum.HORIZONTAL)
+				resultEntity.tipoSiloHorizontal(tipoSiloModel.getLargura(), tipoSiloModel.getComprimento());
+			if (tipoSiloModel.getTipoSilo() == TipoSiloEnum.HORIZONTAL)
+				resultEntity.tipoSiloVertical(tipoSiloModel.getRaio());
+			TipoSilo result = tipoSiloRepository.save(resultEntity);
 
 			logger.info("Tipo Silo atualizado com sucesso: " + result);
 			return MessageResponse.success(new TipoSiloDTO(result));

@@ -15,8 +15,10 @@ import org.springframework.stereotype.Service;
 import br.com.telematica.siloapi.model.SiloModuloModel;
 import br.com.telematica.siloapi.model.dto.SiloModuloDTO;
 import br.com.telematica.siloapi.model.entity.SiloModulo;
+import br.com.telematica.siloapi.model.enums.TipoSiloEnum;
 import br.com.telematica.siloapi.repository.SiloModuloRepository;
 import br.com.telematica.siloapi.services.SiloModuloServInterface;
+import br.com.telematica.siloapi.utils.Utils;
 import br.com.telematica.siloapi.utils.message.MessageResponse;
 import jakarta.persistence.EntityNotFoundException;
 
@@ -82,14 +84,46 @@ public class SiloModuloServiceImpl implements SiloModuloServInterface {
 	@Override
 	public ResponseEntity<List<SiloModuloDTO>> findAll() {
 		List<SiloModulo> modulos = siloModuloRepository.findAll();
-		List<SiloModuloDTO> dtoList = modulos.stream().map(SiloModuloDTO::new).collect(Collectors.toList());
+		List<SiloModuloDTO> dtoList = modulos.stream().map(dto -> {
+			var siloModuloDTO = new SiloModuloDTO(dto);
+			var tipoSilo = TipoSiloEnum.valueOf(dto.getSilo().getTipoSilo().getTsitip());
+			if (tipoSilo == TipoSiloEnum.HORIZONTAL)
+				return null;
+				
+			if (tipoSilo == TipoSiloEnum.VERTICAL)
+				return null;
+			
+			siloModuloDTO.volumeSilo(null, null);
+			return siloModuloDTO;
+		}).collect(Collectors.toList());
 		return MessageResponse.success(dtoList);
 	}
 
 	@Override
 	public ResponseEntity<SiloModuloDTO> findId(Long codigo) {
 		var siloModulo = siloModuloRepository.findById(codigo).orElseThrow(() -> new EntityNotFoundException("Módulo do Silo não encontrado com o ID: " + codigo));
-		return MessageResponse.success(new SiloModuloDTO(siloModulo));
+		var tipoSilo = TipoSiloEnum.valueOf(siloModulo.getSilo().getTipoSilo().getTsitip());
+		Double volumeTotal = null;
+		Double volumeStatus = null;
+		Double raio = siloModulo.getSilo().getTipoSilo().getTsirai();
+		Double largura = siloModulo.getSilo().getTipoSilo().getTsilar();
+		Double comprimento = siloModulo.getSilo().getTipoSilo().getTsicom();
+		Double alturaSilo = siloModulo.getSilo().getTipoSilo().getTsiach();
+		
+		if (tipoSilo == TipoSiloEnum.HORIZONTAL) {
+			volumeTotal = Utils.calcularVolumeHorizontal(comprimento, largura, alturaSilo);
+			volumeStatus = Utils.calcularVolumeHorizontal(comprimento, largura, alturaSilo); // valor da medição
+			
+		}
+		if (tipoSilo == TipoSiloEnum.VERTICAL) {
+			volumeTotal = Utils.calcularVolumeVertical(raio, alturaSilo);
+			volumeStatus = Utils.calcularVolumeVertical(raio, alturaSilo); // valor da medição
+			
+		}
+			
+		var siloModuloDTO = new SiloModuloDTO(siloModulo);
+		siloModuloDTO.volumeSilo(volumeTotal, volumeStatus);
+		return MessageResponse.success(siloModuloDTO);
 	}
 
 	SiloModulo findEntity(Long codigo) {
