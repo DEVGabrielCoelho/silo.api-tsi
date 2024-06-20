@@ -181,7 +181,7 @@ public class AbrangenciaServiceImpl implements AbrangenciaServInterface {
 
 			abrangenciaRepository.deleteById(codigo);
 			return MessageResponse.success(null);
-		} catch (Exception e) {
+		} catch (EntityNotFoundException | IOException e) {
 			log.error("Erro ao apagar a Abrangência. Mensagem: " + e.getMessage(), e);
 			throw new IOException("Erro ao apagar a Abrangência. Mensagem: " + e.getMessage(), e);
 		}
