@@ -69,7 +69,7 @@ public class LoggerDetailsDTO {
 	public LoggerDetailsDTO(LoggerEntity pend) {
 		try {
 			LoggerEnum enumLogger = LoggerEnum.valueOf(pend.getLogtip());
-			this.data = Utils.convertDateToString(pend.getLogdat());
+			this.data = Utils.dateToString(pend.getLogdat());
 			this.tipoLogger = enumLogger;
 			this.mensagem = pend.getLogmsg();
 		} catch (Exception e) {

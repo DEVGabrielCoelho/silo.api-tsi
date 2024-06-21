@@ -39,12 +39,12 @@ public class RecursoServiceImpl implements RecursoServInterface {
         		 .orElse(null);
     }
 
-    public RecursoDTO findByIdApi(@NonNull String nome) throws EntityNotFoundException, IOException {
+    public RecursoDTO findByIdApi(@NonNull String nome) throws EntityNotFoundException {
         Recurso recurso = findByIdEntity(nome);
         return new RecursoDTO(recurso);
     }
 
-    public RecursoDTO findByIdApi(@NonNull Long codigo) throws EntityNotFoundException, IOException {
+    public RecursoDTO findByIdApi(@NonNull Long codigo) throws EntityNotFoundException {
         Recurso recurso = findByIdEntity(codigo);
         return new RecursoDTO(recurso);
     }
@@ -70,7 +70,7 @@ public class RecursoServiceImpl implements RecursoServInterface {
         return recursoRepository.save(recurso);
     }
 
-    public List<Recurso> findAllEntity() throws EntityNotFoundException, IOException {
+    public List<Recurso> findAllEntity() throws EntityNotFoundException{
         return recursoRepository.findAll();
     }
 
@@ -84,7 +84,7 @@ public class RecursoServiceImpl implements RecursoServInterface {
         }
     }
 
-    public Page<Recurso> findAllEntity(String nome, Pageable pageable) throws EntityNotFoundException, IOException {
+    public Page<Recurso> findAllEntity(String nome, Pageable pageable) throws EntityNotFoundException {
         Objects.requireNonNull(pageable, "Pageable do Recurso está nulo.");
         if (nome == null) {
             return recursoRepository.findAll(pageable);

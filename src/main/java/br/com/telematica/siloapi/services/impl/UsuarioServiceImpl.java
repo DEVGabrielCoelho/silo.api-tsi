@@ -51,7 +51,7 @@ public class UsuarioServiceImpl implements UsuarioServInterface {
 	@Autowired
 	private EmpresaServiceImpl empresaService;
 
-	public UsuarioDTO findLogin(String login) throws EntityNotFoundException, IOException {
+	public UsuarioDTO findLogin(String login) throws EntityNotFoundException {
 		return userRepository.findByUsulog(login).map(UsuarioDTO::new).orElseThrow(() -> new EntityNotFoundException("Usuário não existe!"));
 	}
 
@@ -63,21 +63,21 @@ public class UsuarioServiceImpl implements UsuarioServInterface {
 		return userRepository.findByUsulog(login).orElse(null);
 	}
 
-	public Page<Usuario> findAllEntity(String nome, @NonNull Pageable pageable) throws EntityNotFoundException, IOException {
+	public Page<Usuario> findAllEntity(String nome, @NonNull Pageable pageable) throws EntityNotFoundException {
 		Objects.requireNonNull(pageable, "Pageable do Usuário está nulo.");
 		Specification<Usuario> spec = Usuario.filterByFields(nome);
 		return userRepository.findAll(spec, pageable);
 	}
 
-	public List<Usuario> findAllEntity() throws EntityNotFoundException, IOException {
+	public List<Usuario> findAllEntity() throws EntityNotFoundException {
 		return userRepository.findAll();
 	}
 
-	public Usuario findByIdEntity(Long cod) throws EntityNotFoundException, IOException {
+	public Usuario findByIdEntity(Long cod) throws EntityNotFoundException {
 		return userRepository.findById(cod).orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado com o código: " + cod));
 	}
 
-	public UsuarioDTO findByUsuario(Long codigo) throws EntityNotFoundException, IOException {
+	public UsuarioDTO findByUsuario(Long codigo) throws EntityNotFoundException {
 		Usuario user = findByIdEntity(codigo);
 		return new UsuarioDTO(user);
 	}
@@ -87,7 +87,7 @@ public class UsuarioServiceImpl implements UsuarioServInterface {
 
 		if ("admin".equalsIgnoreCase(existingUser.getUsulog())) {
 			log.info("Usuário admin não pode ser alterado: " + existingUser);
-			throw new RuntimeException("Usuário admin não pode ser alterado.");
+			throw new IOException("Usuário admin não pode ser alterado.");
 		}
 
 		existingUser = updateUserInfo(existingUser, userModel);
@@ -99,7 +99,7 @@ public class UsuarioServiceImpl implements UsuarioServInterface {
 		if (existingUserOpt.isPresent() && "admin".equalsIgnoreCase(existingUserOpt.get().getUsulog())) {
 			Usuario existingUser = existingUserOpt.get();
 			log.info("Usuário com o login admin já existe: " + existingUser);
-			throw new RuntimeException("Usuário admin já existe!");
+			throw new IOException("Usuário admin já existe!");
 		}
 
 		Usuario newUser = new Usuario();

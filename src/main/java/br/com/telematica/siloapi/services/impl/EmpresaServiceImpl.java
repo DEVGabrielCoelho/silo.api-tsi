@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -44,16 +43,12 @@ public class EmpresaServiceImpl implements EmpresaServInterface {
 
 	@Override
 	public ResponseEntity<EmpresaDTO> empresaDeleteById(Long codigo) throws IOException {
-		Objects.requireNonNull(codigo, "Código da Empresa está nulo.");
 
 		try {
-			var empresa = empresaRepository.findById(codigo).orElseThrow(() -> new EmptyResultDataAccessException("Não foi possível encontrar a empresa com o ID fornecido.", 1));
+			var empresa = findByIdEntity(codigo);
 
 			empresaRepository.deleteById(empresa.getEmpcod());
 			return MessageResponse.success(null);
-		} catch (EmptyResultDataAccessException e) {
-			log.error("Não foi possível encontrar a empresa com o ID fornecido. Erro: ", e);
-			throw new IOException("Não foi possível encontrar a empresa com o ID fornecido.", e);
 		} catch (Exception e) {
 			log.error("Erro ao deletar a empresa. Erro: ", e);
 			throw new IOException("Erro ao deletar a empresa.", e);
@@ -90,18 +85,18 @@ public class EmpresaServiceImpl implements EmpresaServInterface {
 	@Override
 	public ResponseEntity<List<EmpresaDTO>> empresaFindAll() throws IOException {
 		var check = checagemFixaBarragem();
-		var result = check.isHier() == 0 ? empresaRepository.findAll() : empresaRepository.findByEmpcodIn(check.listAbrangencia());
+		var result = check.isHier() == 0 ? empresaRepository.findAll()
+				: empresaRepository.findByEmpcodIn(check.listAbrangencia());
 
 		return MessageResponse.success(result.stream().map(EmpresaDTO::new).collect(Collectors.toList()));
 	}
 
 	@Override
 	public ResponseEntity<EmpresaDTO> empresaUpdate(Long codigo, EmpresaModel empresaModel) throws IOException {
-		Objects.requireNonNull(codigo, "Código da Empresa está nulo.");
 		Objects.requireNonNull(empresaModel.getCnpj(), "CNPJ da Empresa está nulo.");
 		Objects.requireNonNull(empresaModel.getNome(), "Nome da Empresa está nulo.");
 
-		var empresa = empresaRepository.findById(codigo).orElseThrow(() -> new EmptyResultDataAccessException("Não foi possível encontrar a empresa com o ID fornecido.", 1));
+		var empresa = findByIdEntity(codigo);
 
 		String nomeFantasia = Optional.ofNullable(empresaModel.getNomeFantasia()).orElse(empresa.getEmpfan());
 		String telefone = Optional.ofNullable(empresaModel.getTelefone()).orElse(empresa.getEmptel());
@@ -120,7 +115,8 @@ public class EmpresaServiceImpl implements EmpresaServInterface {
 		Objects.requireNonNull(empresaModel.getNome(), "Nome da Empresa está nulo.");
 
 		try {
-			Empresa empresa = new Empresa(null, empresaModel.getCnpj(), empresaModel.getNome(), empresaModel.getNomeFantasia(), empresaModel.getTelefone());
+			Empresa empresa = new Empresa(null, empresaModel.getCnpj(), empresaModel.getNome(),
+					empresaModel.getNomeFantasia(), empresaModel.getTelefone());
 			Empresa savedEmpresa = empresaRepository.save(empresa);
 			return MessageResponse.create(new EmpresaDTO(savedEmpresa));
 		} catch (Exception e) {
@@ -140,7 +136,6 @@ public class EmpresaServiceImpl implements EmpresaServInterface {
 
 	@Override
 	public ResponseEntity<EmpresaDTO> empresaFindByCnpjApi(Long codigo) throws IOException {
-		Objects.requireNonNull(codigo, "Código da Empresa está nulo.");
 		EmpresaDTO empresa = empresaFindByCnpjAbrangencia(codigo);
 		if (empresa == null) {
 			return MessageResponse.success(null);
@@ -166,13 +161,12 @@ public class EmpresaServiceImpl implements EmpresaServInterface {
 		return emp;
 	}
 
-	public Empresa empresaFindByCnpjEntity(Long codigo) throws IOException {
+	public Empresa empresaFindByCnpjEntity(Long codigo) {
 		Objects.requireNonNull(codigo, "Código da Empresa está nulo.");
 		return empresaRepository.findByEmpcnp(codigo).orElse(null);
 	}
 
 	public EmpresaDTO empresaFindByCnpjAbrangencia(Long codigo) throws IOException {
-		Objects.requireNonNull(codigo, "Código da Empresa está nulo.");
 		Empresa emp = empresaFindByCnpjEntity(codigo);
 		if (emp == null) {
 			return null;
@@ -187,7 +181,7 @@ public class EmpresaServiceImpl implements EmpresaServInterface {
 	public Empresa findByIdEntity(@NonNull Long codigo) {
 		Objects.requireNonNull(codigo, "Código da Empresa está nulo.");
 		return empresaRepository.findById(codigo).orElseThrow(() -> {
-			log.info("Empresa não encontrada ou deletada.");
+			log.error("Empresa não encontrada ou deletada.");
 			return new EntityNotFoundException("Empresa não encontrada ou deletada.");
 		});
 	}

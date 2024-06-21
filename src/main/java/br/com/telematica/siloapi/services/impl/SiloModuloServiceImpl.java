@@ -14,7 +14,9 @@ import org.springframework.stereotype.Service;
 
 import br.com.telematica.siloapi.model.SiloModuloModel;
 import br.com.telematica.siloapi.model.dto.SiloModuloDTO;
+import br.com.telematica.siloapi.model.entity.Medicao;
 import br.com.telematica.siloapi.model.entity.SiloModulo;
+import br.com.telematica.siloapi.model.entity.TipoSilo;
 import br.com.telematica.siloapi.model.enums.TipoSiloEnum;
 import br.com.telematica.siloapi.repository.SiloModuloRepository;
 import br.com.telematica.siloapi.services.SiloModuloServInterface;
@@ -32,12 +34,19 @@ public class SiloModuloServiceImpl implements SiloModuloServInterface {
 
 	@Autowired
 	private SiloServiceImpl siloServiceImpl;
+	@Autowired
+	private MedicaoServiceImpl medicaoServiceImpl;
+
+	private double volumeTotal = 0;
+	private double volumeStatus = 0;
 
 	@Override
 	public ResponseEntity<SiloModuloDTO> save(SiloModuloModel object) throws IOException {
 		try {
 			var silo = siloServiceImpl.findEntity(object.getSilo());
-			var entity = new SiloModulo(null, silo, object.getDescricao(), object.getTotalSensor(), object.getNumSerie(), object.getTimeoutKeepAlive(), object.getTimeoutMedicao(), null, null, object.getGmt(), object.getCorKeepAlive(), object.getCorMedicao(), object.getStatus().getStatus());
+			var entity = new SiloModulo(null, silo, object.getDescricao(), object.getTotalSensor(),
+					object.getNumSerie(), object.getTimeoutKeepAlive(), object.getTimeoutMedicao(), null, null,
+					object.getGmt(), object.getCorKeepAlive(), object.getCorMedicao(), object.getStatus().getStatus());
 
 			SiloModulo result = siloModuloRepository.save(entity);
 			logger.info("Módulo do Silo salvo com sucesso: " + result);
@@ -52,7 +61,8 @@ public class SiloModuloServiceImpl implements SiloModuloServInterface {
 	public ResponseEntity<SiloModuloDTO> delete(Long codigo) throws IOException {
 		Objects.requireNonNull(codigo, "Código do Módulo do Silo está nulo.");
 		try {
-			var entity = siloModuloRepository.findById(codigo).orElseThrow(() -> new EntityNotFoundException("Não foi possível encontrar o módulo do silo com o ID fornecido: " + codigo));
+			var entity = siloModuloRepository.findById(codigo).orElseThrow(() -> new EntityNotFoundException(
+					"Não foi possível encontrar o módulo do silo com o ID fornecido: " + codigo));
 
 			siloModuloRepository.delete(entity);
 			logger.info("Módulo do Silo deletado com sucesso: " + entity);
@@ -67,9 +77,12 @@ public class SiloModuloServiceImpl implements SiloModuloServInterface {
 	public ResponseEntity<SiloModuloDTO> update(Long codigo, SiloModuloModel object) throws IOException {
 		try {
 			var silo = siloServiceImpl.findEntity(object.getSilo());
-			var siloModulo = siloModuloRepository.findById(codigo).orElseThrow(() -> new EntityNotFoundException("Não foi possível encontrar o módulo do silo com o ID fornecido: " + codigo));
+			var siloModulo = siloModuloRepository.findById(codigo).orElseThrow(() -> new EntityNotFoundException(
+					"Não foi possível encontrar o módulo do silo com o ID fornecido: " + codigo));
 
-			var entity = new SiloModulo(siloModulo.getSmocod(), silo, object.getDescricao(), object.getTotalSensor(), object.getNumSerie(), object.getTimeoutKeepAlive(), object.getTimeoutMedicao(), null, null, object.getGmt(), object.getCorKeepAlive(), object.getCorMedicao(),
+			var entity = new SiloModulo(siloModulo.getSmocod(), silo, object.getDescricao(), object.getTotalSensor(),
+					object.getNumSerie(), object.getTimeoutKeepAlive(), object.getTimeoutMedicao(), null, null,
+					object.getGmt(), object.getCorKeepAlive(), object.getCorMedicao(),
 					object.getStatus().getStatus());
 
 			SiloModulo result = siloModuloRepository.save(entity);
@@ -84,46 +97,15 @@ public class SiloModuloServiceImpl implements SiloModuloServInterface {
 	@Override
 	public ResponseEntity<List<SiloModuloDTO>> findAll() {
 		List<SiloModulo> modulos = siloModuloRepository.findAll();
-		List<SiloModuloDTO> dtoList = modulos.stream().map(dto -> {
-			var siloModuloDTO = new SiloModuloDTO(dto);
-			var tipoSilo = TipoSiloEnum.valueOf(dto.getSilo().getTipoSilo().getTsitip());
-			if (tipoSilo == TipoSiloEnum.HORIZONTAL)
-				return null;
-				
-			if (tipoSilo == TipoSiloEnum.VERTICAL)
-				return null;
-			
-			siloModuloDTO.volumeSilo(null, null);
-			return siloModuloDTO;
-		}).collect(Collectors.toList());
+		List<SiloModuloDTO> dtoList = modulos.stream().map(this::dtoCalc)
+				.collect(Collectors.toList());
 		return MessageResponse.success(dtoList);
 	}
 
 	@Override
 	public ResponseEntity<SiloModuloDTO> findId(Long codigo) {
-		var siloModulo = siloModuloRepository.findById(codigo).orElseThrow(() -> new EntityNotFoundException("Módulo do Silo não encontrado com o ID: " + codigo));
-		var tipoSilo = TipoSiloEnum.valueOf(siloModulo.getSilo().getTipoSilo().getTsitip());
-		Double volumeTotal = null;
-		Double volumeStatus = null;
-		Double raio = siloModulo.getSilo().getTipoSilo().getTsirai();
-		Double largura = siloModulo.getSilo().getTipoSilo().getTsilar();
-		Double comprimento = siloModulo.getSilo().getTipoSilo().getTsicom();
-		Double alturaSilo = siloModulo.getSilo().getTipoSilo().getTsiach();
-		
-		if (tipoSilo == TipoSiloEnum.HORIZONTAL) {
-			volumeTotal = Utils.calcularVolumeHorizontal(comprimento, largura, alturaSilo);
-			volumeStatus = Utils.calcularVolumeHorizontal(comprimento, largura, alturaSilo); // valor da medição
-			
-		}
-		if (tipoSilo == TipoSiloEnum.VERTICAL) {
-			volumeTotal = Utils.calcularVolumeVertical(raio, alturaSilo);
-			volumeStatus = Utils.calcularVolumeVertical(raio, alturaSilo); // valor da medição
-			
-		}
-			
-		var siloModuloDTO = new SiloModuloDTO(siloModulo);
-		siloModuloDTO.volumeSilo(volumeTotal, volumeStatus);
-		return MessageResponse.success(siloModuloDTO);
+		var siloModulo = findEntity(codigo);
+		return MessageResponse.success(dtoCalc(siloModulo));
 	}
 
 	SiloModulo findEntity(Long codigo) {
@@ -140,14 +122,39 @@ public class SiloModuloServiceImpl implements SiloModuloServInterface {
 		});
 	}
 
-	void registerKeepAliveInModulo(SiloModulo modulo, Date date) throws EntityNotFoundException, IOException {
+	public void registerKeepAliveInModulo(SiloModulo modulo, Date date) throws EntityNotFoundException {
 		var mod = siloModuloRepository.save(modulo.sireneModuloRegisterKeep(date));
 		logger.info("Registro de último KeepAlive efetuado com sucesso: " + mod);
 	}
 
-	void registerMedicaoInModulo(SiloModulo modulo, Date date) throws EntityNotFoundException, IOException {
+	public void registerMedicaoInModulo(SiloModulo modulo, Date date) throws EntityNotFoundException {
 		var mod = siloModuloRepository.save(modulo.sireneModuloRegisterMedicao(date));
 		logger.info("Registro de última Medição efetuado com sucesso: " + mod);
+	}
+
+	public SiloModuloDTO dtoCalc(SiloModulo siloModulo) {
+		TipoSilo tipoSilo = siloModulo.getSilo().getTipoSilo();
+		var tipo = TipoSiloEnum.valueOf(tipoSilo.getTsitip());
+		double raio = tipoSilo.getTsirai();
+		double largura = tipoSilo.getTsilar();
+		double comprimento = tipoSilo.getTsicom();
+		double alturaSilo = tipoSilo.getTsiach() - tipoSilo.getTsidse();
+		Medicao ultimaMedicao = medicaoServiceImpl.ultimaMedicao(siloModulo);
+		if (tipo == TipoSiloEnum.HORIZONTAL) {
+			volumeTotal = Utils.calcularVolumeHorizontal(comprimento, largura, alturaSilo);
+			volumeStatus = Utils.calcularVolumeHorizontal(comprimento, largura, ultimaMedicao.getMsidis()); // valor da medição
+
+		}
+		if (tipo == TipoSiloEnum.VERTICAL) {
+			volumeTotal = Utils.calcularVolumeVertical(raio, alturaSilo);
+			volumeStatus = Utils.calcularVolumeVertical(raio, ultimaMedicao.getMsidis()); // valor da medição
+
+		}
+
+		var siloModuloDTO = new SiloModuloDTO(siloModulo);
+		siloModuloDTO.volumeSilo(volumeTotal, volumeStatus);
+
+		return siloModuloDTO;
 	}
 
 }

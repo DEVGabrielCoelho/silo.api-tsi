@@ -107,7 +107,7 @@ public class TipoSiloServiceImpl implements TipoSiloServInterface {
 	@Override
 	public ResponseEntity<TipoSiloDTO> findById(Long codigo) throws IOException, EntityNotFoundException {
 		Objects.requireNonNull(codigo, "Código do Tipo do Silo está nulo.");
-		TipoSilo result = tipoSiloRepository.findById(codigo).orElseThrow(() -> new EntityNotFoundException("Tipo Silo não encontrado com o ID: " + codigo));
+		TipoSilo result = findEntity(codigo);
 
 		return MessageResponse.success(new TipoSiloDTO(result));
 	}

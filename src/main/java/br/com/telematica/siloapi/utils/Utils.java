@@ -25,7 +25,7 @@ public class Utils {
 	private static final DateTimeFormatter dtfEditado = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS");
 	private static final DateTimeFormatter dtfPadrao = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
-	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	private static SimpleDateFormat sdf;
 	private static SimpleDateFormat sdfbase = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 
 	public static String convertDateToString() {
@@ -49,15 +49,13 @@ public class Utils {
 	public static String removeGmtToDateTime(String horarioComGMT, Integer gmtEmMinutos) {
 		LocalDateTime dataAtual = LocalDateTime.parse(horarioComGMT, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 		LocalDateTime dataSemOffset = dataAtual.minusMinutes(gmtEmMinutos);
-		String formatoDesejado = dataSemOffset.format(dtfEditado);
-		return formatoDesejado;
+		return dataSemOffset.format(dtfEditado);
 	}
 
 	public static String getDataHoraGMT0() {
 		Instant agoraGMT = Instant.now();
 		OffsetDateTime offsetDateTimeGMT0 = agoraGMT.atOffset(ZoneOffset.UTC);
-		String formattedDateTime = offsetDateTimeGMT0.format(dtfPadrao);
-		return formattedDateTime;
+		return offsetDateTimeGMT0.format(dtfPadrao);
 	}
 
 	public static Date convertStringToDate(String dateString) {
@@ -66,14 +64,14 @@ public class Utils {
 		return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
 	}
 
-	public static String convertDateToString(Date date) {
+	public static String dateToString(Date date) {
 		Objects.requireNonNull(date, "A Data de entrada para conversão de Date para String está nula.");
 		LocalDateTime localDateTime = LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
 		return dtfEditado.format(localDateTime);
 	}
 
 	public static String newDateString() {
-		return convertDateToString(new Date());
+		return dateToString(new Date());
 	}
 
 	public static String bytesParaBase64(byte[] bytes) {
@@ -96,8 +94,7 @@ public class Utils {
 	public static Pageable consultaPage(String ordenarEntity, @NonNull String direcao, Integer pagina, Integer tamanho) {
 		Sort.Direction sortDirection = Sort.Direction.fromString(direcao);
 		Sort sort = Sort.by(sortDirection, ordenarEntity);
-		Pageable pageable = PageRequest.of(pagina, tamanho, sort);
-		return pageable;
+		return PageRequest.of(pagina, tamanho, sort);
 	}
 
 	public static ResponseGlobalModel responseMessageError(String message) {
@@ -114,38 +111,37 @@ public class Utils {
 	}
 
 	public static String sdfDateforString(Date date) {
+		sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		return sdf.format(date);
 	}
 
-	public static Date sdfStringforDate(String date) throws Exception {
+	public static Date sdfStringforDate(String date) throws ParseException {
 		try {
 			return sdf.parse(date);
-		} catch (Exception e) {
-			throw new Exception("Error parsing date: " + e.getMessage());
-		}
-	}
-
-	public static Date sdfDateTimeZone(String msidth) throws ParseException {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-		sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-
-		try {
-			Date date = sdf.parse(msidth);
-			System.out.println("Date: " + date);
-			return date;
 		} catch (ParseException e) {
 			throw new ParseException("Error parsing date: " + e.getMessage(), 0);
 		}
 	}
 
-    public static double calcularVolumeVertical(double raio, double altura) {
+	public static Date sdfDateTimeZone(String msidth) throws ParseException {
+		sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+		sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+		try {
+			return sdf.parse(msidth);
+		} catch (ParseException e) {
+			throw new ParseException("Error parsing date: " + e.getMessage(), 0);
+		}
+	}
+
+    public static Double calcularVolumeVertical(double raio, double altura) {
         if (raio < 0 || altura < 0) {
             throw new IllegalArgumentException("O raio e a altura devem ser positivos.");
         }
         return Math.PI * Math.pow(raio, 2) * altura;
     }
 
-    public static double calcularVolumeHorizontal(double comprimento, double largura, double altura) {
+    public static Double calcularVolumeHorizontal(double comprimento, double largura, double altura) {
         if (comprimento < 0 || largura < 0 || altura < 0) {
             throw new IllegalArgumentException("O comprimento, a largura e a altura devem ser positivos.");
         }

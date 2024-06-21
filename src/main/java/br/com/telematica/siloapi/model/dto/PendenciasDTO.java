@@ -162,8 +162,8 @@ public class PendenciasDTO {
 			this.tipoPendencia = tipo;
 			this.status = status;
 			this.descricao = pend.getPendes();
-			this.dataInicio = pend.getPenini() == null ? null : Utils.convertDateToString(pend.getPenini());
-			this.dataFim = pend.getPenfim() == null ? null : Utils.convertDateToString(pend.getPenfim());
+			this.dataInicio = pend.getPenini() == null ? null : Utils.dateToString(pend.getPenini());
+			this.dataFim = pend.getPenfim() == null ? null : Utils.dateToString(pend.getPenfim());
 			this.modulo = pend.getSmocod();
 			this.firmware = pend.getFirmware().getFircod();
 		} catch (Exception e) {

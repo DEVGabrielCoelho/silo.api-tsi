@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -17,6 +18,7 @@ import br.com.telematica.siloapi.exception.CustomMessageException;
 import br.com.telematica.siloapi.model.MedicaoModel;
 import br.com.telematica.siloapi.model.dto.MedicaoDTO;
 import br.com.telematica.siloapi.model.entity.Medicao;
+import br.com.telematica.siloapi.model.entity.SiloModulo;
 import br.com.telematica.siloapi.repository.MedicaoRepository;
 import br.com.telematica.siloapi.services.MedicaoServInterface;
 import br.com.telematica.siloapi.utils.Utils;
@@ -107,6 +109,13 @@ public class MedicaoServiceImpl implements MedicaoServInterface {
 		return new MedicaoDTO(medicaoEntity);
 	}
 
+	Medicao ultimaMedicao(SiloModulo siloModulo) {
+		Optional<Medicao> medicao = medicaoRepository.findFirstBySilomoduloOrderByMsidthDesc(siloModulo);
+		if(medicao.isEmpty() || !medicao.isPresent())
+			return null;
+		return medicao.get();
+	}
+	
 	private void checkDataMedicao(MedicaoModel model) {
 		Objects.requireNonNull(model.getDataMedicao(), "Data da Medição está nula.");
 		Objects.requireNonNull(model.getSilo(), "Código do Silo está nulo.");

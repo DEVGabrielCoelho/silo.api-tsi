@@ -40,7 +40,7 @@ public class PerfilPermissaoServiceImpl implements PerfilPermServInterface {
 	@Autowired
 	private PerfilRepository perfilRepository;
 
-	public Perfil findByIdPerfilEntity(@NonNull Long codigo) throws EntityNotFoundException, IOException {
+	public Perfil findByIdPerfilEntity(@NonNull Long codigo) throws EntityNotFoundException {
 		return perfilRepository.findById(codigo).orElse(null);
 	}
 
@@ -48,21 +48,21 @@ public class PerfilPermissaoServiceImpl implements PerfilPermServInterface {
 		return perfilRepository.findByPernom(nome).orElse(null);
 	}
 
-	public PerfilPermissaoDTO findByIdPerfil(Long codigo) throws EntityNotFoundException, IOException {
+	public PerfilPermissaoDTO findByIdPerfil(Long codigo) throws EntityNotFoundException {
 		Objects.requireNonNull(codigo, "Código do Perfil está nulo.");
 		Perfil perfil = findByIdPerfilEntity(codigo);
 		List<PermissaoDTO> permissoes = permissaoRepository.findByPerfil_percod(perfil.getPercod()).orElseThrow(() -> new EntityNotFoundException("Permissões não encontradas para o perfil com código: " + codigo)).stream().map(PermissaoDTO::new).collect(Collectors.toList());
 		return new PerfilPermissaoDTO(perfil, permissoes);
 	}
 
-	public List<PerfilPermissaoDTO> findAllPerfil() throws EntityNotFoundException, IOException {
+	public List<PerfilPermissaoDTO> findAllPerfil() throws EntityNotFoundException {
 		return perfilRepository.findAll().stream().map(perfil -> {
 			List<PermissaoDTO> permissoes = permissaoRepository.findByPerfil_percod(perfil.getPercod()).orElseGet(ArrayList::new).stream().map(PermissaoDTO::new).collect(Collectors.toList());
 			return new PerfilPermissaoDTO(perfil, permissoes);
 		}).collect(Collectors.toList());
 	}
 
-	public Page<PerfilPermissaoDTO> findAllPagePerfil(String nome, Pageable pageable) throws EntityNotFoundException, IOException {
+	public Page<PerfilPermissaoDTO> findAllPagePerfil(String nome, Pageable pageable) throws EntityNotFoundException {
 		Objects.requireNonNull(pageable, "Pageable do Perfil está nulo.");
 		Specification<Perfil> spec = Perfil.filterByFields(nome);
 		Page<Perfil> result = perfilRepository.findAll(spec, pageable);
@@ -76,7 +76,7 @@ public class PerfilPermissaoServiceImpl implements PerfilPermServInterface {
 		return permissaoRepository.findByPerfil_percodAndRecurso_recnom(perfil.getPercod(), recurso.getRecnom()).orElse(null);
 	}
 
-	public PermissaoDTO findByIdApi(@NonNull Long codigo) throws EntityNotFoundException, IOException {
+	public PermissaoDTO findByIdApi(@NonNull Long codigo) throws EntityNotFoundException {
 		Permissao permissao = findByEntity(codigo);
 		return new PermissaoDTO(permissao);
 	}
@@ -102,7 +102,7 @@ public class PerfilPermissaoServiceImpl implements PerfilPermServInterface {
 		}
 	}
 
-	public PerfilPermissaoDTO updatePerfilApi(Long codigo, PerfilModel perModel) throws EntityNotFoundException, IOException {
+	public PerfilPermissaoDTO updatePerfilApi(Long codigo, PerfilModel perModel) throws EntityNotFoundException {
 		Objects.requireNonNull(codigo, "Código do Perfil está nulo.");
 		Objects.requireNonNull(perModel.getNome(), "Nome do Perfil está nulo.");
 
@@ -151,7 +151,7 @@ public class PerfilPermissaoServiceImpl implements PerfilPermServInterface {
 			deleteEntityPermissao(perfil);
 			perfilRepository.deleteById(perfil);
 			return Utils.responseMessageSucess("Apagado com Sucesso.");
-		} catch (Exception e) {
+		} catch (IOException e) {
 			throw new IOException("Erro ao apagar o perfil. Mensagem: " + e.getMessage(), e);
 		}
 	}
@@ -166,7 +166,7 @@ public class PerfilPermissaoServiceImpl implements PerfilPermServInterface {
 		}
 	}
 
-	public RecursoDTO getNomeRecursoDTO(@NonNull String nome) throws EntityNotFoundException, IOException {
+	public RecursoDTO getNomeRecursoDTO(@NonNull String nome) throws EntityNotFoundException {
 		return new RecursoDTO(recursoService.findByIdEntity(nome));
 	}
 

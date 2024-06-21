@@ -26,9 +26,9 @@ public class TipoSilo {
 	@Column(nullable = false)
 	private Double tsiach;
 
-	private Double tsirai = Double.valueOf(0);;
-	private Double tsilar = Double.valueOf(0);;
-	private Double tsicom = Double.valueOf(0);;
+	private Double tsirai = Double.valueOf(0);
+	private Double tsilar = Double.valueOf(0);
+	private Double tsicom = Double.valueOf(0);
 
 	public TipoSilo(Long tsicod, String tsinom, String tsides, String tsitip, Double tsidse, Double tsiach, Double tsirai, Double tsilar, Double tsicom) {
 		super();

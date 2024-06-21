@@ -96,18 +96,12 @@ public class SiloServiceImpl implements SiloServInterface {
 	@Override
 	public ResponseEntity<SiloDTO> findById(Long codigo) {
 		Objects.requireNonNull(codigo, "Código do Silo está nulo.");
-		var result = siloRepository.findById(codigo).orElseThrow(() -> {
-			logger.error("Silo não encontrado com o ID: " + codigo);
-			return new EntityNotFoundException("Silo não encontrado com o ID: " + codigo);
-		});
+		var result = findEntity(codigo);
 		return MessageResponse.success(new SiloDTO(result));
 	}
 
 	Silo findEntity(Long codigo) {
-		return siloRepository.findById(codigo).orElseThrow(() -> {
-			logger.error("Silo não encontrado com o ID: " + codigo);
-			return new EntityNotFoundException("Silo não encontrado com o ID: " + codigo);
-		});
+		return siloRepository.findById(codigo).orElseThrow(() ->  new EntityNotFoundException("Silo não encontrado com o ID: " + codigo));
 	}
 
 }

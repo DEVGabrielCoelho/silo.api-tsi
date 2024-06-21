@@ -33,7 +33,6 @@ public class LoggerServiceImpl implements LoggerServInterface {
 	public ResponseEntity<LoggerDTO> save(LoggerModel logModel) throws EntityNotFoundException, IOException {
 		Objects.requireNonNull(logModel, "Log model está nulo.");
 		Date date = Utils.convertStringToDate(logModel.getData());
-		// String numSerie = logModel.getNumSerie();
 		String tipo = logModel.getTipoLogger().toString();
 		String mensagem = logModel.getMensagem();
 

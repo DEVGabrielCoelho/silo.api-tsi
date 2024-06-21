@@ -46,7 +46,7 @@ public class PlantaServiceImpl implements PlantaServInterface {
             logger.info("Planta salva com sucesso: " + savedPlanta);
 
             return MessageResponse.success(new PlantaDTO(savedPlanta));
-        } catch (Exception e) {
+        } catch (IOException e) {
             logger.error("Erro ao salvar a planta: ", e);
             throw CustomMessageException.exceptionIOException("salvar", RECURSO, planta, e);
         }
@@ -54,7 +54,6 @@ public class PlantaServiceImpl implements PlantaServInterface {
 
     @Override
     public ResponseEntity<PlantaDTO> deleteByPlacod(Long codigo) throws IOException {
-        Objects.requireNonNull(codigo, "Código da Planta está nulo.");
         try {
             var entity = findEntity(codigo);
             if (entity == null) {
@@ -66,10 +65,7 @@ public class PlantaServiceImpl implements PlantaServInterface {
         } catch (EmptyResultDataAccessException e) {
             logger.error("Não foi possível encontrar a Planta com o ID fornecido. Error: ", e);
             throw CustomMessageException.exceptionEntityNotFoundException(codigo, RECURSO, e);
-        } catch (Exception e) {
-            logger.error("Erro ao deletar a Planta. Erro: ", e);
-            throw CustomMessageException.exceptionIOException("deletar", RECURSO, codigo, e);
-        }
+        } 
     }
 
     @Override
@@ -86,7 +82,7 @@ public class PlantaServiceImpl implements PlantaServInterface {
             logger.info("Planta atualizada com sucesso: " + updatedPlanta);
 
             return MessageResponse.success(new PlantaDTO(updatedPlanta));
-        } catch (Exception e) {
+        } catch (IOException e) {
             logger.error("Erro ao atualizar a planta: ", e);
             throw CustomMessageException.exceptionCodigoIOException("atualizar", RECURSO, codigo, planta, e);
         }
@@ -122,7 +118,7 @@ public class PlantaServiceImpl implements PlantaServInterface {
         return new PlantaDTO(plantaEntity);
     }
 
-    Planta findEntity(Long codigo) throws IOException {
+    Planta findEntity(Long codigo) {
         Objects.requireNonNull(codigo, "Código está nulo.");
         return plantaRepository.findById(codigo)
                 .orElseThrow(() -> new EntityNotFoundException("Planta não encontrada com o código: " + codigo));

@@ -104,7 +104,7 @@ public class AuthServiceImpl implements AuthServInterface {
 	}
 
 	@Override
-	public ResponseEntity<ResponseAuthDTO> authLogin(@NonNull AuthModel authReq) throws Exception {
+	public ResponseEntity<ResponseAuthDTO> authLogin(@NonNull AuthModel authReq) throws AuthenticationException, IOException {
 		Objects.requireNonNull(authReq.getLogin(), "Login está nulo.");
 		Objects.requireNonNull(authReq.getSenha(), "Senha está nula.");
 
@@ -116,9 +116,9 @@ public class AuthServiceImpl implements AuthServInterface {
 
 			GenerateTokenRecords tokenGenerate = getToken(authReq);
 			return MessageResponse.success(new ResponseAuthDTO(tokenGenerate.token(), tokenGenerate.date(), tokenGenerate.expiryIn(), userCheck.getUsucod(), new PerfilDTO(userCheck.getPerfil())));
-		} catch (AuthenticationException e) {
+		} catch (IOException e) {
 			log.error("Erro na autenticação: {}", e.getMessage(), e);
-			throw new RuntimeException("Erro na autenticação: " + e.getMessage());
+			throw new IOException("Erro na autenticação: " + e.getMessage());
 		}
 	}
 

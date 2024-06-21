@@ -42,12 +42,12 @@ public class PendenciaServiceImpl implements PendenciaServInterface {
 		Objects.requireNonNull(num, "Número de Série está nulo.");
 		ItensPendenciasDTO itensPendencias = new ItensPendenciasDTO();
 		List<Long> listFirmware = new ArrayList<>();
-		
+
 		var modulo = siloModuloServiceImpl.findEntityNSE(num);
 		Date dateKeep = Utils.addGmtToDateTime(modulo.getSmogmt());
 		String dateKeepString = Utils.addGmtToDateTimeSendString(dateKeep);
 		siloModuloServiceImpl.registerKeepAliveInModulo(modulo, dateKeep);
-		
+
 		var listaPendenciaNova = findByPenStaAndpendel(StatusEnum.PENDENCIA.toString());
 		listaPendenciaNova.stream().map(pendencia -> listFirmware.add(pendencia.getId())).collect(Collectors.toList());
 		itensPendencias.setFirmware(listFirmware);
@@ -76,8 +76,7 @@ public class PendenciaServiceImpl implements PendenciaServInterface {
 
 	@Override
 	public ResponseEntity<PendenciasDTO> findById(Long id) {
-		Objects.requireNonNull(id, "Id da Pendência está nulo.");
-		Pendencia pendencia = pendenciaRepository.findByPencodAndPendel(id, 1).orElseThrow(() -> new EntityNotFoundException("Pendência não encontrada com o ID: " + id));
+		Pendencia pendencia = findBy(id);
 		return MessageResponse.success(new PendenciasDTO(pendencia));
 	}
 
@@ -103,7 +102,7 @@ public class PendenciaServiceImpl implements PendenciaServInterface {
 		Long id = delete.getIdPendencia();
 		Objects.requireNonNull(id, "Id da Pendência está nulo.");
 
-		Pendencia pendencia = pendenciaRepository.findByPencodAndPendel(id, 1).orElseThrow(() -> new IOException("Pendência não encontrada com o ID: " + id));
+		Pendencia pendencia = findBy(id);
 		pendencia.setPensta(delete.getStatus().toString());
 		pendencia.setPendes(delete.getDescricao());
 		pendencia.setPenfim(new Date());
@@ -114,10 +113,10 @@ public class PendenciaServiceImpl implements PendenciaServInterface {
 
 	@Override
 	public ResponseEntity<PendenciasDTO> update(Long id, StatusEnum pendenciaStatus) throws ParseException {
-		Objects.requireNonNull(id, "Id da Pendência está nulo.");
+
 		Objects.requireNonNull(pendenciaStatus, "Status da pendência está nulo.");
 
-		Pendencia pendencia = pendenciaRepository.findByPencodAndPendel(id, 1).orElseThrow(() -> new EntityNotFoundException("Pendência não encontrada com o ID: " + id));
+		Pendencia pendencia = findBy(id);
 
 		pendencia.setPensta(pendenciaStatus.toString());
 		if (pendenciaStatus == StatusEnum.FINALIZADO) {
@@ -129,16 +128,24 @@ public class PendenciaServiceImpl implements PendenciaServInterface {
 	}
 
 	@Override
-	public ResponseEntity<PendenciasDTO> save(PendenciaModel pendenciaModel) throws EntityNotFoundException, IOException {
+	public ResponseEntity<PendenciasDTO> save(PendenciaModel pendenciaModel)
+			throws EntityNotFoundException, IOException {
 		String numSerie = pendenciaModel.getNumSerie();
 		Objects.requireNonNull(pendenciaModel.getStatus(), "Status da pendência está nulo.");
 		Objects.requireNonNull(pendenciaModel.getTipoPendencia(), "Tipo da Pendência está nulo.");
 		Objects.requireNonNull(pendenciaModel.getDescricao(), "Descrição da Pendência está nula.");
 		Objects.requireNonNull(numSerie, "Número de Série está nulo.");
 
-		Pendencia pendencia = new Pendencia(null, pendenciaModel.getTipoPendencia().toString(), pendenciaModel.getStatus().toString(), pendenciaModel.getDescricao(), new Date(), null, null, null, 1);
+		Pendencia pendencia = new Pendencia(null, pendenciaModel.getTipoPendencia().toString(),
+				pendenciaModel.getStatus().toString(), pendenciaModel.getDescricao(), new Date(), null, null, null, 1);
 
 		Pendencia savedPendencia = pendenciaRepository.save(pendencia);
 		return MessageResponse.success(new PendenciasDTO(savedPendencia));
+	}
+
+	public Pendencia findBy(Long id) {
+		Objects.requireNonNull(id, "Id da Pendência está nulo.");
+		return pendenciaRepository.findByPencodAndPendel(id, 1)
+				.orElseThrow(() -> new EntityNotFoundException("Pendência não encontrada com o ID: " + id));
 	}
 }
