@@ -2,6 +2,7 @@ package br.com.telematica.siloapi.model.dto;
 
 import br.com.telematica.siloapi.model.entity.TipoSilo;
 import br.com.telematica.siloapi.model.enums.TipoSiloEnum;
+import br.com.telematica.siloapi.utils.Utils;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -55,16 +56,15 @@ public class TipoSiloDTO extends Codigo {
 		this.setCodigo(entity.getTsicod());
 		this.descricao = entity.getTsides();
 		this.tipoSilo = TipoSiloEnum.valueOf(entity.getTsitip());
-		this.distanciaSensor = entity.getTsidse();
-		this.alturaCheio = entity.getTsiach();
-		this.raio = entity.getTsirai();
-		this.largura = entity.getTsilar();
-		this.comprimento = entity.getTsicom();
+		this.distanciaSensor = Utils.converterMmParaCm(entity.getTsidse());
+		this.alturaCheio = Utils.converterMmParaCm(entity.getTsiach());
+		this.raio = Utils.converterMmParaCm(entity.getTsirai());
+		this.largura = Utils.converterMmParaCm(entity.getTsilar());
+		this.comprimento = Utils.converterMmParaCm(entity.getTsicom());
 	}
 
 	public TipoSiloDTO() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

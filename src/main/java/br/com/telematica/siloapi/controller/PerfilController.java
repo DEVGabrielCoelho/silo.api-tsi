@@ -38,9 +38,9 @@ public class PerfilController extends SecurityRestController {
 	@Autowired
 	private PerfilPermServInterface perfilServImpl;
 
-	@PostMapping("/v1/cadastrar")
-	@Operation(description = "Cadastrar um novo perfil de usuário com permissões de acesso. Recebe os detalhes do perfil e suas permissões e armazena no sistema.")
-	public ResponseEntity<PerfilPermissaoDTO> cadastrarPerfil(@Validated @RequestBody PerfilModel cadastro) throws IOException {
+	@PostMapping("/v1/criar")
+	@Operation(description = "Criar um novo perfil de usuário com permissões de acesso. Recebe os detalhes do perfil e suas permissões e armazena no sistema.")
+	public ResponseEntity<PerfilPermissaoDTO> criarPerfil(@Validated @RequestBody PerfilModel cadastro) throws IOException {
 		var perfilService = perfilServImpl.save(cadastro);
 		return ResponseEntity.ok(perfilService);
 	}

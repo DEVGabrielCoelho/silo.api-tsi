@@ -1,5 +1,6 @@
 package br.com.telematica.siloapi.model.entity;
 
+import br.com.telematica.siloapi.utils.Utils;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -44,19 +45,18 @@ public class TipoSilo {
 	}
 
 	public TipoSilo tipoSiloVertical(Double tsirai) {
-		this.tsirai = tsirai;
+		this.tsirai = Utils.converterCmParaMm(tsirai);
 		return this;
 	}
 
 	public TipoSilo tipoSiloHorizontal(Double tsilar, Double tsicom) {
-		this.tsilar = tsilar;
-		this.tsicom = tsicom;
+		this.tsilar = Utils.converterCmParaMm(tsilar);
+		this.tsicom = Utils.converterCmParaMm(tsicom);
 		return this;
 	}
 
 	public TipoSilo() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

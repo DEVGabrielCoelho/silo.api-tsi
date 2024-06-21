@@ -34,8 +34,8 @@ public class PlantaController extends SecurityRestController {
 		return planta.findAllPlantaDTO();
 	}
 
-	@PostMapping("/v1/cadastrar")
-	@Operation(description = "Cadastrar uma nova planta. Recebe os detalhes da planta e a armazena no sistema.")
+	@PostMapping("/v1/criar")
+	@Operation(description = "Criar uma nova planta. Recebe os detalhes da planta e a armazena no sistema.")
 	public ResponseEntity<PlantaDTO> createPlanta(@RequestBody PlantaModel plantaDto) throws IOException {
 		return planta.save(plantaDto);
 	}

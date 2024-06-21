@@ -63,9 +63,9 @@ public class PendencyController extends SecurityRestController {
 		return pendenciaService.findByAll();
 	}
 
-	@PostMapping("/v1/cadastrar")
-	@Operation(description = "Cadastrar uma nova pendência. Recebe os detalhes da pendência e a armazena no sistema.")
-	public ResponseEntity<PendenciasDTO> cadastrarPendencia(@Valid @RequestBody PendenciaModel entity) throws EntityNotFoundException, IOException {
+	@PostMapping("/v1/criar")
+	@Operation(description = "Criar uma nova pendência. Recebe os detalhes da pendência e a armazena no sistema.")
+	public ResponseEntity<PendenciasDTO> criarPendencia(@Valid @RequestBody PendenciaModel entity) throws EntityNotFoundException, IOException {
 		return pendenciaService.save(entity);
 	}
 

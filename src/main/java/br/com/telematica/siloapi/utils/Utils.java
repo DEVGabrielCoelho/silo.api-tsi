@@ -22,11 +22,15 @@ import br.com.telematica.siloapi.exception.ResponseGlobalModel;
 
 public class Utils {
 
+	private Utils() {
+		throw new IllegalStateException("Utility class");
+	}
+
 	private static final DateTimeFormatter dtfEditado = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS");
 	private static final DateTimeFormatter dtfPadrao = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
 	private static SimpleDateFormat sdf;
-	private static SimpleDateFormat sdfbase = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+	private static final SimpleDateFormat sdfbase = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 
 	public static String convertDateToString() {
 		LocalDateTime localDateTime = LocalDateTime.ofInstant(new Date().toInstant(), ZoneId.systemDefault());
@@ -91,7 +95,8 @@ public class Utils {
 		return new String(decodedBytes);
 	}
 
-	public static Pageable consultaPage(String ordenarEntity, @NonNull String direcao, Integer pagina, Integer tamanho) {
+	public static Pageable consultaPage(String ordenarEntity, @NonNull String direcao, Integer pagina,
+			Integer tamanho) {
 		Sort.Direction sortDirection = Sort.Direction.fromString(direcao);
 		Sort sort = Sort.by(sortDirection, ordenarEntity);
 		return PageRequest.of(pagina, tamanho, sort);
@@ -134,18 +139,38 @@ public class Utils {
 		}
 	}
 
-    public static Double calcularVolumeVertical(double raio, double altura) {
-        if (raio < 0 || altura < 0) {
-            throw new IllegalArgumentException("O raio e a altura devem ser positivos.");
-        }
-        return Math.PI * Math.pow(raio, 2) * altura;
+	public static Double calcularVolumeVertical(double raio, double altura) {
+		if (raio < 0 || altura < 0) {
+			throw new IllegalArgumentException("O raio e a altura devem ser positivos.");
+		}
+		return Math.PI * Math.pow(raio, 2) * altura;
+	}
+
+	public static Double calcularVolumeHorizontal(double comprimento, double largura, double altura) {
+		if (comprimento < 0 || largura < 0 || altura < 0) {
+			throw new IllegalArgumentException("O comprimento, a largura e a altura devem ser positivos.");
+		}
+		return comprimento * largura * altura;
+	}
+
+
+	public static String convertTimestampToDateStr(long timestamp) {
+        LocalDateTime dateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneId.systemDefault());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        return dateTime.format(formatter);
+    }
+	public static Date convertTimestampToDate(long timestamp) throws ParseException {
+        String timeStampStr = convertTimestampToDateStr(timestamp);
+        return sdfStringforDate(timeStampStr);
     }
 
-    public static Double calcularVolumeHorizontal(double comprimento, double largura, double altura) {
-        if (comprimento < 0 || largura < 0 || altura < 0) {
-            throw new IllegalArgumentException("O comprimento, a largura e a altura devem ser positivos.");
-        }
-        return comprimento * largura * altura;
+	public static double converterCmParaMm(double cm) {
+        return cm * 10.0;
     }
-	
+
+    // Função para converter mm para cm
+    public static double converterMmParaCm(double mm) {
+        return mm / 10.0;
+    }
+
 }

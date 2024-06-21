@@ -37,8 +37,8 @@ public class UsuarioController extends SecurityRestController {
 	@Autowired
 	private UsuarioServInterface userServImpl;
 
-	@PostMapping("/v1/cadastrar")
-	@Operation(description = "Cadastrar um novo usuário. Recebe os detalhes do usuário e o armazena no sistema.")
+	@PostMapping("/v1/criar")
+	@Operation(description = "Criar um novo usuário. Recebe os detalhes do usuário e o armazena no sistema.")
 	public ResponseEntity<UsuarioDTO> criar(@RequestBody @NonNull UsuarioModel cadastro) throws EntityNotFoundException, IOException {
 		return userServImpl.saveUpdateEncodePassword(cadastro);
 	}

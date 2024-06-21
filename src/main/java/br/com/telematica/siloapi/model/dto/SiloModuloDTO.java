@@ -2,6 +2,7 @@ package br.com.telematica.siloapi.model.dto;
 
 import br.com.telematica.siloapi.model.entity.SiloModulo;
 import br.com.telematica.siloapi.model.enums.StatusDeviceEnum;
+import br.com.telematica.siloapi.utils.Utils;
 
 public class SiloModuloDTO extends Codigo {
 
@@ -15,8 +16,8 @@ public class SiloModuloDTO extends Codigo {
 	private String corKeepAlive;
 	private String corMedicao;
 	private StatusDeviceEnum status;
-	private Double volumeCheio = Double.valueOf(0);;
-	private Double volumeStatus = Double.valueOf(0);;
+	private Double volumeCheio = Double.valueOf(0);
+	private Double volumeStatus = Double.valueOf(0);
 
 	public SiloModuloDTO(Long codigo, SiloDTO silo, String descricao, Long totalSensor, String numSerie, Long timeoutKeepAlive, Long timeoutMedicao, Integer gmt, String corKeepAlive, String corMedicao, StatusDeviceEnum status, Double volumeCheio, Double volumeStatus) {
 		super(codigo);
@@ -49,19 +50,13 @@ public class SiloModuloDTO extends Codigo {
 	}
 
 	public SiloModuloDTO volumeSilo(Double volumeCheio, Double volumeStatus) {
-		this.volumeCheio = volumeCheio;
-		this.volumeStatus = volumeStatus;
+		this.volumeCheio = Utils.converterMmParaCm(volumeCheio);
+		this.volumeStatus = Utils.converterMmParaCm(volumeStatus);
 		return this;
-	}
-
-	public SiloModuloDTO() {
-		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public SiloModuloDTO(Long codigo) {
 		super(codigo);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

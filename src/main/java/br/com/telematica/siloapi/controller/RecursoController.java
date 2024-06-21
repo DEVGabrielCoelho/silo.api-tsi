@@ -35,9 +35,9 @@ public class RecursoController extends SecurityRestController {
 	@Autowired
 	private RecursoServiceImpl recursoServImpl;
 
-	@PostMapping("/v1/cadastrar")
-	@Operation(description = "Cadastrar um novo recurso. Recebe os detalhes do recurso e o armazena no sistema. Obs: Gerado automaticamente ao iniciar a aplicação.")
-	public ResponseEntity<RecursoDTO> cadastrarRecurso(@RequestBody RecursoModel cadastro) {
+	@PostMapping("/v1/criar")
+	@Operation(description = "Criar um novo recurso. Recebe os detalhes do recurso e o armazena no sistema. Obs: Gerado automaticamente ao iniciar a aplicação.")
+	public ResponseEntity<RecursoDTO> criarRecurso(@RequestBody RecursoModel cadastro) {
 		var recursoService = recursoServImpl.save(cadastro);
 		return recursoService;
 	}

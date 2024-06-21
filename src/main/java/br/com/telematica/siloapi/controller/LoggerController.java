@@ -52,9 +52,9 @@ public class LoggerController extends SecurityRestController {
 		return logServ.findByAll();
 	}
 
-	@PostMapping("/v1/cadastrar")
-	@Operation(description = "Cadastrar um novo log. Recebe os detalhes do log e o armazena no sistema.")
-	public ResponseEntity<LoggerDTO> cadastrarLogger(@RequestBody LoggerModel entity) throws EntityNotFoundException, IOException {
+	@PostMapping("/v1/criar")
+	@Operation(description = "Criar um novo log. Recebe os detalhes do log e o armazena no sistema.")
+	public ResponseEntity<LoggerDTO> criarLogger(@RequestBody LoggerModel entity) throws EntityNotFoundException, IOException {
 		return logServ.save(entity);
 	}
 }

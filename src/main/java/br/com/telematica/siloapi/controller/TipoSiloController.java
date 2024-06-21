@@ -35,7 +35,7 @@ public class TipoSiloController extends SecurityRestController {
 		return tipoSiloInterface.findAllTipoSiloDTO();
 	}
 
-	@PostMapping("/v1/cadastrar")
+	@PostMapping("/v1/criar")
 	@Operation(description = "Cadastro de um novo tipo de silo. Recebe os detalhes do tipo de silo e o armazena no sistema.")
 	public ResponseEntity<TipoSiloDTO> createSilo(@Valid @RequestBody TipoSiloModel tipoSilo) throws RuntimeException, IOException {
 		return tipoSiloInterface.save(tipoSilo);

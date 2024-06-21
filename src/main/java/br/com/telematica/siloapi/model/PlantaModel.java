@@ -15,20 +15,25 @@ public class PlantaModel {
 	@Schema(description = "Nome da planta", example = "Planta 1", nullable = false)
 	private String nome;
 
-	public PlantaModel() {
-	}
-
 	public PlantaModel(Long empresa, String nome) {
 		this.empresa = empresa;
 		this.nome = nome;
 	}
 
-	public Long getEmpresa() {
-		return empresa;
+	public PlantaModel() {
+		super();
 	}
 
-	public void setEmpresa(Long empresa) {
-		this.empresa = empresa;
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("PlantaModel [");
+		if (empresa != null)
+			builder.append("empresa=").append(empresa).append(", ");
+		if (nome != null)
+			builder.append("nome=").append(nome);
+		builder.append("]");
+		return builder.toString();
 	}
 
 	public String getNome() {
@@ -39,18 +44,12 @@ public class PlantaModel {
 		this.nome = nome;
 	}
 
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("PlantaModel [");
-		if (empresa != null) {
-			builder.append("empresa=").append(empresa).append(", ");
-		}
-		if (nome != null) {
-			builder.append("nome=").append(nome);
-		}
-		builder.append("]");
-		return builder.toString();
+	public Long getEmpresa() {
+		return empresa;
+	}
+
+	public void setEmpresa(Long empresa) {
+		this.empresa = empresa;
 	}
 
 }

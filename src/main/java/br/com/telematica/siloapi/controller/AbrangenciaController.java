@@ -38,9 +38,9 @@ public class AbrangenciaController extends SecurityRestController {
 	@Autowired
 	private AbrangenciaServInterface abrangenciaServImpl;
 
-	@PostMapping("/v1/cadastrar")
-	@Operation(description = "Cadastrar uma nova Abrangência. Envia um objeto de abrangência e armazena-o no sistema.")
-	public ResponseEntity<AbrangenciaListaDetalhesDTO> cadastrarAbrangencia(@RequestBody AbrangenciaModel cadastro) throws IOException {
+	@PostMapping("/v1/criar")
+	@Operation(description = "Criar uma nova Abrangência. Envia um objeto de abrangência e armazena-o no sistema.")
+	public ResponseEntity<AbrangenciaListaDetalhesDTO> criarAbrangencia(@RequestBody AbrangenciaModel cadastro) throws IOException {
 		var abrangenciaService = abrangenciaServImpl.save(cadastro);
 		return abrangenciaService;
 	}

@@ -18,6 +18,7 @@ import br.com.telematica.siloapi.model.entity.TipoSilo;
 import br.com.telematica.siloapi.model.enums.TipoSiloEnum;
 import br.com.telematica.siloapi.repository.TipoSiloRepository;
 import br.com.telematica.siloapi.services.TipoSiloServInterface;
+import br.com.telematica.siloapi.utils.Utils;
 import br.com.telematica.siloapi.utils.message.MessageResponse;
 import jakarta.persistence.EntityNotFoundException;
 
@@ -37,8 +38,8 @@ public class TipoSiloServiceImpl implements TipoSiloServInterface {
 			entity.setTsinom(tipoSiloModel.getNome());
 			entity.setTsides(tipoSiloModel.getDescricao());
 			entity.setTsitip(tipoSiloModel.getTipoSilo().getTipo());
-			entity.setTsiach(tipoSiloModel.getAlturaCheio());
-			entity.setTsidse(tipoSiloModel.getDistanciaSensor());
+			entity.setTsiach(Utils.converterCmParaMm(tipoSiloModel.getAlturaCheio()));
+			entity.setTsidse(Utils.converterCmParaMm(tipoSiloModel.getDistanciaSensor()));
 			
 			if (tipoSiloModel.getTipoSilo() == TipoSiloEnum.HORIZONTAL)
 				entity.tipoSiloHorizontal(tipoSiloModel.getLargura(), tipoSiloModel.getComprimento());

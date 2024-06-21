@@ -59,9 +59,9 @@ public class FirmwareController extends SecurityRestController {
 		return firmService.findByIdDownload(codigo);
 	}
 
-	@PostMapping(path = "/v1/cadastrar", consumes = { "multipart/form-data" })
-	@Operation(description = "Cadastrar um novo firmware. Recebe o arquivo e os detalhes do firmware e o armazena no sistema.")
-	public ResponseEntity<FirmwareDTO> cadastrarFirmware(@RequestParam("arquivo") MultipartFile arquivo, @RequestParam(name = "modelo") String modelo) throws IOException {
+	@PostMapping(path = "/v1/criar", consumes = { "multipart/form-data" })
+	@Operation(description = "Criar um novo firmware. Recebe o arquivo e os detalhes do firmware e o armazena no sistema.")
+	public ResponseEntity<FirmwareDTO> criarFirmware(@RequestParam("arquivo") MultipartFile arquivo, @RequestParam(name = "modelo") String modelo) throws IOException {
 		var save = firmService.save(arquivo, modelo);
 		return save;
 	}

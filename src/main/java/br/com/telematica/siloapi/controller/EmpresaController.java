@@ -63,9 +63,9 @@ public class EmpresaController extends SecurityRestController {
 		return empresaService.empresaFindAll();
 	}
 
-	@PostMapping("/v1/cadastrar")
-	@Operation(description = "Cadastrar uma nova empresa. Recebe os detalhes da empresa e a armazena no sistema.")
-	public ResponseEntity<EmpresaDTO> cadastrarEmpresa(@RequestBody EmpresaModel entity) throws IOException {
+	@PostMapping("/v1/criar")
+	@Operation(description = "Criar uma nova empresa. Recebe os detalhes da empresa e a armazena no sistema.")
+	public ResponseEntity<EmpresaDTO> criarEmpresa(@RequestBody EmpresaModel entity) throws IOException {
 		return empresaService.empresaSave(entity);
 	}
 

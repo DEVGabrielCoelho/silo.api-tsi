@@ -34,7 +34,7 @@ public class SiloController extends SecurityRestController {
 		return silo.findAllSiloDTO();
 	}
 
-	@PostMapping("/v1/cadastrar")
+	@PostMapping("/v1/criar")
 	@Operation(description = "Cadastro de um novo silo. Recebe os detalhes do silo e o armazena no sistema.")
 	public ResponseEntity<SiloDTO> createSilo(@RequestBody SiloModel siloDTO) throws IOException {
 		return silo.save(siloDTO);

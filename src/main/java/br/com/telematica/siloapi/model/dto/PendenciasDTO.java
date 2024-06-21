@@ -120,7 +120,8 @@ public class PendenciasDTO {
 		return builder.toString();
 	}
 
-	public PendenciasDTO(Logger logger, Long id, PendenciaEnum tipoPendencia, StatusEnum status, String descricao, String dataInicio, String dataFim, Long modulo, Long firmware) {
+	public PendenciasDTO(Logger logger, Long id, PendenciaEnum tipoPendencia, StatusEnum status, String descricao,
+			String dataInicio, String dataFim, Long modulo, Long firmware) {
 		super();
 		this.logger = logger;
 		this.id = id;
@@ -135,32 +136,28 @@ public class PendenciasDTO {
 
 	public static String consultaPagable(String value) {
 		switch (value) {
-		case "id":
-			return "pencod";
-		case "tipoPendencia":
-			return "pentip";
-		case "status":
-			return "pensta";
-		case "dataInicio":
-			return "penini";
-		case "dataFim":
-			return "penfim";
-		case "modulo":
-			return "smocod";
-		default:
-			throw new IllegalArgumentException("Unexpected value: " + value);
+			case "id":
+				return "pencod";
+			case "tipoPendencia":
+				return "pentip";
+			case "status":
+				return "pensta";
+			case "dataInicio":
+				return "penini";
+			case "dataFim":
+				return "penfim";
+			case "modulo":
+				return "smocod";
+			default:
+				throw new IllegalArgumentException("Unexpected value: " + value);
 		}
 	}
 
 	public PendenciasDTO(Pendencia pend) {
 		try {
-
-			PendenciaEnum tipo = PendenciaEnum.valueOf(pend.getPentip());
-			StatusEnum status = StatusEnum.valueOf(pend.getPensta());
-
 			this.id = pend.getPencod();
-			this.tipoPendencia = tipo;
-			this.status = status;
+			this.tipoPendencia = PendenciaEnum.valueOf(pend.getPentip());
+			this.status = StatusEnum.valueOf(pend.getPensta());
 			this.descricao = pend.getPendes();
 			this.dataInicio = pend.getPenini() == null ? null : Utils.dateToString(pend.getPenini());
 			this.dataFim = pend.getPenfim() == null ? null : Utils.dateToString(pend.getPenfim());
