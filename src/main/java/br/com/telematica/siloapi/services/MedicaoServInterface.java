@@ -5,6 +5,8 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
 import br.com.telematica.siloapi.model.MedicaoDeviceModel;
@@ -28,4 +30,5 @@ public interface MedicaoServInterface {
 
 	ResponseEntity<MedicaoDTO> update(MedicaoModel medicaoDTO) throws IOException, ParseException;
 
+	ResponseEntity<Page<MedicaoDTO>> medicaoFindAllPaginado(String searchTerm, String dataInicio, String dataFim, Pageable pageable);
 }

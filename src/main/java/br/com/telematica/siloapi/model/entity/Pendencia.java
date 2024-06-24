@@ -190,6 +190,7 @@ public class Pendencia {
 					// searchPredicates.add(criteriaBuilder.equal(root.get("fircod"),
 					// searchTermLong));
 				} catch (NumberFormatException e) {
+					//
 				}
 
 				try {
@@ -198,6 +199,7 @@ public class Pendencia {
 					searchPredicates.add(criteriaBuilder.equal(root.get("penini"), searchTermDate));
 					searchPredicates.add(criteriaBuilder.equal(root.get("penfim"), searchTermDate));
 				} catch (DateTimeParseException e) {
+					//
 				}
 
 				searchPredicates.add(criteriaBuilder.like(criteriaBuilder.function("TO_CHAR", String.class, root.get("penini"), criteriaBuilder.literal("YYYY-MM-DD")), likePattern));
@@ -205,10 +207,10 @@ public class Pendencia {
 				searchPredicates.add(criteriaBuilder.like(criteriaBuilder.function("TO_CHAR", String.class, root.get("penini"), criteriaBuilder.literal("HH24:MI")), likePattern));
 				searchPredicates.add(criteriaBuilder.like(criteriaBuilder.function("TO_CHAR", String.class, root.get("penfim"), criteriaBuilder.literal("HH24:MI")), likePattern));
 
-				predicates.add(criteriaBuilder.or(searchPredicates.toArray(new Predicate[0])));
+				predicates.add(criteriaBuilder.or(searchPredicates.toArray(Predicate[]::new)));
 			}
 
-			return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+			return criteriaBuilder.and(predicates.toArray(Predicate[]::new));
 		};
 	}
 }

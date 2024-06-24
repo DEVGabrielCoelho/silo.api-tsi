@@ -84,6 +84,7 @@ public class Usuario implements UserDetails {
 		this.abrangencia = abrangencia;
 	}
 
+
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
@@ -201,17 +202,9 @@ public class Usuario implements UserDetails {
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return Collections.singleton(new SimpleGrantedAuthority(perfil.getPernom()));
+		return Collections.singleton(new SimpleGrantedAuthority(this.perfil.getPernom()));
 	}
-
-	// @Override
-	// public Collection<? extends GrantedAuthority> getAuthorities() {
-	// PerfilService perfilService = new PerfilService();
-	// return Collections.singleton(new
-	// SimpleGrantedAuthority(perfilService.findByIdEntity(percod).getPernom()));
-	//
-	// }
-
+	
 	@Override
 	public String getPassword() {
 		return this.getUsusen();
@@ -225,28 +218,21 @@ public class Usuario implements UserDetails {
 	@Override
 	public boolean isAccountNonExpired() {
 		return true;
-		// throw new UnsupportedOperationException("Unimplemented method
-		// 'isAccountNonExpired'");
 	}
 
 	@Override
 	public boolean isAccountNonLocked() {
 		return true;
-		// throw new UnsupportedOperationException("Unimplemented method
-		// 'isAccountNonLocked'");
 	}
 
 	@Override
 	public boolean isCredentialsNonExpired() {
 		return true;
-		// throw new UnsupportedOperationException("Unimplemented method
-		// 'isCredentialsNonExpired'");
 	}
 
 	@Override
 	public boolean isEnabled() {
 		return true;
-		// throw new UnsupportedOperationException("Unimplemented method 'isEnabled'");
 	}
 
 	public static Specification<Usuario> filterByFields(String searchTerm) {
@@ -273,10 +259,10 @@ public class Usuario implements UserDetails {
 					// Ignore if the conversion fails
 				}
 
-				predicates.add(criteriaBuilder.or(searchPredicates.toArray(new Predicate[0])));
+				predicates.add(criteriaBuilder.or(searchPredicates.toArray(Predicate[]::new)));
 			}
 
-			return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+			return criteriaBuilder.and(predicates.toArray(Predicate[]::new));
 		};
 	}
 }

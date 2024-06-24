@@ -19,13 +19,22 @@ public class SiloModel {
 	@Schema(description = "Nome", example = "Silo 1", nullable = true)
 	private String nome;
 
+	@NotNull(message = "O campo 'latitude' é obrigatório e não pode estar em branco.")
+	@Schema(description = "latitude", example = "1111", nullable = true)
+	private Double latitude;
+	@NotNull(message = "O campo 'longitude' é obrigatório e não pode estar em branco.")
+	@Schema(description = "longitude", example = "2222", nullable = true)
+	private Double longitude;
+
 	public SiloModel() {
 	}
 
-	public SiloModel(Long tipoSilo, Long planta, String nome) {
-		this.tipoSilo = tipoSilo;
-		this.planta = planta;
+	public SiloModel(Double latitude, Double longitude, String nome, Long planta, Long tipoSilo) {
+		this.latitude = latitude;
+		this.longitude = longitude;
 		this.nome = nome;
+		this.planta = planta;
+		this.tipoSilo = tipoSilo;
 	}
 
 	public Long getTipoSilo() {
@@ -52,19 +61,36 @@ public class SiloModel {
 		this.nome = nome;
 	}
 
+	public Double getLatitude() {
+		return latitude;
+	}
+
+	public void setLatitude(Double latitude) {
+		this.latitude = latitude;
+	}
+
+	public Double getLongitude() {
+		return longitude;
+	}
+
+	public void setLongitude(Double longitude) {
+		this.longitude = longitude;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("SiloModel [");
-		if (tipoSilo != null) {
+		if (tipoSilo != null)
 			builder.append("tipoSilo=").append(tipoSilo).append(", ");
-		}
-		if (planta != null) {
+		if (planta != null)
 			builder.append("planta=").append(planta).append(", ");
-		}
-		if (nome != null) {
-			builder.append("nome=").append(nome);
-		}
+		if (nome != null)
+			builder.append("nome=").append(nome).append(", ");
+		if (latitude != null)
+			builder.append("latitude=").append(latitude).append(", ");
+		if (longitude != null)
+			builder.append("longitude=").append(longitude);
 		builder.append("]");
 		return builder.toString();
 	}

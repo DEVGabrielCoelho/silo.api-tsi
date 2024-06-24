@@ -7,32 +7,44 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public class PlantaDTO extends Codigo {
 
 	@Schema(description = "Código da empresa", example = "1", nullable = false)
-	private Long codigoEmpresa;
+	private Long empresa;
 	@Schema(description = "Nome da planta", example = "Planta 1", nullable = false)
 	private String nome;
 
-	public PlantaDTO() {
-	}
-
-	public PlantaDTO(Long codigo, Long codigoEmpresa, String nome) {
-		super(codigo);
-		this.codigoEmpresa = codigoEmpresa;
+	public PlantaDTO(Long empresa, String nome) {
+		this.empresa = empresa;
 		this.nome = nome;
 	}
 
-	public PlantaDTO(Planta entity) {
-		super();
-		this.setCodigo(entity.getPlacod());
-		this.codigoEmpresa = entity.getEmpresa().getEmpcod();
-		this.nome = entity.getPlanom();
+	public PlantaDTO(Long codigo) {
+		super(codigo);
 	}
 
-	public Long getCodigoEmpresa() {
-		return codigoEmpresa;
+	public PlantaDTO(Planta planta) {
+
+		this.setCodigo(planta.getPlacod());
+		this.empresa = planta.getEmpresa().getEmpcod();
+		this.nome = planta.getPlanom();
 	}
 
-	public void setCodigoEmpresa(Long codigoEmpresa) {
-		this.codigoEmpresa = codigoEmpresa;
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("PlantaDTO [");
+		if (empresa != null)
+			builder.append("empresa=").append(empresa).append(", ");
+		if (nome != null)
+			builder.append("nome=").append(nome);
+		builder.append("]");
+		return builder.toString();
+	}
+
+	public Long getEmpresa() {
+		return empresa;
+	}
+
+	public void setEmpresa(Long empresa) {
+		this.empresa = empresa;
 	}
 
 	public String getNome() {
@@ -41,19 +53,6 @@ public class PlantaDTO extends Codigo {
 
 	public void setNome(String nome) {
 		this.nome = nome;
-	}
-
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("PlantaDTO [codigo=");
-		builder.append(getCodigo());
-		builder.append(", codigoEmpresa=");
-		builder.append(codigoEmpresa);
-		builder.append(", nome=");
-		builder.append(nome);
-		builder.append("]");
-		return builder.toString();
 	}
 
 }

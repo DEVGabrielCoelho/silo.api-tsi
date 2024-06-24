@@ -93,7 +93,7 @@ public class LoggerEntity {
 		// TODO Auto-generated constructor stub
 	}
 
-	public static Specification<LoggerEntity> filterByFields(Long smocod, String filtro, String startDateStr, String endDateStr) {
+	public static Specification<LoggerEntity> filterByFields(String filtro, String startDateStr, String endDateStr) {
 		return (root, query, criteriaBuilder) -> {
 			List<Predicate> predicates = new ArrayList<>();
 			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -113,7 +113,8 @@ public class LoggerEntity {
 			try {
 				Long searchTermLong = Long.valueOf(filtro);
 				predicates.add(criteriaBuilder.equal(root.get("logcod"), searchTermLong));
-			} catch (Exception e) {
+			} catch (NumberFormatException e) {
+				// 
 			}
 			// if (smocod != null) {
 			// predicates.add(criteriaBuilder.equal(root.get("smocod"), smocod));
@@ -124,7 +125,7 @@ public class LoggerEntity {
 				List<Predicate> filtroPredicates = new ArrayList<>();
 				filtroPredicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("logtip")), likePattern));
 				filtroPredicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("logmsg")), likePattern));
-				predicates.add(criteriaBuilder.or(filtroPredicates.toArray(new Predicate[0])));
+				predicates.add(criteriaBuilder.or(filtroPredicates.toArray(Predicate[]::new)));
 			}
 
 			if (startDate != null && endDate != null) {
@@ -135,7 +136,7 @@ public class LoggerEntity {
 				predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("logdat"), endDate));
 			}
 
-			return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+			return criteriaBuilder.and(predicates.toArray(Predicate[]::new));
 		};
 	}
 

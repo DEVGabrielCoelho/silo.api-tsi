@@ -54,6 +54,7 @@ public class TipoSiloDTO extends Codigo {
 
 	public TipoSiloDTO(TipoSilo entity) {
 		this.setCodigo(entity.getTsicod());
+		this.nome = entity.getTsinom();
 		this.descricao = entity.getTsides();
 		this.tipoSilo = TipoSiloEnum.valueOf(entity.getTsitip());
 		this.distanciaSensor = Utils.converterMmParaCm(entity.getTsidse());

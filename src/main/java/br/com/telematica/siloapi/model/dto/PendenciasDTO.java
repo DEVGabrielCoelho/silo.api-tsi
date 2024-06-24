@@ -136,20 +136,25 @@ public class PendenciasDTO {
 
 	public static String consultaPagable(String value) {
 		switch (value) {
-			case "id":
+			case "id" -> {
 				return "pencod";
-			case "tipoPendencia":
+			}
+			case "tipoPendencia" -> {
 				return "pentip";
-			case "status":
+			}
+			case "status" -> {
 				return "pensta";
-			case "dataInicio":
+			}
+			case "dataInicio" -> {
 				return "penini";
-			case "dataFim":
+			}
+			case "dataFim" -> {
 				return "penfim";
-			case "modulo":
+			}
+			case "modulo" -> {
 				return "smocod";
-			default:
-				throw new IllegalArgumentException("Unexpected value: " + value);
+			}
+			default -> throw new IllegalArgumentException("Unexpected value: " + value);
 		}
 	}
 

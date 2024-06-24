@@ -1,6 +1,6 @@
 package br.com.telematica.siloapi.handler;
 
-import java.text.ParseException;
+import java.io.IOException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +25,7 @@ import br.com.telematica.siloapi.services.impl.RecursoServiceImpl;
 import br.com.telematica.siloapi.services.impl.UsuarioServiceImpl;
 import br.com.telematica.siloapi.utils.JsonNodeConverter;
 import jakarta.annotation.PostConstruct;
+import jakarta.persistence.EntityNotFoundException;
 
 @Configuration
 public class CreateAdminHandler {
@@ -42,27 +43,25 @@ public class CreateAdminHandler {
 	@Autowired
 	private EmpresaServiceImpl empresaService;
 
-	private static Long cnpjTSI = Long.valueOf("44772937000150");
+	private static final Long CNPJTSI = Long.valueOf("44772937000150");
 
-	private static String[] listaRecursos = { "PENDENCIA", "FIRMWARE", "LOGGER", "USUARIO", "PERFIL", "RECURSO", "ABRANGENCIA", "EMPRESA", "PLANTA", "MEDICAO", "SILO", "TIPOSILO" };
-	private static String[] listaAbrangencia = { "EMPRESA", "PLANTA", "SILO", "TIPOSILO" };
+	private static final String[] listaRecursos = { "PENDENCIA", "FIRMWARE", "LOGGER", "USUARIO", "PERFIL", "RECURSO",
+			"ABRANGENCIA", "EMPRESA", "PLANTA", "MEDICAO", "SILO", "TIPOSILO", "MODULO" };
+	private static final String[] listaAbrangencia = { "EMPRESA", "PLANTA", "SILO", "TIPOSILO", "MODULO" };
 
 	@PostConstruct
-	public void init() {
-		createAdminHandler();
-	}
-
 	public void createAdminHandler() {
 		try {
-			logs.debug("CreateAdminHandler Start... ");
+			logs.info("CreateAdminHandler Start... ");
 			var user = usuarioService.findLoginEntityNull("admin");
+			createEmpresa();
+			createRecurso();
+			createPerfilPermissao();
+			createPerfilPermissaoDevice();
+			createAbrangencia();
+			createAbrangenciaDevice();
 			if (user == null) {
-				createEmpresa();
-				createRecurso();
-				createPerfilPermissao();
-				createPerfilPermissaoDevice();
-				createAbrangencia();
-				createAbrangenciaDevice();
+				logs.info("CreateAdminHandler Init Create... ");
 				createUsuario();
 				createUsuarioDevice();
 			}
@@ -71,35 +70,40 @@ public class CreateAdminHandler {
 		}
 	}
 
-	public void createEmpresa() throws ParseException {
+	public void createEmpresa() {
 		try {
-			logs.debug("createEmpresa Start... ");
-			var empresa = empresaService.empresaFindByCnpjEntity(cnpjTSI);
+			logs.info("createEmpresa Start... ");
+			var empresa = empresaService.empresaFindByCnpjEntity(CNPJTSI);
 
-			EmpresaModel empresaModel = new EmpresaModel(cnpjTSI, "Telemática - Sistemas Inteligentes", "TSI", "(99)99999-9999");
+			EmpresaModel empresaModel = new EmpresaModel(CNPJTSI, "Telemática - Sistemas Inteligentes", "TSI",
+					"(99)99999-9999");
 			if (empresa == null)
 				empresaService.empresaSave(empresaModel);
 
-		} catch (Exception e) {
-			logs.error("createEmpresa: ", e);
+		} catch (IOException e) {
+			logs.error("Error createEmpresa: ", e);
 		}
 	}
 
 	public void createPerfilPermissao() {
 		try {
-			logs.debug("createPerfil Start... ");
+			logs.info("createPerfil Start... ");
 			var perfil = perfilPermissaoService.findByIdPerfilEntity("ADMIN");
 			if (perfil == null)
-				perfil = perfilPermissaoService.createUpdatePerfil(new Perfil(null, "ADMIN", "Perfil do Administrador."));
+				perfil = perfilPermissaoService
+						.createUpdatePerfil(new Perfil(null, "ADMIN", "Perfil do Administrador."));
 			else
-				perfil = perfilPermissaoService.createUpdatePerfil(new Perfil(perfil.getPercod(), "ADMIN", "Perfil do Administrador."));
+				perfil = perfilPermissaoService
+						.createUpdatePerfil(new Perfil(perfil.getPercod(), "ADMIN", "Perfil do Administrador."));
 			int listItem = listaRecursos.length;
 			for (int i = 0; i < listItem; i++) {
 				RecursoMapEnum recursoEnum = RecursoMapEnum.valueOf(listaRecursos[i]);
-				var valueRecurso = perfilPermissaoService.findByPerfilAndRecurso(perfil, recursoService.findByIdEntity(recursoEnum.getNome()));
+				var valueRecurso = perfilPermissaoService.findByPerfilAndRecurso(perfil,
+						recursoService.findByIdEntity(recursoEnum.getNome()));
 				PermissaoModel permissao = new PermissaoModel(recursoEnum, 1, 1, 1, 1, 1);
 				if (valueRecurso == null)
 					perfilPermissaoService.saveEntityPermissao(perfil, permissao);
+
 			}
 
 		} catch (Exception e) {
@@ -109,19 +113,22 @@ public class CreateAdminHandler {
 
 	public void createPerfilPermissaoDevice() {
 		try {
-			logs.debug("createPerfilDevice Start... ");
+			logs.info("createPerfilDevice Start... ");
 			var perfil = perfilPermissaoService.findByIdPerfilEntity("DEVICE");
 			if (perfil == null)
 				perfil = perfilPermissaoService.createUpdatePerfil(new Perfil(null, "DEVICE", "Perfil do DEVICE."));
 			else
-				perfil = perfilPermissaoService.createUpdatePerfil(new Perfil(perfil.getPercod(), "DEVICE", "Perfil do DEVICE."));
+				perfil = perfilPermissaoService
+						.createUpdatePerfil(new Perfil(perfil.getPercod(), "DEVICE", "Perfil do DEVICE."));
 			int listItem = listaRecursos.length;
 			for (int i = 0; i < listItem; i++) {
 				RecursoMapEnum recursoEnum = RecursoMapEnum.valueOf(listaRecursos[i]);
-				var valueRecurso = perfilPermissaoService.findByPerfilAndRecurso(perfil, recursoService.findByIdEntity(recursoEnum.getNome()));
+				var valueRecurso = perfilPermissaoService.findByPerfilAndRecurso(perfil,
+						recursoService.findByIdEntity(recursoEnum.getNome()));
 				PermissaoModel permissao = new PermissaoModel(RecursoMapEnum.valueOf(listaRecursos[i]), 1, 1, 1, 1, 1);
 				if (valueRecurso == null)
 					perfilPermissaoService.saveEntityPermissao(perfil, permissao);
+
 			}
 
 		} catch (Exception e) {
@@ -131,7 +138,7 @@ public class CreateAdminHandler {
 
 	public void createRecurso() {
 		try {
-			logs.debug("createRecurso Start... ");
+			logs.info("createRecurso Start... ");
 			int listItem = listaRecursos.length;
 			for (int i = 0; i < listItem; i++) {
 				RecursoMapEnum recursoEnum = RecursoMapEnum.valueOf(listaRecursos[i]);
@@ -145,84 +152,85 @@ public class CreateAdminHandler {
 		}
 	}
 
-	public void createAbrangencia() throws Exception {
-	    try {
-	        logs.debug("createAbrangencia Start...");
-	        
-	        Abrangencia abrangencia = abrangenciaService.findByIdEntity("ADMIN");
-	        
-	        if (abrangencia == null) {
-	            abrangencia = abrangenciaService.createUpdateAbrangencia(new Abrangencia(null, "ADMIN", "Descrição Abrangencia ADMIN"));
-	        } else {
-	            abrangencia = abrangenciaService.createUpdateAbrangencia(new Abrangencia(abrangencia.getAbrcod(), "ADMIN", "Descrição Abrangencia ADMIN"));
-	        }
-
-	        int listItem = listaAbrangencia.length;
-	        for (int i = 0; i < listItem; i++) {
-	            RecursoMapEnum recursoEnum = RecursoMapEnum.valueOf(listaAbrangencia[i]);
-	            Recurso recurso = recursoService.findByIdEntity(recursoEnum.getNome());
-	            
-	            JsonNodeConverter jsonNode = new JsonNodeConverter();
-	            String data = jsonNode.convertToDatabaseColumn(new ObjectMapper().createArrayNode());
-
-	            abrangenciaService.saveOrUpdateAbrangenciaDetalhes(abrangencia, new AbrangenciaDetalhes(
-	                null,
-	                abrangencia,
-	                recurso,
-	                0, 
-	                data
-	            ));
-	        }
-	    } catch (Exception e) {
-	        logs.error("createAbrangencia: ", e);
-	    }
-	}
-
-
-
-	public void createAbrangenciaDevice() throws Exception {
-	    try {
-	        logs.debug("createAbrangenciaDevice Start...");
-	        
-	        Abrangencia abrangencia = abrangenciaService.findByIdEntity("DEVICE");
-	        
-	        if (abrangencia == null) {
-	            abrangencia = abrangenciaService.createUpdateAbrangencia(new Abrangencia(null, "DEVICE", "Descrição Abrangencia DEVICE"));
-	        } else {
-	            abrangencia = abrangenciaService.createUpdateAbrangencia(new Abrangencia(abrangencia.getAbrcod(), "DEVICE", "Descrição Abrangencia DEVICE"));
-	        }
-	    } catch (Exception e) {
-	        logs.error("createAbrangenciaDevice: ", e);
-	    }
-	}
-
-
-	public void createUsuario() throws ParseException {
+	public void createAbrangencia() {
 		try {
-			logs.debug("createUsuario Start... ");
-			var empresa = empresaService.empresaFindByCnpjEntity(cnpjTSI);
+			logs.info("createAbrangencia Start...");
+
+			Abrangencia abrangencia = abrangenciaService.findByIdEntity("ADMIN");
+
+			if (abrangencia == null) {
+				abrangencia = new Abrangencia(null, "ADMIN", "Descrição Abrangencia ADMIN");
+			} else {
+				abrangencia = new Abrangencia(abrangencia.getAbrcod(), "ADMIN", "Descrição Abrangencia ADMIN");
+			}
+			abrangenciaService.createUpdateAbrangencia(abrangencia);
+
+			int listItem = listaAbrangencia.length;
+			for (int i = 0; i < listItem; i++) {
+				RecursoMapEnum recursoEnum = RecursoMapEnum.valueOf(listaAbrangencia[i]);
+				Recurso recurso = recursoService.findByIdEntity(recursoEnum.getNome());
+
+				JsonNodeConverter jsonNode = new JsonNodeConverter();
+				String data = jsonNode.convertToDatabaseColumn(new ObjectMapper().createArrayNode());
+
+				abrangenciaService.saveOrUpdateAbrangenciaDetalhes(abrangencia, new AbrangenciaDetalhes(
+						null,
+						abrangencia,
+						recurso,
+						0,
+						data));
+			}
+		} catch (Exception e) {
+			logs.error("createAbrangencia: ", e);
+		}
+	}
+
+	public void createAbrangenciaDevice() {
+		try {
+			logs.info("createAbrangenciaDevice Start...");
+
+			Abrangencia abrangencia = abrangenciaService.findByIdEntity("DEVICE");
+
+			if (abrangencia == null) {
+				abrangencia = new Abrangencia(null, "DEVICE", "Descrição Abrangencia DEVICE");
+			} else {
+				abrangencia = new Abrangencia(abrangencia.getAbrcod(), "DEVICE", "Descrição Abrangencia DEVICE");
+			}
+
+			abrangenciaService.createUpdateAbrangencia(abrangencia);
+		} catch (Exception e) {
+			logs.error("createAbrangenciaDevice: ", e);
+		}
+	}
+
+	public void createUsuario() {
+		try {
+			logs.info("createUsuario Start... ");
+			var empresa = empresaService.empresaFindByCnpjEntity(CNPJTSI);
 			var perfil = perfilPermissaoService.findByIdPerfilEntity("ADMIN");
 			var abrangencia = abrangenciaService.findByIdEntity("ADMIN");
-			UsuarioModel usuario = new UsuarioModel("ADMIN", Long.valueOf(0), "admin", "admin", "admin@admin.com", empresa.getEmpcod(), perfil.getPercod(), abrangencia.getAbrcod());
+			UsuarioModel usuario = new UsuarioModel("ADMIN", Long.valueOf(0), "admin", "admin", "admin@admin.com",
+					empresa.getEmpcod(), perfil.getPercod(), abrangencia.getAbrcod());
 			var userCheck = usuarioService.findLoginEntityNull("admin");
 			if (userCheck == null)
 				usuarioService.saveUpdateEntity(usuario);
-		} catch (Exception e) {
+		} catch (EntityNotFoundException | IOException e) {
 			logs.error("createUsuario: ", e);
 		}
 	}
 
-	public void createUsuarioDevice() throws ParseException {
+	public void createUsuarioDevice() {
 		try {
-			logs.debug("createUsuarioDevice Start... ");
-			var empresa = empresaService.empresaFindByCnpjEntity(cnpjTSI);
+			logs.info("createUsuarioDevice Start... ");
+			var empresa = empresaService.empresaFindByCnpjEntity(CNPJTSI);
 			var perfil = perfilPermissaoService.findByIdPerfilEntity("DEVICE");
 			var abrangencia = abrangenciaService.findByIdEntity("DEVICE");
-			UsuarioModel usuario = new UsuarioModel("DEVICE", Long.valueOf(0), "device", "device", "DEVICE@DEVICE.com", empresa.getEmpcod(), perfil.getPercod(), abrangencia.getAbrcod());
+			UsuarioModel usuario = new UsuarioModel("DEVICE", Long.valueOf(0), "device", "device", "DEVICE@DEVICE.com",
+					empresa.getEmpcod(), perfil.getPercod(), abrangencia.getAbrcod());
 			var userCheck = usuarioService.findLoginEntityNull("device");
 			if (userCheck == null)
 				usuarioService.saveUpdateEntity(usuario);
-		} catch (Exception e) {
+		} catch (EntityNotFoundException | IOException e) {
 			logs.error("createUsuarioDevice: ", e);
 		}
 	}

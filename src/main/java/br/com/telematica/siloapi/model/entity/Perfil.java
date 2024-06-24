@@ -1,5 +1,6 @@
 package br.com.telematica.siloapi.model.entity;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +17,9 @@ import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "perfil")
-public class Perfil {
+public class Perfil implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -104,10 +107,10 @@ public class Perfil {
 					// Ignore if the conversion fails
 				}
 
-				predicates.add(criteriaBuilder.or(searchPredicates.toArray(new Predicate[0])));
+				predicates.add(criteriaBuilder.or(searchPredicates.toArray(Predicate[]::new)));
 			}
 
-			return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+			return criteriaBuilder.and(predicates.toArray(Predicate[]::new));
 		};
 	}
 }

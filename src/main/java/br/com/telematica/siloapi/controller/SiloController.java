@@ -4,6 +4,10 @@ import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.telematica.siloapi.model.SiloModel;
@@ -51,4 +56,42 @@ public class SiloController extends SecurityRestController {
 	public ResponseEntity<SiloDTO> deleteSilo(@PathVariable("codigo") Long codigo) throws IOException {
 		return silo.deleteByPlacod(codigo);
 	}
+
+	@GetMapping("/paginado")
+    public ResponseEntity<Page<SiloDTO>> findAllPaginado(
+            @RequestParam(value = "filtro", required = false) String filtro,
+            @RequestParam(value = "pagina", defaultValue = "0") int pagina,
+            @RequestParam(value = "tamanho", defaultValue = "10") int tamanho,
+            @RequestParam(value = "ordenarPor", defaultValue = "silcod") String ordenarPor,
+            @RequestParam(value = "direcao", defaultValue = "ASC") String direcao) {
+
+        Sort sort = Sort.by(Sort.Direction.fromString(direcao), filtrarDirecao(ordenarPor));
+        Pageable pageable = PageRequest.of(pagina, tamanho, sort);
+
+        return silo.siloFindAllPaginado(filtro, pageable);
+    }
+
+	public String filtrarDirecao(String str) {
+		switch (str) {
+			case "codigo" -> {
+				return "silcod";
+			}
+			case "tipoSilo" -> {
+				return "tsicod";
+			}
+			case "planta" -> {
+				return "placod";
+			}
+			case "nome" -> {
+				return "silnom";
+			}
+			default -> throw new AssertionError();
+		}
+	}
 }
+
+
+
+
+
+

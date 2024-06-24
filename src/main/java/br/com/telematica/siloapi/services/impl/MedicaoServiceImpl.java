@@ -1,5 +1,7 @@
 package br.com.telematica.siloapi.services.impl;
 
+import static br.com.telematica.siloapi.utils.Utils.sdfStringforDate;
+
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Date;
@@ -13,6 +15,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +30,6 @@ import br.com.telematica.siloapi.model.entity.SiloModulo;
 import br.com.telematica.siloapi.repository.MedicaoRepository;
 import br.com.telematica.siloapi.services.MedicaoServInterface;
 import br.com.telematica.siloapi.utils.Utils;
-import static br.com.telematica.siloapi.utils.Utils.sdfStringforDate;
 import br.com.telematica.siloapi.utils.message.MessageResponse;
 
 @Service
@@ -116,6 +120,13 @@ public class MedicaoServiceImpl implements MedicaoServInterface {
 	public MedicaoDTO findByData(Date date) throws IOException {
 		return new MedicaoDTO(medicaoRepository.findByMsidth(date));
 	}
+	
+	@Override
+	public ResponseEntity<Page<MedicaoDTO>> medicaoFindAllPaginado(String searchTerm, String dataInicio, String dataFim, Pageable pageable) {
+        Specification<Medicao> spec = Medicao.filterByFields(searchTerm, null, dataInicio, dataFim);
+        Page<Medicao> result = medicaoRepository.findAll(spec, pageable);
+        return ResponseEntity.ok(result.map(MedicaoDTO::new));
+    }
 
 	private MedicaoDTO convertToMedicaoDTO(Medicao medicaoEntity) {
 		return new MedicaoDTO(medicaoEntity);

@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.List;
 
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
 import br.com.telematica.siloapi.model.TipoSiloModel;
@@ -21,6 +23,7 @@ public interface TipoSiloServInterface {
 
 	public ResponseEntity<TipoSiloDTO> findById(Long id) throws IOException, EmptyResultDataAccessException;
 
-	public ResponseEntity<TipoSiloDTO> save(TipoSiloModel tipoSilo) throws RuntimeException, IOException;
+	public ResponseEntity<TipoSiloDTO> save(TipoSiloModel tipoSilo) throws IOException;
 
+	public ResponseEntity<Page<TipoSiloDTO>> tipoSiloFindAllPaginado(String searchTerm, Pageable pageable);
 }

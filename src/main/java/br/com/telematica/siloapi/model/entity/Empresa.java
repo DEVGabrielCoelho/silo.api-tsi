@@ -1,5 +1,6 @@
 package br.com.telematica.siloapi.model.entity;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +16,9 @@ import jakarta.persistence.criteria.Predicate;
 
 @Entity
 @Table(name = "empresa")
-public class Empresa {
+public class Empresa implements Serializable{
+
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -134,10 +137,10 @@ public class Empresa {
 					// Ignore if the conversion fails
 				}
 
-				predicates.add(criteriaBuilder.or(searchPredicates.toArray(new Predicate[0])));
+				predicates.add(criteriaBuilder.or(searchPredicates.toArray(Predicate[]::new)));
 			}
 
-			return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+			return criteriaBuilder.and(predicates.toArray(Predicate[]::new));
 		};
 	}
 

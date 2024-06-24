@@ -8,6 +8,9 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -109,9 +112,16 @@ public class TipoSiloServiceImpl implements TipoSiloServInterface {
 	public ResponseEntity<TipoSiloDTO> findById(Long codigo) throws IOException, EntityNotFoundException {
 		Objects.requireNonNull(codigo, "Código do Tipo do Silo está nulo.");
 		TipoSilo result = findEntity(codigo);
-
+		
 		return MessageResponse.success(new TipoSiloDTO(result));
 	}
+	
+	@Override
+	public ResponseEntity<Page<TipoSiloDTO>> tipoSiloFindAllPaginado(String searchTerm, Pageable pageable) {
+        Specification<TipoSilo> spec = TipoSilo.filterByFields(searchTerm, null);
+        Page<TipoSilo> result = tipoSiloRepository.findAll(spec, pageable);
+        return ResponseEntity.ok(result.map(TipoSiloDTO::new));
+    }
 
 	private TipoSiloDTO convertToTipoSiloDTO(TipoSilo tipoSilo) {
 		return new TipoSiloDTO(tipoSilo);

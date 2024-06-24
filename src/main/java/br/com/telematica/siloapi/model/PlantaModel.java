@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-@Schema(name = "PlantaDTO", description = "Objeto de transferência de dados de Planta")
+@Schema(description = "Objeto de transferência de dados de Planta")
 public class PlantaModel {
 
 	@NotNull(message = "O campo 'empresa' é obrigatório e não pode estar nulo.")

@@ -8,6 +8,9 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -34,18 +37,18 @@ public class SiloServiceImpl implements SiloServInterface {
 	private PlantaServiceImpl plantaService;
 
 	@Override
-	public ResponseEntity<SiloDTO> save(SiloModel siloDTO) throws IOException {
+	public ResponseEntity<SiloDTO> save(SiloModel siloModel) throws IOException {
 		try {
-			var tipoSilo = tipoSiloService.findEntity(siloDTO.getTipoSilo());
-			var planta = plantaService.findEntity(siloDTO.getPlanta());
-			var entity = new Silo(null, tipoSilo, siloDTO.getNome(), planta);
+			var tipoSilo = tipoSiloService.findEntity(siloModel.getTipoSilo());
+			var planta = plantaService.findEntity(siloModel.getPlanta());
+			var entity = new Silo(null, tipoSilo, siloModel.getNome(), planta, siloModel.getLatitude(), siloModel.getLongitude());
 			var result = siloRepository.save(entity);
 
 			logger.info("Silo salvo com sucesso: " + result);
 			return MessageResponse.success(new SiloDTO(result));
 		} catch (Exception e) {
 			logger.error("Erro ao salvar o Silo: ", e);
-			throw new IOException("Erro ao salvar o Silo: " + siloDTO, e);
+			throw new IOException("Erro ao salvar o Silo: " + siloModel, e);
 		}
 	}
 
@@ -71,7 +74,7 @@ public class SiloServiceImpl implements SiloServInterface {
 		try {
 			var tipoSilo = tipoSiloService.findEntity(siloModel.getTipoSilo());
 			var planta = plantaService.findEntity(siloModel.getPlanta());
-			var entity = new Silo(codigo, tipoSilo, siloModel.getNome(), planta);
+			var entity = new Silo(codigo, tipoSilo, siloModel.getNome(), planta, siloModel.getLatitude(), siloModel.getLongitude());
 			var result = siloRepository.save(entity);
 
 			logger.info("Silo atualizado com sucesso: " + result);
@@ -99,6 +102,13 @@ public class SiloServiceImpl implements SiloServInterface {
 		var result = findEntity(codigo);
 		return MessageResponse.success(new SiloDTO(result));
 	}
+	
+	@Override
+	public ResponseEntity<Page<SiloDTO>> siloFindAllPaginado(String searchTerm, Pageable pageable) {
+        Specification<Silo> spec = Silo.filterByFields(searchTerm, null, null, null);
+        Page<Silo> result = siloRepository.findAll(spec, pageable);
+        return ResponseEntity.ok(result.map(SiloDTO::new));
+    }
 
 	Silo findEntity(Long codigo) {
 		return siloRepository.findById(codigo).orElseThrow(() ->  new EntityNotFoundException("Silo não encontrado com o ID: " + codigo));

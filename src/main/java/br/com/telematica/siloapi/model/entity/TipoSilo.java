@@ -1,5 +1,10 @@
 package br.com.telematica.siloapi.model.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.data.jpa.domain.Specification;
+
 import br.com.telematica.siloapi.utils.Utils;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -7,6 +12,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.criteria.Predicate;
 
 @Entity
 @Table(name = "tipo_silo")
@@ -166,4 +172,49 @@ public class TipoSilo {
 		this.tsicom = tsicom;
 	}
 
+ public static Specification<TipoSilo> filterByFields(String searchTerm, List<Long> listTsicod) {
+        return (root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            // Filtragem por lista de IDs
+            if (listTsicod != null && !listTsicod.isEmpty()) {
+                predicates.add(root.get("tsicod").in(listTsicod));
+            }
+
+            // Filtragem por termo de busca
+            if (searchTerm != null && !searchTerm.isEmpty()) {
+                String likePattern = "%" + searchTerm.toLowerCase() + "%";
+
+                List<Predicate> searchPredicates = new ArrayList<>();
+
+                // Adiciona predicados para os campos string
+                searchPredicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("tsinom")), likePattern));
+                searchPredicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("tsides")), likePattern));
+                searchPredicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("tsitip")), likePattern));
+
+                // Tenta converter o termo de busca para Long e Double
+                try {
+                    Long searchTermLong = Long.valueOf(searchTerm);
+                    searchPredicates.add(criteriaBuilder.equal(root.get("tsicod"), searchTermLong));
+                } catch (NumberFormatException e) {
+                    // Ignora se a conversão para Long falhar
+                }
+
+                try {
+                    Double searchTermDouble = Double.valueOf(searchTerm);
+                    searchPredicates.add(criteriaBuilder.equal(root.get("tsidse"), searchTermDouble));
+                    searchPredicates.add(criteriaBuilder.equal(root.get("tsiach"), searchTermDouble));
+                    searchPredicates.add(criteriaBuilder.equal(root.get("tsirai"), searchTermDouble));
+                    searchPredicates.add(criteriaBuilder.equal(root.get("tsilar"), searchTermDouble));
+                    searchPredicates.add(criteriaBuilder.equal(root.get("tsicom"), searchTermDouble));
+                } catch (NumberFormatException e) {
+                    // Ignora se a conversão para Double falhar
+                }
+
+                predicates.add(criteriaBuilder.or(searchPredicates.toArray(Predicate[]::new)));
+            }
+
+            return criteriaBuilder.and(predicates.toArray(Predicate[]::new));
+        };
+    }
 }

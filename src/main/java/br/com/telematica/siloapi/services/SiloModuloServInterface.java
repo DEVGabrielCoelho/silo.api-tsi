@@ -3,6 +3,8 @@ package br.com.telematica.siloapi.services;
 import java.io.IOException;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
 import br.com.telematica.siloapi.model.SiloModuloModel;
@@ -19,5 +21,7 @@ public interface SiloModuloServInterface {
 	ResponseEntity<List<SiloModuloDTO>> findAll();
 
 	ResponseEntity<SiloModuloDTO> findId(Long codigo);
+
+	ResponseEntity<Page<SiloModuloDTO>> siloModuloFindAllPaginado(String searchTerm, Pageable pageable);
 
 }

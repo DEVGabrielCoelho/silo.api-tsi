@@ -1,5 +1,10 @@
 package br.com.telematica.siloapi.model.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.data.jpa.domain.Specification;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -8,6 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.criteria.Predicate;
 
 @Entity
 @Table(name = "planta")
@@ -77,6 +83,39 @@ public class Planta {
 		}
 		builder.append("]");
 		return builder.toString();
+	}
+
+	public static Specification<Planta> filterByFields(String searchTerm, List<Long> listPlacod) {
+		return (root, query, criteriaBuilder) -> {
+			List<Predicate> predicates = new ArrayList<>();
+
+			// Filtragem por lista de IDs da empresa
+			if (listPlacod != null && !listPlacod.isEmpty()) {
+				predicates.add(root.get("placod").in(listPlacod));
+			}
+
+			// Filtragem por termo de busca
+			if (searchTerm != null && !searchTerm.isEmpty()) {
+				String likePattern = "%" + searchTerm.toLowerCase() + "%";
+
+				List<Predicate> searchPredicates = new ArrayList<>();
+
+				// Adiciona predicado para o campo `planom`
+				searchPredicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("planom")), likePattern));
+
+				// Tenta converter o termo de busca para Long
+				try {
+					Long searchTermLong = Long.valueOf(searchTerm);
+					searchPredicates.add(criteriaBuilder.equal(root.get("placod"), searchTermLong));
+				} catch (NumberFormatException e) {
+					// Ignora se a conversão falhar
+				}
+
+				predicates.add(criteriaBuilder.or(searchPredicates.toArray(Predicate[]::new)));
+			}
+
+			return criteriaBuilder.and(predicates.toArray(Predicate[]::new));
+		};
 	}
 
 }

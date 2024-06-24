@@ -10,6 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -100,9 +103,16 @@ public class SiloModuloServiceImpl implements SiloModuloServInterface {
 	public ResponseEntity<List<SiloModuloDTO>> findAll() {
 		List<SiloModulo> modulos = siloModuloRepository.findAll();
 		List<SiloModuloDTO> dtoList = modulos.stream().map(this::dtoCalc)
-				.collect(Collectors.toList());
+		.collect(Collectors.toList());
 		return MessageResponse.success(dtoList);
 	}
+	
+	@Override
+	public ResponseEntity<Page<SiloModuloDTO>> siloModuloFindAllPaginado(String searchTerm, Pageable pageable) {
+        Specification<SiloModulo> spec = SiloModulo.filterByFields(searchTerm, null, null);
+        Page<SiloModulo> result = siloModuloRepository.findAll(spec, pageable);
+        return ResponseEntity.ok(result.map(SiloModuloDTO::new));
+    }
 
 	@Override
 	public ResponseEntity<SiloModuloDTO> findId(Long codigo) {

@@ -12,6 +12,10 @@ public class SiloDTO extends Codigo {
 	private PlantaDTO planta;
 	@Schema(description = "Nome", example = "Silo 1", nullable = true)
 	private String nome;
+	@Schema(description = "latitude", example = "1111", nullable = true)
+	private Double latitude;
+	@Schema(description = "longitude", example = "2222", nullable = true)
+	private Double longitude;
 
 	public SiloDTO() {
 	}
@@ -21,6 +25,8 @@ public class SiloDTO extends Codigo {
 		this.tipoSilo = new TipoSiloDTO(entity.getTipoSilo());
 		this.planta = new PlantaDTO(entity.getPlanta());
 		this.nome = entity.getSilnom();
+		this.longitude = entity.getSillon();
+		this.latitude = entity.getSillat();
 	}
 
 	public SiloDTO(Long codigo, TipoSiloDTO tipoSilo, PlantaDTO planta, String nome) {
@@ -28,23 +34,6 @@ public class SiloDTO extends Codigo {
 		this.tipoSilo = tipoSilo;
 		this.planta = planta;
 		this.nome = nome;
-	}
-
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("SiloDTO [");
-		if (tipoSilo != null) {
-			builder.append("tipoSilo=").append(tipoSilo).append(", ");
-		}
-		if (planta != null) {
-			builder.append("planta=").append(planta).append(", ");
-		}
-		if (nome != null) {
-			builder.append("nome=").append(nome);
-		}
-		builder.append("]");
-		return builder.toString();
 	}
 
 	public TipoSiloDTO getTipoSilo() {
@@ -71,4 +60,39 @@ public class SiloDTO extends Codigo {
 		this.nome = nome;
 	}
 
+	public Double getLatitude() {
+		return latitude;
+	}
+
+	public void setLatitude(Double latitude) {
+		this.latitude = latitude;
+	}
+
+	public Double getLongitude() {
+		return longitude;
+	}
+
+	public void setLongitude(Double longitude) {
+		this.longitude = longitude;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("SiloDTO [");
+		if (tipoSilo != null)
+			builder.append("tipoSilo=").append(tipoSilo).append(", ");
+		if (planta != null)
+			builder.append("planta=").append(planta).append(", ");
+		if (nome != null)
+			builder.append("nome=").append(nome).append(", ");
+		if (latitude != null)
+			builder.append("latitude=").append(latitude).append(", ");
+		if (longitude != null)
+			builder.append("longitude=").append(longitude);
+		builder.append("]");
+		return builder.toString();
+	}
+
+	
 }

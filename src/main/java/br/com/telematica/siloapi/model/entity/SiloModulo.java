@@ -1,6 +1,10 @@
 package br.com.telematica.siloapi.model.entity;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
+import org.springframework.data.jpa.domain.Specification;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,6 +14,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.criteria.Predicate;
 
 @Entity
 @Table(name = "silo_modulo")
@@ -62,7 +67,6 @@ public class SiloModulo {
 
 	public SiloModulo() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public SiloModulo sireneModuloRegisterKeep(Date keepalive) {
@@ -225,5 +229,55 @@ public class SiloModulo {
 	public void setSmosta(String smosta) {
 		this.smosta = smosta;
 	}
+
+ public static Specification<SiloModulo> filterByFields(String searchTerm, List<Long> listSmocod, List<Long> listSilcod) {
+        return (root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            // Filtragem por lista de IDs de SiloModulo
+            if (listSmocod != null && !listSmocod.isEmpty()) {
+                predicates.add(root.get("smocod").in(listSmocod));
+            }
+
+            // Filtragem por lista de IDs de Silo
+            if (listSilcod != null && !listSilcod.isEmpty()) {
+                predicates.add(root.get("silo").get("silcod").in(listSilcod));
+            }
+
+            // Filtragem por termo de busca
+            if (searchTerm != null && !searchTerm.isEmpty()) {
+                String likePattern = "%" + searchTerm.toLowerCase() + "%";
+
+                List<Predicate> searchPredicates = new ArrayList<>();
+
+                // Adiciona predicados para os campos string
+                searchPredicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("smodes")), likePattern));
+                searchPredicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("smonse")), likePattern));
+                searchPredicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("smosta")), likePattern));
+
+                // Tenta converter o termo de busca para Long e Integer
+                try {
+                    Long searchTermLong = Long.valueOf(searchTerm);
+                    searchPredicates.add(criteriaBuilder.equal(root.get("smocod"), searchTermLong));
+                    searchPredicates.add(criteriaBuilder.equal(root.get("smotse"), searchTermLong));
+                    searchPredicates.add(criteriaBuilder.equal(root.get("smotke"), searchTermLong));
+                    searchPredicates.add(criteriaBuilder.equal(root.get("smotme"), searchTermLong));
+                } catch (NumberFormatException e) {
+                    // Ignora se a conversão para Long falhar
+                }
+
+                try {
+                    Integer searchTermInt = Integer.valueOf(searchTerm);
+                    searchPredicates.add(criteriaBuilder.equal(root.get("smogmt"), searchTermInt));
+                } catch (NumberFormatException e) {
+                    // Ignora se a conversão para Integer falhar
+                }
+
+                predicates.add(criteriaBuilder.or(searchPredicates.toArray(Predicate[]::new)));
+            }
+
+            return criteriaBuilder.and(predicates.toArray(Predicate[]::new));
+        };
+    }
 
 }

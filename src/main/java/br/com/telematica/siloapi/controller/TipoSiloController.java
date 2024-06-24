@@ -4,6 +4,10 @@ import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.telematica.siloapi.model.TipoSiloModel;
@@ -37,7 +42,7 @@ public class TipoSiloController extends SecurityRestController {
 
 	@PostMapping("/v1/criar")
 	@Operation(description = "Cadastro de um novo tipo de silo. Recebe os detalhes do tipo de silo e o armazena no sistema.")
-	public ResponseEntity<TipoSiloDTO> createSilo(@Valid @RequestBody TipoSiloModel tipoSilo) throws RuntimeException, IOException {
+	public ResponseEntity<TipoSiloDTO> createSilo(@Valid @RequestBody TipoSiloModel tipoSilo) throws IOException {
 		return tipoSiloInterface.save(tipoSilo);
 	}
 
@@ -52,4 +57,38 @@ public class TipoSiloController extends SecurityRestController {
 	public ResponseEntity<TipoSiloDTO> deleteSilo(@Valid @PathVariable("codigo") Long codigo) throws IOException {
 		return tipoSiloInterface.deleteByTsicod(codigo);
 	}
+
+	@GetMapping("/paginado")
+	@Operation(description = "Busca uma lista paginada de tipo de silo com base em critérios de busca e ordenação. Este endpoint permite a busca por um termo específico, além de suportar paginação e ordenação dos resultados.")
+	public ResponseEntity<Page<TipoSiloDTO>> findAllPaginado(
+            @RequestParam(value = "filtro", required = false) String filtro,
+            @RequestParam(value = "pagina", defaultValue = "0") int pagina,
+            @RequestParam(value = "tamanho", defaultValue = "10") int tamanho,
+            @RequestParam(value = "ordenarPor", defaultValue = "codigo") String ordenarPor,
+            @RequestParam(value = "direcao", defaultValue = "ASC") String direcao) {
+
+        Sort sort = Sort.by(Sort.Direction.fromString(direcao), filtrarDirecao(ordenarPor));
+        Pageable pageable = PageRequest.of(pagina, tamanho, sort);
+
+        return tipoSiloInterface.tipoSiloFindAllPaginado(filtro, pageable);
+    }
+
+	public String filtrarDirecao(String str) {
+		switch (str) {
+			case "codigo" -> {
+				return "tsicod";
+			}
+			case "nome" -> {
+				return "tsinom";
+			}
+			case "descricao" -> {
+				return "tsides";
+			}
+			case "tipoSilo" -> {
+				return "tsitip";
+			}
+			default -> throw new AssertionError();
+		}
+	}
+	
 }

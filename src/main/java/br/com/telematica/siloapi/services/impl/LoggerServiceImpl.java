@@ -55,7 +55,7 @@ public class LoggerServiceImpl implements LoggerServInterface {
 	public ResponseEntity<Page<LoggerDTO>> findByAllPaginado(Long smocod, String filtro, String startDate, String endDate, @NonNull Pageable pageable) throws EntityNotFoundException, IOException {
 		Objects.requireNonNull(pageable, "Pageable está nulo.");
 
-		Specification<LoggerEntity> spec = LoggerEntity.filterByFields(smocod, filtro, startDate, endDate);
+		Specification<LoggerEntity> spec = LoggerEntity.filterByFields( filtro, startDate, endDate);
 		Page<LoggerEntity> page = logRepository.findAll(spec, pageable);
 
 		return MessageResponse.success(page.map(LoggerDTO::new));

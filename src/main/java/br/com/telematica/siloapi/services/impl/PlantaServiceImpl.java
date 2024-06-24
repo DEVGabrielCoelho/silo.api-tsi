@@ -9,6 +9,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -96,9 +99,16 @@ public class PlantaServiceImpl implements PlantaServInterface {
     @Override
     public ResponseEntity<List<PlantaDTO>> findAllPlantaDTO() throws IOException {
         List<PlantaDTO> plantaDTOs = plantaRepository.findAll().stream()
-                .map(this::convertToPlantaDTO)
-                .collect(Collectors.toList());
+        .map(this::convertToPlantaDTO)
+        .collect(Collectors.toList());
         return MessageResponse.success(plantaDTOs);
+    }
+    
+    @Override
+    public ResponseEntity<Page<PlantaDTO>> plantaFindAllPaginado(String searchTerm, Pageable pageable) {
+        Specification<Planta> spec = Planta.filterByFields(searchTerm, null);
+        Page<Planta> result = plantaRepository.findAll(spec, pageable);
+        return ResponseEntity.ok(result.map(PlantaDTO::new));
     }
 
     @Override

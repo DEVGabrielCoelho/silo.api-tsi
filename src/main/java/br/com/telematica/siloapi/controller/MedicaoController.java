@@ -5,6 +5,10 @@ import java.text.ParseException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -64,4 +68,20 @@ public class MedicaoController extends SecurityRestController {
 			throws IOException, ParseException {
 		return medicaoService.deleteByMsidth(dataMedicao);
 	}
+
+	@GetMapping("/paginado")
+    public ResponseEntity<Page<MedicaoDTO>> findAllPaginado(
+            @RequestParam(value = "filtro", required = false) String filtro,
+            @RequestParam(value = "dataInicio", required = false) String dataInicio,
+            @RequestParam(value = "dataFim", required = false) String dataFim,
+            @RequestParam(value = "pagina", defaultValue = "0") int pagina,
+            @RequestParam(value = "tamanho", defaultValue = "10") int tamanho,
+            @RequestParam(value = "ordenarPor", defaultValue = "msidth") String ordenarPor,
+            @RequestParam(value = "direcao", defaultValue = "ASC") String direcao) {
+
+        Sort sort = Sort.by(Sort.Direction.fromString(direcao), ordenarPor);
+        Pageable pageable = PageRequest.of(pagina, tamanho, sort);
+
+        return medicaoService.medicaoFindAllPaginado(filtro, dataInicio, dataFim, pageable);
+    }
 }

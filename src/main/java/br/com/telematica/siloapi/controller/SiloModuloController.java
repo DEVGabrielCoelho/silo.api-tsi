@@ -4,6 +4,10 @@ import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.telematica.siloapi.model.SiloModuloModel;
@@ -30,7 +35,7 @@ public class SiloModuloController extends SecurityRestController {
 
 	@GetMapping("/v1/listar")
 	@Operation(description = "Busca pelos módulos dos silos cadastrados. Retorna uma lista de todos os módulos de silos existentes.")
-	public ResponseEntity<List<SiloModuloDTO>> getSiloModulo() throws IOException {
+	public ResponseEntity<List<SiloModuloDTO>> getSiloModulo() {
 		return siloModuloServInterface.findAll();
 	}
 
@@ -42,7 +47,8 @@ public class SiloModuloController extends SecurityRestController {
 
 	@PutMapping("/v1/atualizar/{codigo}")
 	@Operation(description = "Atualização de um módulo de silo existente. Atualiza os detalhes de um módulo com base no código fornecido.")
-	public ResponseEntity<SiloModuloDTO> updateSiloModulo(@PathVariable("codigo") Long codigo, @RequestBody SiloModuloModel siloModulo) throws IOException {
+	public ResponseEntity<SiloModuloDTO> updateSiloModulo(@PathVariable("codigo") Long codigo,
+			@RequestBody SiloModuloModel siloModulo) throws IOException {
 		return siloModuloServInterface.update(codigo, siloModulo);
 	}
 
@@ -51,4 +57,45 @@ public class SiloModuloController extends SecurityRestController {
 	public ResponseEntity<SiloModuloDTO> deleteSiloModulo(@PathVariable("codigo") Long codigo) throws IOException {
 		return siloModuloServInterface.delete(codigo);
 	}
+
+	@GetMapping("/paginado")
+	public ResponseEntity<Page<SiloModuloDTO>> findAllPaginado(
+			@RequestParam(value = "filtro", required = false) String filtro,
+			@RequestParam(value = "pagina", defaultValue = "0") int pagina,
+			@RequestParam(value = "tamanho", defaultValue = "10") int tamanho,
+			@RequestParam(value = "ordenarPor", defaultValue = "codigo") String ordenarPor,
+			@RequestParam(value = "direcao", defaultValue = "ASC") String direcao) {
+
+		Sort sort = Sort.by(Sort.Direction.fromString(direcao), filtrarDirecao(ordenarPor));
+		Pageable pageable = PageRequest.of(pagina, tamanho, sort);
+
+		return siloModuloServInterface.siloModuloFindAllPaginado(filtro, pageable);
+	}
+
+	public String filtrarDirecao(String str) {
+		switch (str) {
+			case "codigo" -> {
+				return "smocod";
+			}
+			case "silo" -> {
+				return "silcod";
+			}
+			case "descricao" -> {
+				return "smodes";
+			}
+			case "numSerie" -> {
+				return "smonse";
+			}
+			default -> throw new AssertionError();
+		}
+	}
 }
+
+
+
+
+
+
+
+
+
