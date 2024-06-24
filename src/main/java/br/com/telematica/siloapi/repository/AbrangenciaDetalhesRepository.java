@@ -1,7 +1,6 @@
 package br.com.telematica.siloapi.repository;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -11,6 +10,6 @@ public interface AbrangenciaDetalhesRepository extends JpaRepository<Abrangencia
 
 	List<AbrangenciaDetalhes> findByAbrangencia_Abrcod(Long codigo);
 
-	Optional<AbrangenciaDetalhes> findByAbrangencia_abrcodAndRecurso_recnomContaining(Long codigo, String nome);
+	List<AbrangenciaDetalhes> findByAbrangencia_abrcodAndRecurso_recnomContaining(Long codigo, String nome);
 
 }

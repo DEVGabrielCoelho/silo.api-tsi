@@ -4,6 +4,6 @@ import java.util.List;
 
 import org.springframework.lang.NonNull;
 
-public record CheckAbrangenciaRec(@NonNull List<Long> listAbrangencia, @NonNull Integer isHier) {
+public record CheckAbrangenciaRec(List<Long> listAbrangencia, @NonNull Integer isHier) {
 
 }

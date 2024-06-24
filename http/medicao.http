@@ -1,6 +1,6 @@
 POST http://localhost:8080/siloapi/api/medicao/v1/cadastra
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhdXRoLWFwaSIsInN1YiI6ImFkbWluIiwiZXhwIjoxNzE5MDc1ODc0LCJyb2xlIjoiQURNSU4ifQ.SJFNrz-MSEyYXHD6bOy44Mvf8BrJ5e7v4E-70NQuzQY
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhdXRoLWFwaSIsInN1YiI6ImFkbWluIiwiZXhwIjoxNzE5MzQyNDcxLCJyb2xlIjoiQURNSU4ifQ.SVHwZXUnknpNMaqd2csm3rbHxjLeGbqh1CSf8DrDMp8
 {
     "applicationID": "1",
     "applicationName": "Teste",

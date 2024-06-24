@@ -24,6 +24,7 @@ import br.com.telematica.siloapi.model.dto.SiloModuloDTO;
 import br.com.telematica.siloapi.services.SiloModuloServInterface;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.persistence.EntityNotFoundException;
 
 @RestController
 @RequestMapping("/api/silo-modulo")
@@ -64,7 +65,7 @@ public class SiloModuloController extends SecurityRestController {
 			@RequestParam(value = "pagina", defaultValue = "0") int pagina,
 			@RequestParam(value = "tamanho", defaultValue = "10") int tamanho,
 			@RequestParam(value = "ordenarPor", defaultValue = "codigo") String ordenarPor,
-			@RequestParam(value = "direcao", defaultValue = "ASC") String direcao) {
+			@RequestParam(value = "direcao", defaultValue = "ASC") String direcao) throws EntityNotFoundException, IOException {
 
 		Sort sort = Sort.by(Sort.Direction.fromString(direcao), filtrarDirecao(ordenarPor));
 		Pageable pageable = PageRequest.of(pagina, tamanho, sort);

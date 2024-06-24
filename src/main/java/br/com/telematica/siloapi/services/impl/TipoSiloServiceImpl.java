@@ -15,10 +15,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import br.com.telematica.siloapi.exception.CustomMessageException;
+import br.com.telematica.siloapi.handler.AbrangenciaHandler;
 import br.com.telematica.siloapi.model.TipoSiloModel;
 import br.com.telematica.siloapi.model.dto.TipoSiloDTO;
 import br.com.telematica.siloapi.model.entity.TipoSilo;
 import br.com.telematica.siloapi.model.enums.TipoSiloEnum;
+import br.com.telematica.siloapi.records.CheckAbrangenciaRec;
 import br.com.telematica.siloapi.repository.TipoSiloRepository;
 import br.com.telematica.siloapi.services.TipoSiloServInterface;
 import br.com.telematica.siloapi.utils.Utils;
@@ -32,6 +34,13 @@ public class TipoSiloServiceImpl implements TipoSiloServInterface {
 	private static final String RECURSO = "Tipo Silo";
 
 	@Autowired
+	private AbrangenciaHandler abrangenciaHandler;
+
+	public CheckAbrangenciaRec checagemFixaAbrangencia() throws EntityNotFoundException, IOException {
+		return abrangenciaHandler.checkAbrangencia("TIPOSILO");
+	}
+
+	@Autowired
 	private TipoSiloRepository tipoSiloRepository;
 
 	@Override
@@ -43,12 +52,12 @@ public class TipoSiloServiceImpl implements TipoSiloServInterface {
 			entity.setTsitip(tipoSiloModel.getTipoSilo().getTipo());
 			entity.setTsiach(Utils.converterCmParaMm(tipoSiloModel.getAlturaCheio()));
 			entity.setTsidse(Utils.converterCmParaMm(tipoSiloModel.getDistanciaSensor()));
-			
+
 			if (tipoSiloModel.getTipoSilo() == TipoSiloEnum.HORIZONTAL)
 				entity.tipoSiloHorizontal(tipoSiloModel.getLargura(), tipoSiloModel.getComprimento());
 			if (tipoSiloModel.getTipoSilo() == TipoSiloEnum.VERTICAL)
 				entity.tipoSiloVertical(tipoSiloModel.getRaio());
-			
+
 			TipoSilo result = tipoSiloRepository.save(entity);
 
 			logger.info("Tipo Silo salvo com sucesso: " + result);
@@ -80,14 +89,15 @@ public class TipoSiloServiceImpl implements TipoSiloServInterface {
 	@Override
 	public ResponseEntity<TipoSiloDTO> update(Long codigo, TipoSiloModel tipoSiloModel) throws IOException {
 		try {
-			TipoSilo resultEntity = tipoSiloRepository.findById(codigo).orElseThrow(() -> CustomMessageException.exceptionEntityNotFoundException(codigo, RECURSO, null));
+			TipoSilo resultEntity = tipoSiloRepository.findById(codigo)
+					.orElseThrow(() -> CustomMessageException.exceptionEntityNotFoundException(codigo, RECURSO, null));
 
 			resultEntity.setTsinom(tipoSiloModel.getNome());
 			resultEntity.setTsides(tipoSiloModel.getDescricao());
 			resultEntity.setTsitip(tipoSiloModel.getTipoSilo().getTipo());
 			resultEntity.setTsiach(tipoSiloModel.getAlturaCheio());
 			resultEntity.setTsidse(tipoSiloModel.getDistanciaSensor());
-			
+
 			if (tipoSiloModel.getTipoSilo() == TipoSiloEnum.HORIZONTAL)
 				resultEntity.tipoSiloHorizontal(tipoSiloModel.getLargura(), tipoSiloModel.getComprimento());
 			if (tipoSiloModel.getTipoSilo() == TipoSiloEnum.HORIZONTAL)
@@ -104,7 +114,8 @@ public class TipoSiloServiceImpl implements TipoSiloServInterface {
 
 	@Override
 	public ResponseEntity<List<TipoSiloDTO>> findAllTipoSiloDTO() throws IOException {
-		List<TipoSiloDTO> tipoSiloDTOList = tipoSiloRepository.findAll().stream().map(this::convertToTipoSiloDTO).collect(Collectors.toList());
+		List<TipoSiloDTO> tipoSiloDTOList = tipoSiloRepository.findAll().stream().map(this::convertToTipoSiloDTO)
+				.collect(Collectors.toList());
 		return MessageResponse.success(tipoSiloDTOList);
 	}
 
@@ -112,16 +123,16 @@ public class TipoSiloServiceImpl implements TipoSiloServInterface {
 	public ResponseEntity<TipoSiloDTO> findById(Long codigo) throws IOException, EntityNotFoundException {
 		Objects.requireNonNull(codigo, "Código do Tipo do Silo está nulo.");
 		TipoSilo result = findEntity(codigo);
-		
+
 		return MessageResponse.success(new TipoSiloDTO(result));
 	}
-	
+
 	@Override
 	public ResponseEntity<Page<TipoSiloDTO>> tipoSiloFindAllPaginado(String searchTerm, Pageable pageable) {
-        Specification<TipoSilo> spec = TipoSilo.filterByFields(searchTerm, null);
-        Page<TipoSilo> result = tipoSiloRepository.findAll(spec, pageable);
-        return ResponseEntity.ok(result.map(TipoSiloDTO::new));
-    }
+		Specification<TipoSilo> spec = TipoSilo.filterByFields(searchTerm, null);
+		Page<TipoSilo> result = tipoSiloRepository.findAll(spec, pageable);
+		return ResponseEntity.ok(result.map(TipoSiloDTO::new));
+	}
 
 	private TipoSiloDTO convertToTipoSiloDTO(TipoSilo tipoSilo) {
 		return new TipoSiloDTO(tipoSilo);

@@ -11,9 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import br.com.telematica.siloapi.handler.AbrangenciaHandler;
 import br.com.telematica.siloapi.model.SiloModel;
 import br.com.telematica.siloapi.model.dto.SiloDTO;
 import br.com.telematica.siloapi.model.entity.Silo;
@@ -36,12 +38,16 @@ public class SiloServiceImpl implements SiloServInterface {
 	@Autowired
 	private PlantaServiceImpl plantaService;
 
+	@Autowired
+	private AbrangenciaHandler abrangenciaHandler;
+
 	@Override
 	public ResponseEntity<SiloDTO> save(SiloModel siloModel) throws IOException {
 		try {
 			var tipoSilo = tipoSiloService.findEntity(siloModel.getTipoSilo());
 			var planta = plantaService.findEntity(siloModel.getPlanta());
-			var entity = new Silo(null, tipoSilo, siloModel.getNome(), planta, siloModel.getLatitude(), siloModel.getLongitude());
+			var entity = new Silo(null, tipoSilo, siloModel.getNome(), planta, siloModel.getLatitude(),
+					siloModel.getLongitude());
 			var result = siloRepository.save(entity);
 
 			logger.info("Silo salvo com sucesso: " + result);
@@ -56,7 +62,7 @@ public class SiloServiceImpl implements SiloServInterface {
 	public ResponseEntity<SiloDTO> deleteByPlacod(Long codigo) throws IOException {
 		Objects.requireNonNull(codigo, "Código do Silo está nulo.");
 		try {
-			var silo = findEntity(codigo);
+			var silo = findCodigo(codigo);
 			siloRepository.delete(silo);
 			logger.info("Silo deletado com sucesso: " + silo);
 			return MessageResponse.success(null);
@@ -74,7 +80,8 @@ public class SiloServiceImpl implements SiloServInterface {
 		try {
 			var tipoSilo = tipoSiloService.findEntity(siloModel.getTipoSilo());
 			var planta = plantaService.findEntity(siloModel.getPlanta());
-			var entity = new Silo(codigo, tipoSilo, siloModel.getNome(), planta, siloModel.getLatitude(), siloModel.getLongitude());
+			var entity = new Silo(codigo, tipoSilo, siloModel.getNome(), planta, siloModel.getLatitude(),
+					siloModel.getLongitude());
 			var result = siloRepository.save(entity);
 
 			logger.info("Silo atualizado com sucesso: " + result);
@@ -99,19 +106,39 @@ public class SiloServiceImpl implements SiloServInterface {
 	@Override
 	public ResponseEntity<SiloDTO> findById(Long codigo) {
 		Objects.requireNonNull(codigo, "Código do Silo está nulo.");
-		var result = findEntity(codigo);
+		var result = findCodigo(codigo);
 		return MessageResponse.success(new SiloDTO(result));
 	}
-	
+
 	@Override
 	public ResponseEntity<Page<SiloDTO>> siloFindAllPaginado(String searchTerm, Pageable pageable) {
-        Specification<Silo> spec = Silo.filterByFields(searchTerm, null, null, null);
-        Page<Silo> result = siloRepository.findAll(spec, pageable);
-        return ResponseEntity.ok(result.map(SiloDTO::new));
-    }
+		try {
+			var checkSilo = abrangenciaHandler.checkAbrangencia("SILO");
+			var checkTipo = abrangenciaHandler.checkAbrangencia("TIPOSILO");
+			var checkPlanta = abrangenciaHandler.checkAbrangencia("PLANTA");
+			Specification<Silo> spec = Specification.where(null);
 
-	Silo findEntity(Long codigo) {
-		return siloRepository.findById(codigo).orElseThrow(() ->  new EntityNotFoundException("Silo não encontrado com o ID: " + codigo));
+			if (checkSilo.isHier() == 0) {
+				spec = spec.and(Silo.filterByFields(searchTerm, null, null, null));
+			} else {
+				spec = spec.and(Silo.filterByFields(searchTerm,
+						checkSilo.listAbrangencia(),
+						checkTipo.isHier() == 0 ? null : checkTipo.listAbrangencia(),
+						checkPlanta.isHier() == 0 ? null : checkPlanta.listAbrangencia()));
+			}
+
+			Page<Silo> result = siloRepository.findAll(spec, pageable);
+			return ResponseEntity.ok(result.map(SiloDTO::new));
+		} catch (EntityNotFoundException ex) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+		} catch (IOException ex) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
+	public Silo findCodigo(Long codigo) {
+		return siloRepository.findById(codigo)
+				.orElseThrow(() -> new EntityNotFoundException("Silo não encontrado com o ID: " + codigo));
 	}
 
 }

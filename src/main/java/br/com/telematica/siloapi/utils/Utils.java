@@ -32,7 +32,7 @@ public class Utils {
 	private static SimpleDateFormat sdf;
 	private static final SimpleDateFormat sdfbase = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 
-	public static String convertDateToString() {
+	public static String convertDateToString(Date smohke) {
 		LocalDateTime localDateTime = LocalDateTime.ofInstant(new Date().toInstant(), ZoneId.systemDefault());
 		return dtfPadrao.format(localDateTime);
 	}
@@ -103,11 +103,11 @@ public class Utils {
 	}
 
 	public static ResponseGlobalModel responseMessageError(String message) {
-		return new ResponseGlobalModel(true, message, Utils.convertDateToString());
+		return new ResponseGlobalModel(true, message, Utils.convertDateToString(silomodulo.getSmohke()));
 	}
 
 	public static ResponseGlobalModel responseMessageSucess(String message) {
-		return new ResponseGlobalModel(false, message, Utils.convertDateToString());
+		return new ResponseGlobalModel(false, message, Utils.convertDateToString(silomodulo.getSmohke()));
 	}
 
 	public static String sdfBaseDateforString() {

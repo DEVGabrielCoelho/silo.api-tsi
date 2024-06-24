@@ -37,7 +37,7 @@ public class EmpresaServiceImpl implements EmpresaServInterface {
 	@Autowired
 	private AbrangenciaHandler abrangenciaHandler;
 
-	public CheckAbrangenciaRec checagemFixaBarragem() throws EntityNotFoundException, IOException {
+	public CheckAbrangenciaRec checagemFixaAbrangencia() throws EntityNotFoundException, IOException {
 		return abrangenciaHandler.checkAbrangencia("EMPRESA");
 	}
 
@@ -59,7 +59,7 @@ public class EmpresaServiceImpl implements EmpresaServInterface {
 	public ResponseEntity<Page<EmpresaDTO>> empresaFindAllPaginado(String nome, Pageable pageable) throws IOException {
 		Objects.requireNonNull(pageable, "Pageable da Empresa está nulo.");
 
-		var check = checagemFixaBarragem();
+		var check = checagemFixaAbrangencia();
 		Specification<Empresa> spec = Specification.where(null);
 
 		if (check.isHier() == 0) {
@@ -84,7 +84,7 @@ public class EmpresaServiceImpl implements EmpresaServInterface {
 
 	@Override
 	public ResponseEntity<List<EmpresaDTO>> empresaFindAll() throws IOException {
-		var check = checagemFixaBarragem();
+		var check = checagemFixaAbrangencia();
 		var result = check.isHier() == 0 ? empresaRepository.findAll()
 				: empresaRepository.findByEmpcodIn(check.listAbrangencia());
 
@@ -153,7 +153,7 @@ public class EmpresaServiceImpl implements EmpresaServInterface {
 	}
 
 	public Empresa findByIdAbrangencia(Empresa emp) throws IOException {
-		var check = checagemFixaBarragem();
+		var check = checagemFixaAbrangencia();
 		var findIdAbrangencia = abrangenciaHandler.findIdAbrangenciaPermi(check, emp.getEmpcod());
 		if (findIdAbrangencia == null) {
 			return null;

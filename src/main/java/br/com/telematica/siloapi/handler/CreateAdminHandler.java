@@ -173,12 +173,15 @@ public class CreateAdminHandler {
 				JsonNodeConverter jsonNode = new JsonNodeConverter();
 				String data = jsonNode.convertToDatabaseColumn(new ObjectMapper().createArrayNode());
 
-				abrangenciaService.saveOrUpdateAbrangenciaDetalhes(abrangencia, new AbrangenciaDetalhes(
+				AbrangenciaDetalhes abd = new AbrangenciaDetalhes(
 						null,
 						abrangencia,
 						recurso,
 						0,
-						data));
+						data);
+
+				if (abrangenciaService.findByAbrangenciaAndRecursoContainingAbrangencia(abrangencia,recurso) == null)
+					abrangenciaService.saveOrUpdateAbrangenciaDetalhes(abrangencia,abd);
 			}
 		} catch (Exception e) {
 			logs.error("createAbrangencia: ", e);

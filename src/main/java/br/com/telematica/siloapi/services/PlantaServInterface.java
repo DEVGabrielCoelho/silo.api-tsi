@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import br.com.telematica.siloapi.model.PlantaModel;
 import br.com.telematica.siloapi.model.dto.PlantaDTO;
 import br.com.telematica.siloapi.model.entity.Planta;
+import jakarta.persistence.EntityNotFoundException;
 
 public interface PlantaServInterface {
 
@@ -26,5 +27,5 @@ public interface PlantaServInterface {
 
 	ResponseEntity<PlantaDTO> findById(Long codigo) throws IOException, EmptyResultDataAccessException;
 
-	ResponseEntity<Page<PlantaDTO>> plantaFindAllPaginado(String searchTerm, Pageable pageable);
+	ResponseEntity<Page<PlantaDTO>> plantaFindAllPaginado(String searchTerm, Pageable pageable) throws EntityNotFoundException, IOException;
 }

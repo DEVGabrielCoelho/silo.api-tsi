@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.com.telematica.siloapi.model.entity.Usuario;
@@ -53,19 +52,16 @@ public class AbrangenciaHandler {
 			var recurso = recursoService.findByIdEntity(text);
 			var abrangencia = abrangenciaService.findByAbrangenciaAndRecursoContainingAbrangencia(user.getAbrangencia(), recurso);
 			if (abrangencia == null)
-				throw new RuntimeException("Não foi encontrado nem um detalhe de Abrangência para o usuário " + currentUserName + " no recurso " + text);
+				throw new IllegalArgumentException("Não foi encontrado nem um detalhe de Abrangência para o usuário " + currentUserName + " no recurso " + text);
 
 			List<Long> ids = new ObjectMapper().readValue(abrangencia.getAbddat(), new TypeReference<List<Long>>() {
 			});
 
 			return new CheckAbrangenciaRec(ids, abrangencia.getAbdhie());
-		} catch (JsonMappingException e) {
-			log.error("Erro ao chegar as abrangencias. ", e);
-			throw new RuntimeException(e.getMessage());
 		} catch (JsonProcessingException e) {
 			log.error("Erro ao chegar as abrangencias. ", e);
-			throw new RuntimeException(e.getMessage());
-		}
+			throw new IllegalArgumentException(e.getMessage());
+		} 
 	}
 
 	public Long findIdAbrangenciaPermi(CheckAbrangenciaRec checkAbrangencia, Long codigo) {

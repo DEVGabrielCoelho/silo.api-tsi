@@ -12,6 +12,8 @@ public class SiloModuloDTO extends Codigo {
 	private String numSerie;
 	private Long timeoutKeepAlive;
 	private Long timeoutMedicao;
+	private String ultimaKeepAlive;
+	private String ultimaMedicao;
 	private Integer gmt;
 	private String corKeepAlive;
 	private String corMedicao;
@@ -19,7 +21,7 @@ public class SiloModuloDTO extends Codigo {
 	private Double volumeCheio = Double.valueOf(0);
 	private Double volumeStatus = Double.valueOf(0);
 
-	public SiloModuloDTO(Long codigo, SiloDTO silo, String descricao, Long totalSensor, String numSerie, Long timeoutKeepAlive, Long timeoutMedicao, Integer gmt, String corKeepAlive, String corMedicao, StatusDeviceEnum status, Double volumeCheio, Double volumeStatus) {
+	public SiloModuloDTO(Long codigo, SiloDTO silo, String descricao, Long totalSensor, String numSerie, Long timeoutKeepAlive, Long timeoutMedicao, String ultimaKeepAlive, String ultimaMedicao, Integer gmt, String corKeepAlive, String corMedicao, StatusDeviceEnum status, Double volumeCheio, Double volumeStatus) {
 		super(codigo);
 		this.silo = silo;
 		this.descricao = descricao;
@@ -27,6 +29,8 @@ public class SiloModuloDTO extends Codigo {
 		this.numSerie = numSerie;
 		this.timeoutKeepAlive = timeoutKeepAlive;
 		this.timeoutMedicao = timeoutMedicao;
+		this.ultimaKeepAlive = ultimaKeepAlive;
+		this.ultimaMedicao = ultimaMedicao;
 		this.gmt = gmt;
 		this.corKeepAlive = corKeepAlive;
 		this.corMedicao = corMedicao;
@@ -43,6 +47,8 @@ public class SiloModuloDTO extends Codigo {
 		this.numSerie = silomodulo.getSmonse();
 		this.timeoutKeepAlive = silomodulo.getSmotke();
 		this.timeoutMedicao = silomodulo.getSmotme();
+		this.ultimaKeepAlive = silomodulo.getSmohke() == null ? null : Utils.convertDateToString(silomodulo.getSmohke());
+		this.ultimaMedicao = silomodulo.getSmohme() == null ? null : Utils.convertDateToString(silomodulo.getSmohme());
 		this.gmt = silomodulo.getSmogmt();
 		this.corKeepAlive = silomodulo.getSmocke();
 		this.corMedicao = silomodulo.getSmocme();
@@ -55,148 +61,125 @@ public class SiloModuloDTO extends Codigo {
 		return this;
 	}
 
+
+
 	public SiloModuloDTO(Long codigo) {
 		super(codigo);
 	}
 
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("SiloModuloDTO [");
-		if (silo != null) {
-			builder.append("silo=").append(silo).append(", ");
-		}
-		if (descricao != null) {
-			builder.append("descricao=").append(descricao).append(", ");
-		}
-		if (totalSensor != null) {
-			builder.append("totalSensor=").append(totalSensor).append(", ");
-		}
-		if (numSerie != null) {
-			builder.append("numSerie=").append(numSerie).append(", ");
-		}
-		if (timeoutKeepAlive != null) {
-			builder.append("timeoutKeepAlive=").append(timeoutKeepAlive).append(", ");
-		}
-		if (timeoutMedicao != null) {
-			builder.append("timeoutMedicao=").append(timeoutMedicao).append(", ");
-		}
-		if (gmt != null) {
-			builder.append("gmt=").append(gmt).append(", ");
-		}
-		if (corKeepAlive != null) {
-			builder.append("corKeepAlive=").append(corKeepAlive).append(", ");
-		}
-		if (corMedicao != null) {
-			builder.append("corMedicao=").append(corMedicao).append(", ");
-		}
-		if (status != null) {
-			builder.append("status=").append(status).append(", ");
-		}
-		if (volumeCheio != null) {
-			builder.append("volumeCheio=").append(volumeCheio).append(", ");
-		}
-		if (volumeStatus != null) {
-			builder.append("volumeStatus=").append(volumeStatus);
-		}
-		builder.append("]");
-		return builder.toString();
-	}
+    public SiloDTO getSilo() {
+        return silo;
+    }
 
-	public SiloDTO getSilo() {
-		return silo;
-	}
+    public void setSilo(SiloDTO silo) {
+        this.silo = silo;
+    }
 
-	public void setSilo(SiloDTO silo) {
-		this.silo = silo;
-	}
+    public String getDescricao() {
+        return descricao;
+    }
 
-	public String getDescricao() {
-		return descricao;
-	}
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
 
-	public void setDescricao(String descricao) {
-		this.descricao = descricao;
-	}
+    public Long getTotalSensor() {
+        return totalSensor;
+    }
 
-	public Long getTotalSensor() {
-		return totalSensor;
-	}
+    public void setTotalSensor(Long totalSensor) {
+        this.totalSensor = totalSensor;
+    }
 
-	public void setTotalSensor(Long totalSensor) {
-		this.totalSensor = totalSensor;
-	}
+    public String getNumSerie() {
+        return numSerie;
+    }
 
-	public String getNumSerie() {
-		return numSerie;
-	}
+    public void setNumSerie(String numSerie) {
+        this.numSerie = numSerie;
+    }
 
-	public void setNumSerie(String numSerie) {
-		this.numSerie = numSerie;
-	}
+    public Long getTimeoutKeepAlive() {
+        return timeoutKeepAlive;
+    }
 
-	public Long getTimeoutKeepAlive() {
-		return timeoutKeepAlive;
-	}
+    public void setTimeoutKeepAlive(Long timeoutKeepAlive) {
+        this.timeoutKeepAlive = timeoutKeepAlive;
+    }
 
-	public void setTimeoutKeepAlive(Long timeoutKeepAlive) {
-		this.timeoutKeepAlive = timeoutKeepAlive;
-	}
+    public Long getTimeoutMedicao() {
+        return timeoutMedicao;
+    }
 
-	public Long getTimeoutMedicao() {
-		return timeoutMedicao;
-	}
+    public void setTimeoutMedicao(Long timeoutMedicao) {
+        this.timeoutMedicao = timeoutMedicao;
+    }
 
-	public void setTimeoutMedicao(Long timeoutMedicao) {
-		this.timeoutMedicao = timeoutMedicao;
-	}
+    public String getUltimaKeepAlive() {
+        return ultimaKeepAlive;
+    }
 
-	public Integer getGmt() {
-		return gmt;
-	}
+    public void setUltimaKeepAlive(String ultimaKeepAlive) {
+        this.ultimaKeepAlive = ultimaKeepAlive;
+    }
 
-	public void setGmt(Integer gmt) {
-		this.gmt = gmt;
-	}
+    public String getUltimaMedicao() {
+        return ultimaMedicao;
+    }
 
-	public String getCorKeepAlive() {
-		return corKeepAlive;
-	}
+    public void setUltimaMedicao(String ultimaMedicao) {
+        this.ultimaMedicao = ultimaMedicao;
+    }
 
-	public void setCorKeepAlive(String corKeepAlive) {
-		this.corKeepAlive = corKeepAlive;
-	}
+    public Integer getGmt() {
+        return gmt;
+    }
 
-	public String getCorMedicao() {
-		return corMedicao;
-	}
+    public void setGmt(Integer gmt) {
+        this.gmt = gmt;
+    }
 
-	public void setCorMedicao(String corMedicao) {
-		this.corMedicao = corMedicao;
-	}
+    public String getCorKeepAlive() {
+        return corKeepAlive;
+    }
 
-	public StatusDeviceEnum getStatus() {
-		return status;
-	}
+    public void setCorKeepAlive(String corKeepAlive) {
+        this.corKeepAlive = corKeepAlive;
+    }
 
-	public void setStatus(StatusDeviceEnum status) {
-		this.status = status;
-	}
+    public String getCorMedicao() {
+        return corMedicao;
+    }
 
-	public Double getVolumeCheio() {
-		return volumeCheio;
-	}
+    public void setCorMedicao(String corMedicao) {
+        this.corMedicao = corMedicao;
+    }
 
-	public void setVolumeCheio(Double volumeCheio) {
-		this.volumeCheio = volumeCheio;
-	}
+    public StatusDeviceEnum getStatus() {
+        return status;
+    }
 
-	public Double getVolumeStatus() {
-		return volumeStatus;
-	}
+    public void setStatus(StatusDeviceEnum status) {
+        this.status = status;
+    }
 
-	public void setVolumeStatus(Double volumeStatus) {
-		this.volumeStatus = volumeStatus;
-	}
+    public Double getVolumeCheio() {
+        return volumeCheio;
+    }
+
+    public void setVolumeCheio(Double volumeCheio) {
+        this.volumeCheio = volumeCheio;
+    }
+
+    public Double getVolumeStatus() {
+        return volumeStatus;
+    }
+
+    public void setVolumeStatus(Double volumeStatus) {
+        this.volumeStatus = volumeStatus;
+    }
+
+
+	
 
 }

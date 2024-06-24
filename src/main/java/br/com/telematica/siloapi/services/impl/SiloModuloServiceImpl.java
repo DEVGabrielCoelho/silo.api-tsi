@@ -16,6 +16,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import br.com.telematica.siloapi.handler.AbrangenciaHandler;
 import br.com.telematica.siloapi.model.SiloModuloModel;
 import br.com.telematica.siloapi.model.dto.SiloModuloDTO;
 import br.com.telematica.siloapi.model.entity.Medicao;
@@ -45,10 +46,14 @@ public class SiloModuloServiceImpl implements SiloModuloServInterface {
 	private double volumeTotal = 0;
 	private double volumeStatus = 0;
 
+	@Autowired
+	private AbrangenciaHandler abrangenciaHandler;
+
+
 	@Override
 	public ResponseEntity<SiloModuloDTO> save(SiloModuloModel object) throws IOException {
 		try {
-			var silo = siloServiceImpl.findEntity(object.getSilo());
+			var silo = siloServiceImpl.findCodigo(object.getSilo());
 			var entity = new SiloModulo(null, silo, object.getDescricao(), object.getTotalSensor(),
 					object.getNumSerie(), object.getTimeoutKeepAlive(), object.getTimeoutMedicao(), null, null,
 					object.getGmt(), object.getCorKeepAlive(), object.getCorMedicao(), object.getStatus().getStatus());
@@ -81,7 +86,7 @@ public class SiloModuloServiceImpl implements SiloModuloServInterface {
 	@Override
 	public ResponseEntity<SiloModuloDTO> update(Long codigo, SiloModuloModel object) throws IOException {
 		try {
-			var silo = siloServiceImpl.findEntity(object.getSilo());
+			var silo = siloServiceImpl.findCodigo(object.getSilo());
 			var siloModulo = siloModuloRepository.findById(codigo).orElseThrow(() -> new EntityNotFoundException(
 					"Não foi possível encontrar o módulo do silo com o ID fornecido: " + codigo));
 
@@ -103,16 +108,24 @@ public class SiloModuloServiceImpl implements SiloModuloServInterface {
 	public ResponseEntity<List<SiloModuloDTO>> findAll() {
 		List<SiloModulo> modulos = siloModuloRepository.findAll();
 		List<SiloModuloDTO> dtoList = modulos.stream().map(this::dtoCalc)
-		.collect(Collectors.toList());
+				.collect(Collectors.toList());
 		return MessageResponse.success(dtoList);
 	}
-	
+
 	@Override
-	public ResponseEntity<Page<SiloModuloDTO>> siloModuloFindAllPaginado(String searchTerm, Pageable pageable) {
-        Specification<SiloModulo> spec = SiloModulo.filterByFields(searchTerm, null, null);
-        Page<SiloModulo> result = siloModuloRepository.findAll(spec, pageable);
-        return ResponseEntity.ok(result.map(SiloModuloDTO::new));
-    }
+	public ResponseEntity<Page<SiloModuloDTO>> siloModuloFindAllPaginado(String searchTerm, Pageable pageable) throws EntityNotFoundException, IOException {
+		var checkSilo = abrangenciaHandler.checkAbrangencia("SILO");
+		var checkModulo = abrangenciaHandler.checkAbrangencia("MODULO");
+		Specification<SiloModulo> spec = Specification.where(null);
+
+		if (checkModulo.isHier() == 0) {
+			spec = spec.and(SiloModulo.filterByFields(searchTerm, null, null));
+		} else {
+			spec = spec.and(SiloModulo.filterByFields(searchTerm, checkModulo.listAbrangencia(), checkSilo.isHier() == 0 ? null : checkSilo.listAbrangencia()));
+		}
+		Page<SiloModulo> result = siloModuloRepository.findAll(spec, pageable);
+		return ResponseEntity.ok(result.map(SiloModuloDTO::new));
+	}
 
 	@Override
 	public ResponseEntity<SiloModuloDTO> findId(Long codigo) {
@@ -154,7 +167,8 @@ public class SiloModuloServiceImpl implements SiloModuloServInterface {
 		Medicao ultimaMedicao = medicaoServiceImpl.ultimaMedicao(siloModulo);
 		if (tipo == TipoSiloEnum.HORIZONTAL) {
 			volumeTotal = Utils.calcularVolumeHorizontal(comprimento, largura, alturaSilo);
-			volumeStatus = Utils.calcularVolumeHorizontal(comprimento, largura, ultimaMedicao.getMsidis()); // valor da medição
+			volumeStatus = Utils.calcularVolumeHorizontal(comprimento, largura, ultimaMedicao.getMsidis()); // valor da
+																											// medição
 
 		}
 		if (tipo == TipoSiloEnum.VERTICAL) {

@@ -16,9 +16,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import br.com.telematica.siloapi.exception.CustomMessageException;
+import br.com.telematica.siloapi.handler.AbrangenciaHandler;
 import br.com.telematica.siloapi.model.PlantaModel;
 import br.com.telematica.siloapi.model.dto.PlantaDTO;
 import br.com.telematica.siloapi.model.entity.Planta;
+import br.com.telematica.siloapi.records.CheckAbrangenciaRec;
 import br.com.telematica.siloapi.repository.PlantaRepository;
 import br.com.telematica.siloapi.services.PlantaServInterface;
 import br.com.telematica.siloapi.utils.message.MessageResponse;
@@ -35,6 +37,13 @@ public class PlantaServiceImpl implements PlantaServInterface {
 
     @Autowired
     private EmpresaServiceImpl empresaServiceImpl;
+
+    @Autowired
+	private AbrangenciaHandler abrangenciaHandler;
+
+    public CheckAbrangenciaRec checagemFixaAbrangencia() throws EntityNotFoundException, IOException {
+		return abrangenciaHandler.checkAbrangencia("PLANTA");
+	}
 
     @Override
     public ResponseEntity<PlantaDTO> save(PlantaModel planta) throws IOException {
@@ -105,8 +114,16 @@ public class PlantaServiceImpl implements PlantaServInterface {
     }
     
     @Override
-    public ResponseEntity<Page<PlantaDTO>> plantaFindAllPaginado(String searchTerm, Pageable pageable) {
-        Specification<Planta> spec = Planta.filterByFields(searchTerm, null);
+    public ResponseEntity<Page<PlantaDTO>> plantaFindAllPaginado(String searchTerm, Pageable pageable) throws EntityNotFoundException, IOException {
+
+        var check = checagemFixaAbrangencia();
+		Specification<Planta> spec = Specification.where(null);
+
+		if (check.isHier() == 0) {
+			spec = spec.and(Planta.filterByFields(searchTerm, null));
+		} else {
+			spec = spec.and(Planta.filterByFields(searchTerm, check.listAbrangencia()));
+		}
         Page<Planta> result = plantaRepository.findAll(spec, pageable);
         return ResponseEntity.ok(result.map(PlantaDTO::new));
     }

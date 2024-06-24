@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 
 import br.com.telematica.siloapi.model.SiloModuloModel;
 import br.com.telematica.siloapi.model.dto.SiloModuloDTO;
+import jakarta.persistence.EntityNotFoundException;
 
 public interface SiloModuloServInterface {
 
@@ -22,6 +23,6 @@ public interface SiloModuloServInterface {
 
 	ResponseEntity<SiloModuloDTO> findId(Long codigo);
 
-	ResponseEntity<Page<SiloModuloDTO>> siloModuloFindAllPaginado(String searchTerm, Pageable pageable);
+	ResponseEntity<Page<SiloModuloDTO>> siloModuloFindAllPaginado(String searchTerm, Pageable pageable) throws EntityNotFoundException, IOException;
 
 }

@@ -24,6 +24,7 @@ import br.com.telematica.siloapi.model.dto.PlantaDTO;
 import br.com.telematica.siloapi.services.PlantaServInterface;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.persistence.EntityNotFoundException;
 
 @RestController
 @RequestMapping("/api/planta")
@@ -63,7 +64,7 @@ public class PlantaController extends SecurityRestController {
 			@RequestParam(value = "pagina", defaultValue = "0") int pagina,
 			@RequestParam(value = "tamanho", defaultValue = "10") int tamanho,
 			@RequestParam(value = "ordenarPor", defaultValue = "codigo") String ordenarPor,
-			@RequestParam(value = "direcao", defaultValue = "ASC") String direcao) {
+			@RequestParam(value = "direcao", defaultValue = "ASC") String direcao) throws EntityNotFoundException, IOException {
 
 				
 		

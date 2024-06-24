@@ -17,7 +17,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
 	@Override
 	public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException {
-		ResponseGlobalModel globalResponse = new ResponseGlobalModel(true, accessDeniedException.getMessage(), Utils.convertDateToString());
+		ResponseGlobalModel globalResponse = new ResponseGlobalModel(true, accessDeniedException.getMessage(), Utils.convertDateToString(silomodulo.getSmohke()));
 		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 		response.setContentType("application/json");
 		response.getWriter().write(new Gson().toJson(globalResponse));

@@ -3,7 +3,6 @@ package br.com.telematica.siloapi.services.impl;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -32,6 +31,7 @@ import br.com.telematica.siloapi.services.AbrangenciaServInterface;
 import br.com.telematica.siloapi.utils.JsonNodeConverter;
 import br.com.telematica.siloapi.utils.message.MessageResponse;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.NonUniqueResultException;
 
 @Service
 public class AbrangenciaServiceImpl implements AbrangenciaServInterface {
@@ -48,14 +48,21 @@ public class AbrangenciaServiceImpl implements AbrangenciaServInterface {
 	private EmpresaServiceImpl empresaService;
 
 	public AbrangenciaDetalhes findByAbrangenciaAndRecursoContaining(Abrangencia codigo, Recurso nome) {
-		return abrangenciaDetalhesRepository
-				.findByAbrangencia_abrcodAndRecurso_recnomContaining(codigo.getAbrcod(), nome.getRecnom()).orElseThrow(
-						() -> new EntityNotFoundException("Detalhes de Abrangencia não encontrada no banco de dados."));
+		List<AbrangenciaDetalhes> results = abrangenciaDetalhesRepository
+				.findByAbrangencia_abrcodAndRecurso_recnomContaining(codigo.getAbrcod(), nome.getRecnom());
+
+		if (results.size() > 1) {
+			throw new NonUniqueResultException(
+					"Query did not return a unique result: " + results.size() + " results were returned");
+		}
+
+		return results.isEmpty() ? null : results.get(0);
 	}
 
 	public AbrangenciaDetalhes findByAbrangenciaAndRecursoContainingAbrangencia(Abrangencia codigo, Recurso nome) {
-		return abrangenciaDetalhesRepository
-				.findByAbrangencia_abrcodAndRecurso_recnomContaining(codigo.getAbrcod(), nome.getRecnom()).orElse(null);
+		List<AbrangenciaDetalhes> results = abrangenciaDetalhesRepository
+				.findByAbrangencia_abrcodAndRecurso_recnomContaining(codigo.getAbrcod(), nome.getRecnom());
+		return  results.get(0);
 	}
 
 	public Abrangencia findByIdEntity(@NonNull Long codigo) throws EntityNotFoundException {
@@ -210,13 +217,11 @@ public class AbrangenciaServiceImpl implements AbrangenciaServInterface {
 
 		Recurso recursoEntity = recursoService.findByIdEntity(recursoNome);
 
-		Optional<AbrangenciaDetalhes> detalhesOpt = abrangenciaDetalhesRepository
-				.findByAbrangencia_abrcodAndRecurso_recnomContaining(abrangencia.getAbrcod(),
-						recursoEntity.getRecnom());
+		AbrangenciaDetalhes detalhesOpt = findByAbrangenciaAndRecursoContaining(abrangencia, recursoEntity);
 
 		JsonNodeConverter jsonNode = new JsonNodeConverter();
 		AbrangenciaDetalhes detalhes = new AbrangenciaDetalhes(
-				detalhesOpt.map(AbrangenciaDetalhes::getAbdcod).orElse(null),
+				detalhesOpt == null ? null : detalhesOpt.getAbdcod(),
 				abrangencia,
 				recursoEntity,
 				recurso.getHierarquia(),
@@ -233,15 +238,11 @@ public class AbrangenciaServiceImpl implements AbrangenciaServInterface {
 		Objects.requireNonNull(detalhes.getAbddat(), "Dados estão nulos.");
 
 		Recurso recurso = detalhes.getRecurso();
-		Long abrangenciaId = abrangencia.getAbrcod();
-		String recursoNome = recurso.getRecnom();
 
-		Optional<AbrangenciaDetalhes> detalhesOpt = abrangenciaDetalhesRepository
-				.findByAbrangencia_abrcodAndRecurso_recnomContaining(abrangenciaId, recursoNome);
+		AbrangenciaDetalhes detalhesOpt = findByAbrangenciaAndRecursoContaining(abrangencia, recurso);
 
-		Long detalhesId = detalhesOpt.map(AbrangenciaDetalhes::getAbdcod).orElse(null);
 		AbrangenciaDetalhes abrangenciaDetalhes = new AbrangenciaDetalhes(
-				detalhesId,
+				detalhesOpt == null ? null : detalhesOpt.getAbdcod(),
 				abrangencia,
 				recurso,
 				detalhes.getAbdhie(),
