@@ -69,7 +69,7 @@ public class MedicaoController extends SecurityRestController {
 		return medicaoService.deleteByMsidth(dataMedicao);
 	}
 
-	@GetMapping("/paginado")
+	@GetMapping("/v1/paginado")
     public ResponseEntity<Page<MedicaoDTO>> findAllPaginado(
             @RequestParam(value = "filtro", required = false) String filtro,
             @RequestParam(value = "dataInicio", required = false) String dataInicio,

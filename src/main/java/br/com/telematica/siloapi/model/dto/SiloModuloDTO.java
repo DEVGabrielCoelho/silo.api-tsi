@@ -56,8 +56,8 @@ public class SiloModuloDTO extends Codigo {
 	}
 
 	public SiloModuloDTO volumeSilo(Double volumeCheio, Double volumeStatus) {
-		this.volumeCheio = Utils.converterMmParaCm(volumeCheio);
-		this.volumeStatus = Utils.converterMmParaCm(volumeStatus);
+		this.volumeCheio = Utils.converterMmParaM(volumeCheio);
+		this.volumeStatus = Utils.converterMmParaM(volumeStatus);
 		return this;
 	}
 

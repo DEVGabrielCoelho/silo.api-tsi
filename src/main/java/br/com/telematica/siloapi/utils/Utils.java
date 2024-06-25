@@ -103,11 +103,11 @@ public class Utils {
 	}
 
 	public static ResponseGlobalModel responseMessageError(String message) {
-		return new ResponseGlobalModel(true, message, Utils.convertDateToString(silomodulo.getSmohke()));
+		return new ResponseGlobalModel(true, message, Utils.convertDateToString(new Date()));
 	}
 
 	public static ResponseGlobalModel responseMessageSucess(String message) {
-		return new ResponseGlobalModel(false, message, Utils.convertDateToString(silomodulo.getSmohke()));
+		return new ResponseGlobalModel(false, message, Utils.convertDateToString(new Date()));
 	}
 
 	public static String sdfBaseDateforString() {
@@ -121,6 +121,7 @@ public class Utils {
 	}
 
 	public static Date sdfStringforDate(String date) throws ParseException {
+		sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		try {
 			return sdf.parse(date);
 		} catch (ParseException e) {
@@ -154,12 +155,12 @@ public class Utils {
 	}
 
 
-	public static String convertTimestampToDateStr(long timestamp) {
-        LocalDateTime dateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneId.systemDefault());
+	public static String convertTimestampToDateStr(int timestamp) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime dateTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(timestamp), ZoneId.systemDefault());
         return dateTime.format(formatter);
     }
-	public static Date convertTimestampToDate(long timestamp) throws ParseException {
+	public static Date convertTimestampToDate(int timestamp) throws ParseException {
         String timeStampStr = convertTimestampToDateStr(timestamp);
         return sdfStringforDate(timeStampStr);
     }
@@ -171,6 +172,10 @@ public class Utils {
     // Função para converter mm para cm
     public static double converterMmParaCm(double mm) {
         return mm / 10.0;
+    }
+
+	public static double converterMmParaM(double mm) {
+        return mm / 1000.0;
     }
 
 }

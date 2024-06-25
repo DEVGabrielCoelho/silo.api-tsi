@@ -165,6 +165,9 @@ public class SiloModuloServiceImpl implements SiloModuloServInterface {
 		double comprimento = tipoSilo.getTsicom();
 		double alturaSilo = tipoSilo.getTsiach() - tipoSilo.getTsidse();
 		Medicao ultimaMedicao = medicaoServiceImpl.ultimaMedicao(siloModulo);
+		if (ultimaMedicao == null){
+			return new SiloModuloDTO(siloModulo);
+		}
 		if (tipo == TipoSiloEnum.HORIZONTAL) {
 			volumeTotal = Utils.calcularVolumeHorizontal(comprimento, largura, alturaSilo);
 			volumeStatus = Utils.calcularVolumeHorizontal(comprimento, largura, ultimaMedicao.getMsidis()); // valor da

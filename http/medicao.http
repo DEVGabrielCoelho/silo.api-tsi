@@ -1,12 +1,13 @@
-POST http://localhost:8080/siloapi/api/medicao/v1/cadastra
+POST http://localhost:8080/siloapi/api/medicao/v1/criarMedicao
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhdXRoLWFwaSIsInN1YiI6ImFkbWluIiwiZXhwIjoxNzE5MzQyNDcxLCJyb2xlIjoiQURNSU4ifQ.SVHwZXUnknpNMaqd2csm3rbHxjLeGbqh1CSf8DrDMp8
+
 {
     "applicationID": "1",
     "applicationName": "Teste",
     "devEUI": "1",
     "deviceName": "Teste2",
-    "timestamp": 1718982824,
+    "timestamp": 1719258805,
     "fCnt": 2,
     "fPort": 2,
     "data": "010201A3027327CE0368630467011305650000",

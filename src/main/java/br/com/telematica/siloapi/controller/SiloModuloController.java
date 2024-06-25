@@ -59,7 +59,7 @@ public class SiloModuloController extends SecurityRestController {
 		return siloModuloServInterface.delete(codigo);
 	}
 
-	@GetMapping("/paginado")
+	@GetMapping("/v1/paginado")
 	public ResponseEntity<Page<SiloModuloDTO>> findAllPaginado(
 			@RequestParam(value = "filtro", required = false) String filtro,
 			@RequestParam(value = "pagina", defaultValue = "0") int pagina,

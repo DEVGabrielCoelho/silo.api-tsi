@@ -50,6 +50,7 @@ public class MedicaoServiceImpl implements MedicaoServInterface {
 		checkDataMedicao(medicaoModel);
 		Date dateMedicao = sdfStringforDate(medicaoModel.getDataMedicao());
 		var siloModulo = siloModuloServiceImpl.findEntity(medicaoModel.getSilo());
+		siloModuloServiceImpl.registerMedicaoInModulo(siloModulo, new Date());
 		Medicao medicao = new Medicao(dateMedicao, siloModulo, medicaoModel.getUmidade(), medicaoModel.getAna(),
 				medicaoModel.getBarometro(), medicaoModel.getTemperatura(), medicaoModel.getDistancia());
 		Medicao savedMedicao = medicaoRepository.save(medicao);
@@ -62,7 +63,7 @@ public class MedicaoServiceImpl implements MedicaoServInterface {
 
 		Date dateMedicao = Utils.convertTimestampToDate(medicaoModel.getTimestamp());
 		var siloModulo = siloModuloServiceImpl.findEntity(Long.valueOf(medicaoModel.getDevEUI()));
-
+		siloModuloServiceImpl.registerMedicaoInModulo(siloModulo, new Date());
 		Medicao medicao = new Medicao(dateMedicao, siloModulo, medicaoModel.getObject().getHumidity(),
 				medicaoModel.getObject().getAnalogInput(),
 				medicaoModel.getObject().getBarometer(), medicaoModel.getObject().getTemperature(),
@@ -94,6 +95,7 @@ public class MedicaoServiceImpl implements MedicaoServInterface {
 		Medicao existingMedicao = medicaoRepository.findByMsidth(dateMedicao);
 
 		var siloModulo = siloModuloServiceImpl.findEntity(medicaoModel.getSilo());
+		siloModuloServiceImpl.registerMedicaoInModulo(siloModulo, new Date());
 
 		existingMedicao.updateMedicao(siloModulo, medicaoModel.getUmidade(), medicaoModel.getAna(),
 				medicaoModel.getBarometro(), medicaoModel.getTemperatura(), medicaoModel.getDistancia());

@@ -58,7 +58,7 @@ public class TipoSiloController extends SecurityRestController {
 		return tipoSiloInterface.deleteByTsicod(codigo);
 	}
 
-	@GetMapping("/paginado")
+	@GetMapping("/v1/paginado")
 	@Operation(description = "Busca uma lista paginada de tipo de silo com base em critérios de busca e ordenação. Este endpoint permite a busca por um termo específico, além de suportar paginação e ordenação dos resultados.")
 	public ResponseEntity<Page<TipoSiloDTO>> findAllPaginado(
             @RequestParam(value = "filtro", required = false) String filtro,

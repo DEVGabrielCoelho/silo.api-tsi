@@ -58,7 +58,7 @@ public class PlantaController extends SecurityRestController {
 		return planta.deleteByPlacod(codigo);
 	}
 
-	@GetMapping("/paginado")
+	@GetMapping("/v1/paginado")
 	public ResponseEntity<Page<PlantaDTO>> findAllPaginado(
 			@RequestParam(value = "filtro", required = false) String filtro,
 			@RequestParam(value = "pagina", defaultValue = "0") int pagina,
