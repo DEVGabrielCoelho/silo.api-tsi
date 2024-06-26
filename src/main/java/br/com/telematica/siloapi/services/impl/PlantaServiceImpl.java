@@ -112,7 +112,7 @@ public class PlantaServiceImpl implements PlantaServInterface {
 		} else {
 			spec = spec.and(Planta.filterByFields(null, findAbrangencia().listAbrangencia()));
 		}
-		List<PlantaDTO> plantaDTOs = plantaRepository.findAll(spec).stream().map(this::convertToPlantaDTO)
+		List<PlantaDTO> plantaDTOs = plantaRepository.findAll(spec).stream().map(this::convertPlantaDTO)
 				.collect(Collectors.toList());
 		return MessageResponse.success(plantaDTOs);
 	}
@@ -129,7 +129,7 @@ public class PlantaServiceImpl implements PlantaServInterface {
 			spec = spec.and(Planta.filterByFields(searchTerm, findAbrangencia().listAbrangencia()));
 		}
 		Page<Planta> result = plantaRepository.findAll(spec, pageable);
-		return ResponseEntity.ok(result.map(PlantaDTO::new));
+		return ResponseEntity.ok(result.map(this::convertPlantaDTO));
 	}
 
 	@Override
@@ -148,11 +148,11 @@ public class PlantaServiceImpl implements PlantaServInterface {
 			return MessageResponse.success(null);
 		}
 
-		return MessageResponse.success(new PlantaDTO(result));
+		return MessageResponse.success(convertPlantaDTO(result));
 	}
 
-	private PlantaDTO convertToPlantaDTO(Planta plantaEntity) {
-		return new PlantaDTO(plantaEntity);
+	private PlantaDTO convertPlantaDTO(Planta plantaEntity) {
+		return new PlantaDTO(plantaEntity, empresaServiceImpl.findByIdAbrangencia(plantaEntity.getEmpresa()));
 	}
 
 	Planta findEntity(Long codigo) {
@@ -178,4 +178,5 @@ public class PlantaServiceImpl implements PlantaServInterface {
 		}
 		return new PlantaDTO(result, empresaServiceImpl.findByIdAbrangencia(result.getEmpresa()));
 	}
+
 }
