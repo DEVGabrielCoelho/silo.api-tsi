@@ -80,21 +80,21 @@ public class Silo {
 		this.silnom = silnom;
 	}
 
-    public Double getSillat() {
-        return sillat;
-    }
+	public Double getSillat() {
+		return sillat;
+	}
 
-    public void setSillat(Double sillat) {
-        this.sillat = sillat;
-    }
+	public void setSillat(Double sillat) {
+		this.sillat = sillat;
+	}
 
-    public Double getSillon() {
-        return sillon;
-    }
+	public Double getSillon() {
+		return sillon;
+	}
 
-    public void setSillon(Double sillon) {
-        this.sillon = sillon;
-    }
+	public void setSillon(Double sillon) {
+		this.sillon = sillon;
+	}
 
 	@Override
 	public String toString() {
@@ -116,57 +116,57 @@ public class Silo {
 		return builder.toString();
 	}
 
-	 public static Specification<Silo> filterByFields(String searchTerm, List<Long> listSilcod, List<Long> listTsicod, List<Long> listPlacod) {
-        return (root, query, criteriaBuilder) -> {
-            List<Predicate> predicates = new ArrayList<>();
+	public static Specification<Silo> filterByFields(String searchTerm, List<Long> listSilcod, List<Long> listTsicod, List<Long> listPlacod) {
+		return (root, query, criteriaBuilder) -> {
+			List<Predicate> predicates = new ArrayList<>();
 
-            // Filtragem por lista de IDs de Silo
-            if (listSilcod != null && !listSilcod.isEmpty()) {
-                predicates.add(root.get("silcod").in(listSilcod));
-            }
+			// Filtragem por lista de IDs de Silo
+			if (listSilcod != null && !listSilcod.isEmpty()) {
+				predicates.add(root.get("silcod").in(listSilcod));
+			}
 
-            // Filtragem por lista de IDs de TipoSilo
-            if (listTsicod != null && !listTsicod.isEmpty()) {
-                predicates.add(root.get("tipoSilo").get("tsicod").in(listTsicod));
-            }
+			// Filtragem por lista de IDs de TipoSilo
+			if (listTsicod != null && !listTsicod.isEmpty()) {
+				predicates.add(root.get("tipoSilo").get("tsicod").in(listTsicod));
+			}
 
-            // Filtragem por lista de IDs de Planta
-            if (listPlacod != null && !listPlacod.isEmpty()) {
-                predicates.add(root.get("planta").get("placod").in(listPlacod));
-            }
+			// Filtragem por lista de IDs de Planta
+			if (listPlacod != null && !listPlacod.isEmpty()) {
+				predicates.add(root.get("planta").get("placod").in(listPlacod));
+			}
 
-            // Filtragem por termo de busca
-            if (searchTerm != null && !searchTerm.isEmpty()) {
-                String likePattern = "%" + searchTerm.toLowerCase() + "%";
+			// Filtragem por termo de busca
+			if (searchTerm != null && !searchTerm.isEmpty()) {
+				String likePattern = "%" + searchTerm.toLowerCase() + "%";
 
-                List<Predicate> searchPredicates = new ArrayList<>();
+				List<Predicate> searchPredicates = new ArrayList<>();
 
-                // Adiciona predicado para o campo `silnom`
-                searchPredicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("silnom")), likePattern));
+				// Adiciona predicado para o campo `silnom`
+				searchPredicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("silnom")), likePattern));
 
-                // Tenta converter o termo de busca para Long e Double
-                try {
-                    Long searchTermLong = Long.valueOf(searchTerm);
-                    searchPredicates.add(criteriaBuilder.equal(root.get("silcod"), searchTermLong));
-                    searchPredicates.add(criteriaBuilder.equal(root.get("tipoSilo").get("tsicod"), searchTermLong));
-                    searchPredicates.add(criteriaBuilder.equal(root.get("planta").get("placod"), searchTermLong));
-                } catch (NumberFormatException e) {
-                    // Ignora se a conversão para Long falhar
-                }
+				// Tenta converter o termo de busca para Long e Double
+				try {
+					Long searchTermLong = Long.valueOf(searchTerm);
+					searchPredicates.add(criteriaBuilder.equal(root.get("silcod"), searchTermLong));
+					searchPredicates.add(criteriaBuilder.equal(root.get("tipoSilo").get("tsicod"), searchTermLong));
+					searchPredicates.add(criteriaBuilder.equal(root.get("planta").get("placod"), searchTermLong));
+				} catch (NumberFormatException e) {
+					// Ignora se a conversão para Long falhar
+				}
 
-                try {
-                    Double searchTermDouble = Double.valueOf(searchTerm);
-                    searchPredicates.add(criteriaBuilder.equal(root.get("sillat"), searchTermDouble));
-                    searchPredicates.add(criteriaBuilder.equal(root.get("sillon"), searchTermDouble));
-                } catch (NumberFormatException e) {
-                    // Ignora se a conversão para Double falhar
-                }
+				try {
+					Double searchTermDouble = Double.valueOf(searchTerm);
+					searchPredicates.add(criteriaBuilder.equal(root.get("sillat"), searchTermDouble));
+					searchPredicates.add(criteriaBuilder.equal(root.get("sillon"), searchTermDouble));
+				} catch (NumberFormatException e) {
+					// Ignora se a conversão para Double falhar
+				}
 
-                predicates.add(criteriaBuilder.or(searchPredicates.toArray(Predicate[]::new)));
-            }
+				predicates.add(criteriaBuilder.or(searchPredicates.toArray(Predicate[]::new)));
+			}
 
-            return criteriaBuilder.and(predicates.toArray(Predicate[]::new));
-        };
-    }
-	
+			return criteriaBuilder.and(predicates.toArray(Predicate[]::new));
+		};
+	}
+
 }

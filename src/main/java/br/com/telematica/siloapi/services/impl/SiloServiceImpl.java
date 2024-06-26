@@ -46,8 +46,7 @@ public class SiloServiceImpl implements SiloServInterface {
 		try {
 			var tipoSilo = tipoSiloService.findEntity(siloModel.getTipoSilo());
 			var planta = plantaService.findEntity(siloModel.getPlanta());
-			var entity = new Silo(null, tipoSilo, siloModel.getNome(), planta, siloModel.getLatitude(),
-					siloModel.getLongitude());
+			var entity = new Silo(null, tipoSilo, siloModel.getNome(), planta, siloModel.getLatitude(), siloModel.getLongitude());
 			var result = siloRepository.save(entity);
 
 			logger.info("Silo salvo com sucesso: " + result);
@@ -80,8 +79,7 @@ public class SiloServiceImpl implements SiloServInterface {
 		try {
 			var tipoSilo = tipoSiloService.findEntity(siloModel.getTipoSilo());
 			var planta = plantaService.findEntity(siloModel.getPlanta());
-			var entity = new Silo(codigo, tipoSilo, siloModel.getNome(), planta, siloModel.getLatitude(),
-					siloModel.getLongitude());
+			var entity = new Silo(codigo, tipoSilo, siloModel.getNome(), planta, siloModel.getLatitude(), siloModel.getLongitude());
 			var result = siloRepository.save(entity);
 
 			logger.info("Silo atualizado com sucesso: " + result);
@@ -121,10 +119,7 @@ public class SiloServiceImpl implements SiloServInterface {
 			if (checkSilo.isHier() == 0) {
 				spec = spec.and(Silo.filterByFields(searchTerm, null, null, null));
 			} else {
-				spec = spec.and(Silo.filterByFields(searchTerm,
-						checkSilo.listAbrangencia(),
-						checkTipo.isHier() == 0 ? null : checkTipo.listAbrangencia(),
-						checkPlanta.isHier() == 0 ? null : checkPlanta.listAbrangencia()));
+				spec = spec.and(Silo.filterByFields(searchTerm, checkSilo.listAbrangencia(), checkTipo.isHier() == 0 ? null : checkTipo.listAbrangencia(), checkPlanta.isHier() == 0 ? null : checkPlanta.listAbrangencia()));
 			}
 
 			Page<Silo> result = siloRepository.findAll(spec, pageable);
@@ -137,8 +132,7 @@ public class SiloServiceImpl implements SiloServInterface {
 	}
 
 	public Silo findCodigo(Long codigo) {
-		return siloRepository.findById(codigo)
-				.orElseThrow(() -> new EntityNotFoundException("Silo não encontrado com o ID: " + codigo));
+		return siloRepository.findById(codigo).orElseThrow(() -> new EntityNotFoundException("Silo não encontrado com o ID: " + codigo));
 	}
 
 }

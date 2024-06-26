@@ -12,22 +12,19 @@ import io.swagger.v3.oas.models.info.Info;
 
 @Configuration
 public class OpenApiConfig {
-    private static final Logger logger = LoggerFactory.getLogger(OpenApiConfig.class);
+	private static final Logger logger = LoggerFactory.getLogger(OpenApiConfig.class);
 
-    @Bean
-    public GroupedOpenApi api() {
-        return GroupedOpenApi.builder()
-                .group("silo-api")
-                .pathsToMatch("/api/**")
-                .build();
-    }
+	@Bean
+	public GroupedOpenApi api() {
+		return GroupedOpenApi.builder().group("silo-api").pathsToMatch("/api/**").build();
+	}
 
-    @Bean
-    public OpenAPI myOpenAPI(BuildProperties env) {
-        String version = env.getVersion();
-        String name = env.getName();
-        logger.info("Info OpenApi Config, Name Package: " + env.getArtifact() + ", version - " + version + " - Name: " + name);
+	@Bean
+	public OpenAPI myOpenAPI(BuildProperties env) {
+		String version = env.getVersion();
+		String name = env.getName();
+		logger.info("Info OpenApi Config, Name Package: " + env.getArtifact() + ", version - " + version + " - Name: " + name);
 
-        return new OpenAPI().info(new Info().title(name).version(version).description("Silo API backend."));
-    }
+		return new OpenAPI().info(new Info().title(name).version(version).description("Silo API backend."));
+	}
 }

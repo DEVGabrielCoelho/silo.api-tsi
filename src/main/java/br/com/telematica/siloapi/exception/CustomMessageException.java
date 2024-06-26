@@ -8,7 +8,6 @@ import jakarta.persistence.EntityNotFoundException;
 
 public class CustomMessageException {
 
-
 	public static IOException exceptionCodigoIOException(String acao, String local, Object codigo, Object object, Throwable throwable) throws IOException {
 		throw new IOException("Erro ao " + acao + " em " + ",Código fornecido " + codigo + ", objeto " + new Gson().toJson(object), throwable);
 	}

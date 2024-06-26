@@ -1,5 +1,6 @@
 package br.com.telematica.siloapi.utils;
 
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -95,8 +96,7 @@ public class Utils {
 		return new String(decodedBytes);
 	}
 
-	public static Pageable consultaPage(String ordenarEntity, @NonNull String direcao, Integer pagina,
-			Integer tamanho) {
+	public static Pageable consultaPage(String ordenarEntity, @NonNull String direcao, Integer pagina, Integer tamanho) {
 		Sort.Direction sortDirection = Sort.Direction.fromString(direcao);
 		Sort sort = Sort.by(sortDirection, ordenarEntity);
 		return PageRequest.of(pagina, tamanho, sort);
@@ -140,42 +140,45 @@ public class Utils {
 		}
 	}
 
-	public static Double calcularVolumeVertical(double raio, double altura) {
-		if (raio < 0 || altura < 0) {
-			throw new IllegalArgumentException("O raio e a altura devem ser positivos.");
-		}
-		return Math.PI * Math.pow(raio, 2) * altura;
+	public static String convertTimestampToDateStr(int timestamp) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		LocalDateTime dateTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(timestamp), ZoneId.systemDefault());
+		return dateTime.format(formatter);
 	}
 
-	public static Double calcularVolumeHorizontal(double comprimento, double largura, double altura) {
-		if (comprimento < 0 || largura < 0 || altura < 0) {
-			throw new IllegalArgumentException("O comprimento, a largura e a altura devem ser positivos.");
-		}
+	public static Date convertTimestampToDate(int timestamp) throws ParseException {
+		String timeStampStr = convertTimestampToDateStr(timestamp);
+		return sdfStringforDate(timeStampStr);
+	}
+
+	// Converte milímetros para metros
+	public static double converterMmParaM(double mm) {
+		return mm / 1000.0;
+	}
+
+	// Converte metros para milímetros
+	public static double converterMParaMm(double m) {
+		return m * 1000.0;
+	}
+
+	// Converte milímetros cúbicos para metros cúbicos
+	public static double converterMm3ParaM3(double mm3) {
+		return mm3 / 1_000_000_000.0;
+	}
+
+	// Calcula o volume de um silo vertical
+	public static double calcularVolumeVertical(double raioMilimetros, double alturaMilimetros) {
+		return Math.PI * Math.pow(raioMilimetros, 2) * alturaMilimetros;
+	}
+
+	public static double calcularVolumeHorizontal(double comprimento, double largura, double altura) {
 		return comprimento * largura * altura;
 	}
 
-
-	public static String convertTimestampToDateStr(int timestamp) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LocalDateTime dateTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(timestamp), ZoneId.systemDefault());
-        return dateTime.format(formatter);
-    }
-	public static Date convertTimestampToDate(int timestamp) throws ParseException {
-        String timeStampStr = convertTimestampToDateStr(timestamp);
-        return sdfStringforDate(timeStampStr);
-    }
-
-	public static double converterCmParaMm(double cm) {
-        return cm * 10.0;
-    }
-
-    // Função para converter mm para cm
-    public static double converterMmParaCm(double mm) {
-        return mm / 10.0;
-    }
-
-	public static double converterMmParaM(double mm) {
-        return mm / 1000.0;
-    }
+	// Formata o volume em metros cúbicos
+	public static String formatarVolume(double volume) {
+		DecimalFormat decimalFormat = new DecimalFormat("0.00");
+		return decimalFormat.format(volume);
+	}
 
 }

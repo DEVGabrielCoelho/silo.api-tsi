@@ -85,9 +85,14 @@ public class EmpresaServiceImpl implements EmpresaServInterface {
 	@Override
 	public ResponseEntity<List<EmpresaDTO>> empresaFindAll() throws IOException {
 		var check = checagemFixaAbrangencia();
-		var result = check.isHier() == 0 ? empresaRepository.findAll()
-				: empresaRepository.findByEmpcodIn(check.listAbrangencia());
+		Specification<Empresa> spec = Specification.where(null);
 
+		if (check.isHier() == 0) {
+			spec = spec.and(Empresa.filterByFields(null, null));
+		} else {
+			spec = spec.and(Empresa.filterByFields(null, check.listAbrangencia()));
+		}
+		List<Empresa> result = empresaRepository.findAll(spec);
 		return MessageResponse.success(result.stream().map(EmpresaDTO::new).collect(Collectors.toList()));
 	}
 
@@ -115,8 +120,7 @@ public class EmpresaServiceImpl implements EmpresaServInterface {
 		Objects.requireNonNull(empresaModel.getNome(), "Nome da Empresa está nulo.");
 
 		try {
-			Empresa empresa = new Empresa(null, empresaModel.getCnpj(), empresaModel.getNome(),
-					empresaModel.getNomeFantasia(), empresaModel.getTelefone());
+			Empresa empresa = new Empresa(null, empresaModel.getCnpj(), empresaModel.getNome(), empresaModel.getNomeFantasia(), empresaModel.getTelefone());
 			Empresa savedEmpresa = empresaRepository.save(empresa);
 			return MessageResponse.create(new EmpresaDTO(savedEmpresa));
 		} catch (Exception e) {
@@ -127,6 +131,13 @@ public class EmpresaServiceImpl implements EmpresaServInterface {
 
 	@Override
 	public ResponseEntity<EmpresaDTO> findByIdApi(Long codigo) throws IOException {
+		var check = checagemFixaAbrangencia();
+		Long idPermitted = abrangenciaHandler.findIdAbrangenciaPermi(check, codigo);
+		if (idPermitted == null) {
+			// throw new EntityNotFoundException("Acesso negado ou entidade não
+			// encontrada.");
+			return MessageResponse.success(null);
+		}
 		var empresa = findById(codigo);
 		if (empresa == null) {
 			return MessageResponse.success(null);
@@ -136,11 +147,19 @@ public class EmpresaServiceImpl implements EmpresaServInterface {
 
 	@Override
 	public ResponseEntity<EmpresaDTO> empresaFindByCnpjApi(Long codigo) throws IOException {
-		EmpresaDTO empresa = empresaFindByCnpjAbrangencia(codigo);
+		Empresa empresa = empresaFindByCnpjEntity(codigo);
 		if (empresa == null) {
 			return MessageResponse.success(null);
 		}
-		return MessageResponse.success(empresa);
+		var check = checagemFixaAbrangencia();
+		Long idPermitted = abrangenciaHandler.findIdAbrangenciaPermi(check, empresa.getEmpcod());
+		if (idPermitted == null) {
+			// throw new EntityNotFoundException("Acesso negado ou entidade não
+			// encontrada.");
+			return MessageResponse.success(null);
+		}
+
+		return MessageResponse.success(new EmpresaDTO(empresa));
 	}
 
 	public Empresa findById(Long codigo) throws IOException {
@@ -164,18 +183,6 @@ public class EmpresaServiceImpl implements EmpresaServInterface {
 	public Empresa empresaFindByCnpjEntity(Long codigo) {
 		Objects.requireNonNull(codigo, "Código da Empresa está nulo.");
 		return empresaRepository.findByEmpcnp(codigo).orElse(null);
-	}
-
-	public EmpresaDTO empresaFindByCnpjAbrangencia(Long codigo) throws IOException {
-		Empresa emp = empresaFindByCnpjEntity(codigo);
-		if (emp == null) {
-			return null;
-		}
-		Empresa empAbrangencia = findByIdAbrangencia(emp);
-		if (empAbrangencia == null) {
-			return null;
-		}
-		return new EmpresaDTO(empAbrangencia);
 	}
 
 	public Empresa findByIdEntity(@NonNull Long codigo) {

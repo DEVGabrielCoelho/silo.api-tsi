@@ -51,8 +51,7 @@ public class MedicaoServiceImpl implements MedicaoServInterface {
 		Date dateMedicao = sdfStringforDate(medicaoModel.getDataMedicao());
 		var siloModulo = siloModuloServiceImpl.findEntity(medicaoModel.getSilo());
 		siloModuloServiceImpl.registerMedicaoInModulo(siloModulo, new Date());
-		Medicao medicao = new Medicao(dateMedicao, siloModulo, medicaoModel.getUmidade(), medicaoModel.getAna(),
-				medicaoModel.getBarometro(), medicaoModel.getTemperatura(), medicaoModel.getDistancia());
+		Medicao medicao = new Medicao(dateMedicao, siloModulo, medicaoModel.getUmidade(), medicaoModel.getAna(), medicaoModel.getBarometro(), medicaoModel.getTemperatura(), medicaoModel.getDistancia());
 		Medicao savedMedicao = medicaoRepository.save(medicao);
 		logger.info("Medição salva com sucesso: " + savedMedicao);
 		return MessageResponse.success(new MedicaoDTO(savedMedicao));
@@ -64,10 +63,7 @@ public class MedicaoServiceImpl implements MedicaoServInterface {
 		Date dateMedicao = Utils.convertTimestampToDate(medicaoModel.getTimestamp());
 		var siloModulo = siloModuloServiceImpl.findEntity(Long.valueOf(medicaoModel.getDevEUI()));
 		siloModuloServiceImpl.registerMedicaoInModulo(siloModulo, new Date());
-		Medicao medicao = new Medicao(dateMedicao, siloModulo, medicaoModel.getObject().getHumidity(),
-				medicaoModel.getObject().getAnalogInput(),
-				medicaoModel.getObject().getBarometer(), medicaoModel.getObject().getTemperature(),
-				medicaoModel.getObject().getIlluminance());
+		Medicao medicao = new Medicao(dateMedicao, siloModulo, medicaoModel.getObject().getHumidity(), medicaoModel.getObject().getAnalogInput(), medicaoModel.getObject().getBarometer(), medicaoModel.getObject().getTemperature(), medicaoModel.getObject().getIlluminance());
 
 		Medicao savedMedicao = medicaoRepository.save(medicao);
 		logger.info("Medição salva com sucesso: " + savedMedicao);
@@ -97,8 +93,7 @@ public class MedicaoServiceImpl implements MedicaoServInterface {
 		var siloModulo = siloModuloServiceImpl.findEntity(medicaoModel.getSilo());
 		siloModuloServiceImpl.registerMedicaoInModulo(siloModulo, new Date());
 
-		existingMedicao.updateMedicao(siloModulo, medicaoModel.getUmidade(), medicaoModel.getAna(),
-				medicaoModel.getBarometro(), medicaoModel.getTemperatura(), medicaoModel.getDistancia());
+		existingMedicao.updateMedicao(siloModulo, medicaoModel.getUmidade(), medicaoModel.getAna(), medicaoModel.getBarometro(), medicaoModel.getTemperatura(), medicaoModel.getDistancia());
 
 		Medicao updatedMedicao = medicaoRepository.save(existingMedicao);
 		logger.info("Medição atualizada com sucesso: " + updatedMedicao);
@@ -113,8 +108,7 @@ public class MedicaoServiceImpl implements MedicaoServInterface {
 
 	@Override
 	public ResponseEntity<List<MedicaoDTO>> findAllMedicaoDTO() throws IOException {
-		List<MedicaoDTO> medicaoDTOs = medicaoRepository.findAll().stream().map(this::convertToMedicaoDTO)
-				.collect(Collectors.toList());
+		List<MedicaoDTO> medicaoDTOs = medicaoRepository.findAll().stream().map(this::convertToMedicaoDTO).collect(Collectors.toList());
 		return MessageResponse.success(medicaoDTOs);
 	}
 
@@ -122,13 +116,13 @@ public class MedicaoServiceImpl implements MedicaoServInterface {
 	public MedicaoDTO findByData(Date date) throws IOException {
 		return new MedicaoDTO(medicaoRepository.findByMsidth(date));
 	}
-	
+
 	@Override
 	public ResponseEntity<Page<MedicaoDTO>> medicaoFindAllPaginado(String searchTerm, String dataInicio, String dataFim, Pageable pageable) {
-        Specification<Medicao> spec = Medicao.filterByFields(searchTerm, null, dataInicio, dataFim);
-        Page<Medicao> result = medicaoRepository.findAll(spec, pageable);
-        return ResponseEntity.ok(result.map(MedicaoDTO::new));
-    }
+		Specification<Medicao> spec = Medicao.filterByFields(searchTerm, null, dataInicio, dataFim);
+		Page<Medicao> result = medicaoRepository.findAll(spec, pageable);
+		return ResponseEntity.ok(result.map(MedicaoDTO::new));
+	}
 
 	private MedicaoDTO convertToMedicaoDTO(Medicao medicaoEntity) {
 		return new MedicaoDTO(medicaoEntity);

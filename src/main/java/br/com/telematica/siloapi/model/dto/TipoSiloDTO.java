@@ -57,11 +57,11 @@ public class TipoSiloDTO extends Codigo {
 		this.nome = entity.getTsinom();
 		this.descricao = entity.getTsides();
 		this.tipoSilo = TipoSiloEnum.valueOf(entity.getTsitip());
-		this.distanciaSensor = Utils.converterMmParaCm(entity.getTsidse());
-		this.alturaCheio = Utils.converterMmParaCm(entity.getTsiach());
-		this.raio = Utils.converterMmParaCm(entity.getTsirai());
-		this.largura = Utils.converterMmParaCm(entity.getTsilar());
-		this.comprimento = Utils.converterMmParaCm(entity.getTsicom());
+		this.distanciaSensor = Utils.converterMmParaM(entity.getTsidse());
+		this.alturaCheio = Utils.converterMmParaM(entity.getTsiach());
+		this.raio = Utils.converterMmParaM(entity.getTsirai());
+		this.largura = Utils.converterMmParaM(entity.getTsilar());
+		this.comprimento = Utils.converterMmParaM(entity.getTsicom());
 	}
 
 	public TipoSiloDTO() {

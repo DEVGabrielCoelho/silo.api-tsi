@@ -48,8 +48,7 @@ public class SiloModuloController extends SecurityRestController {
 
 	@PutMapping("/v1/atualizar/{codigo}")
 	@Operation(description = "Atualização de um módulo de silo existente. Atualiza os detalhes de um módulo com base no código fornecido.")
-	public ResponseEntity<SiloModuloDTO> updateSiloModulo(@PathVariable("codigo") Long codigo,
-			@RequestBody SiloModuloModel siloModulo) throws IOException {
+	public ResponseEntity<SiloModuloDTO> updateSiloModulo(@PathVariable("codigo") Long codigo, @RequestBody SiloModuloModel siloModulo) throws IOException {
 		return siloModuloServInterface.update(codigo, siloModulo);
 	}
 
@@ -60,12 +59,8 @@ public class SiloModuloController extends SecurityRestController {
 	}
 
 	@GetMapping("/v1/paginado")
-	public ResponseEntity<Page<SiloModuloDTO>> findAllPaginado(
-			@RequestParam(value = "filtro", required = false) String filtro,
-			@RequestParam(value = "pagina", defaultValue = "0") int pagina,
-			@RequestParam(value = "tamanho", defaultValue = "10") int tamanho,
-			@RequestParam(value = "ordenarPor", defaultValue = "codigo") String ordenarPor,
-			@RequestParam(value = "direcao", defaultValue = "ASC") String direcao) throws EntityNotFoundException, IOException {
+	public ResponseEntity<Page<SiloModuloDTO>> findAllPaginado(@RequestParam(value = "filtro", required = false) String filtro, @RequestParam(value = "pagina", defaultValue = "0") int pagina, @RequestParam(value = "tamanho", defaultValue = "10") int tamanho,
+			@RequestParam(value = "ordenarPor", defaultValue = "codigo") String ordenarPor, @RequestParam(value = "direcao", defaultValue = "ASC") String direcao) throws EntityNotFoundException, IOException {
 
 		Sort sort = Sort.by(Sort.Direction.fromString(direcao), filtrarDirecao(ordenarPor));
 		Pageable pageable = PageRequest.of(pagina, tamanho, sort);
@@ -75,28 +70,19 @@ public class SiloModuloController extends SecurityRestController {
 
 	public String filtrarDirecao(String str) {
 		switch (str) {
-			case "codigo" -> {
-				return "smocod";
-			}
-			case "silo" -> {
-				return "silcod";
-			}
-			case "descricao" -> {
-				return "smodes";
-			}
-			case "numSerie" -> {
-				return "smonse";
-			}
-			default -> throw new AssertionError();
+		case "codigo" -> {
+			return "smocod";
+		}
+		case "silo" -> {
+			return "silcod";
+		}
+		case "descricao" -> {
+			return "smodes";
+		}
+		case "numSerie" -> {
+			return "smonse";
+		}
+		default -> throw new AssertionError();
 		}
 	}
 }
-
-
-
-
-
-
-
-
-

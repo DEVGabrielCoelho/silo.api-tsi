@@ -4,12 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public enum RecursoMapEnum {
-	PENDENCIA("PENDENCIA", "/api/pendencia"), FIRMWARE("FIRMWARE", "/api/pendencia-firmware"),
-	MEDICAO("MEDICAO", "/api/medicao"), LOGGER("LOGGER", "/api/logger"), EMPRESA("EMPRESA", "/api/empresa"),
-	USUARIO("USUARIO", "/api/usuario"), PERFIL("PERFIL", "/api/perfil"),
-	RECURSO("RECURSO", "/api/recurso"), ABRANGENCIA("ABRANGENCIA", "/api/abrangencia"),
-	MODULODEVICE("MODULODEVICE", "/api/modulo-device"), PLANTA("PLANTA", "/api/planta"), SILO("SILO", "/api/silo"),
-	MODULO("MODULO", "/api/silo-modulo"), TIPOSILO("TIPOSILO", "/api/tipo-silo");
+	PENDENCIA("PENDENCIA", "/api/pendencia"), FIRMWARE("FIRMWARE", "/api/pendencia-firmware"), MEDICAO("MEDICAO", "/api/medicao"), LOGGER("LOGGER", "/api/logger"), EMPRESA("EMPRESA", "/api/empresa"), USUARIO("USUARIO", "/api/usuario"), PERFIL("PERFIL", "/api/perfil"),
+	RECURSO("RECURSO", "/api/recurso"), ABRANGENCIA("ABRANGENCIA", "/api/abrangencia"), MODULODEVICE("MODULODEVICE", "/api/modulo-device"), PLANTA("PLANTA", "/api/planta"), SILO("SILO", "/api/silo"), MODULO("MODULO", "/api/silo-modulo"), TIPOSILO("TIPOSILO", "/api/tipo-silo");
 
 	private static final Logger logger = LoggerFactory.getLogger(RecursoMapEnum.class);
 	private final String nome;

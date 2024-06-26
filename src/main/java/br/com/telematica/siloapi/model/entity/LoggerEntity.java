@@ -114,7 +114,7 @@ public class LoggerEntity {
 				Long searchTermLong = Long.valueOf(filtro);
 				predicates.add(criteriaBuilder.equal(root.get("logcod"), searchTermLong));
 			} catch (NumberFormatException e) {
-				// 
+				//
 			}
 			// if (smocod != null) {
 			// predicates.add(criteriaBuilder.equal(root.get("smocod"), smocod));

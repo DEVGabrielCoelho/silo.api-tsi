@@ -42,46 +42,35 @@ public class MedicaoController extends SecurityRestController {
 
 	@PostMapping("/v1/criar")
 	@Operation(description = "Criar uma nova medição. Recebe os detalhes da medição e a armazena no sistema.")
-	public ResponseEntity<MedicaoDTO> createMedicao(@RequestBody MedicaoModel medicaoDTO)
-			throws IOException, ParseException {
+	public ResponseEntity<MedicaoDTO> createMedicao(@RequestBody MedicaoModel medicaoDTO) throws IOException, ParseException {
 		return medicaoService.save(medicaoDTO);
 	}
 
 	@PostMapping("/v1/criarMedicao")
 	@Operation(description = "Criar uma nova medição. Recebe os detalhes da medição e a armazena no sistema.")
-	public ResponseEntity<MedicaoDTO> createMedicao(@RequestBody MedicaoDeviceModel medicaoDTO)
-			throws IOException, ParseException {
+	public ResponseEntity<MedicaoDTO> createMedicao(@RequestBody MedicaoDeviceModel medicaoDTO) throws IOException, ParseException {
 		return medicaoService.saveData(medicaoDTO);
 	}
 
 	@PutMapping("/v1/atualiza")
 	@Operation(description = "Atualizar uma medição existente. Atualiza os detalhes de uma medição com base nas informações fornecidas.")
-	public ResponseEntity<MedicaoDTO> updateMedicao(@RequestBody MedicaoModel medicaoDTO)
-			throws IOException, ParseException {
+	public ResponseEntity<MedicaoDTO> updateMedicao(@RequestBody MedicaoModel medicaoDTO) throws IOException, ParseException {
 		return medicaoService.update(medicaoDTO);
 	}
 
 	@DeleteMapping("/v1/deletar")
 	@Operation(description = "Deletar uma medição pelo ID. Remove uma medição específica com base no ID fornecido.")
-	public ResponseEntity<MedicaoDTO> deleteMedicao(
-			@RequestParam(name = "dataMedicao", required = true) String dataMedicao)
-			throws IOException, ParseException {
+	public ResponseEntity<MedicaoDTO> deleteMedicao(@RequestParam(name = "dataMedicao", required = true) String dataMedicao) throws IOException, ParseException {
 		return medicaoService.deleteByMsidth(dataMedicao);
 	}
 
 	@GetMapping("/v1/paginado")
-    public ResponseEntity<Page<MedicaoDTO>> findAllPaginado(
-            @RequestParam(value = "filtro", required = false) String filtro,
-            @RequestParam(value = "dataInicio", required = false) String dataInicio,
-            @RequestParam(value = "dataFim", required = false) String dataFim,
-            @RequestParam(value = "pagina", defaultValue = "0") int pagina,
-            @RequestParam(value = "tamanho", defaultValue = "10") int tamanho,
-            @RequestParam(value = "ordenarPor", defaultValue = "msidth") String ordenarPor,
-            @RequestParam(value = "direcao", defaultValue = "ASC") String direcao) {
+	public ResponseEntity<Page<MedicaoDTO>> findAllPaginado(@RequestParam(value = "filtro", required = false) String filtro, @RequestParam(value = "dataInicio", required = false) String dataInicio, @RequestParam(value = "dataFim", required = false) String dataFim,
+			@RequestParam(value = "pagina", defaultValue = "0") int pagina, @RequestParam(value = "tamanho", defaultValue = "10") int tamanho, @RequestParam(value = "ordenarPor", defaultValue = "msidth") String ordenarPor, @RequestParam(value = "direcao", defaultValue = "ASC") String direcao) {
 
-        Sort sort = Sort.by(Sort.Direction.fromString(direcao), ordenarPor);
-        Pageable pageable = PageRequest.of(pagina, tamanho, sort);
+		Sort sort = Sort.by(Sort.Direction.fromString(direcao), ordenarPor);
+		Pageable pageable = PageRequest.of(pagina, tamanho, sort);
 
-        return medicaoService.medicaoFindAllPaginado(filtro, dataInicio, dataFim, pageable);
-    }
+		return medicaoService.medicaoFindAllPaginado(filtro, dataInicio, dataFim, pageable);
+	}
 }

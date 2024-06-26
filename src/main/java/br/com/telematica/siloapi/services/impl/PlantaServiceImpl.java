@@ -29,94 +29,100 @@ import jakarta.persistence.EntityNotFoundException;
 @Service
 public class PlantaServiceImpl implements PlantaServInterface {
 
-    private static final Logger logger = LoggerFactory.getLogger(PlantaServiceImpl.class);
-    private static final String RECURSO = "Planta";
+	private static final Logger logger = LoggerFactory.getLogger(PlantaServiceImpl.class);
+	private static final String RECURSO = "Planta";
 
-    @Autowired
-    private PlantaRepository plantaRepository;
+	@Autowired
+	private PlantaRepository plantaRepository;
 
-    @Autowired
-    private EmpresaServiceImpl empresaServiceImpl;
+	@Autowired
+	private EmpresaServiceImpl empresaServiceImpl;
 
-    @Autowired
+	@Autowired
 	private AbrangenciaHandler abrangenciaHandler;
 
-    public CheckAbrangenciaRec checagemFixaAbrangencia() throws EntityNotFoundException, IOException {
+	public CheckAbrangenciaRec checagemFixaAbrangencia() throws EntityNotFoundException, IOException {
 		return abrangenciaHandler.checkAbrangencia("PLANTA");
 	}
 
-    @Override
-    public ResponseEntity<PlantaDTO> save(PlantaModel planta) throws IOException {
-        validatePlantaFields(planta);
+	@Override
+	public ResponseEntity<PlantaDTO> save(PlantaModel planta) throws IOException {
+		validatePlantaFields(planta);
 
-        try {
-            var emp = empresaServiceImpl.findById(planta.getEmpresa());
-            var entity = new Planta();
-            entity.plantaUpdateOrSave(planta.getNome(), emp);
+		try {
+			var emp = empresaServiceImpl.findById(planta.getEmpresa());
+			var entity = new Planta();
+			entity.plantaUpdateOrSave(planta.getNome(), emp);
 
-            Planta savedPlanta = plantaRepository.save(entity);
-            logger.info("Planta salva com sucesso: " + savedPlanta);
+			Planta savedPlanta = plantaRepository.save(entity);
+			logger.info("Planta salva com sucesso: " + savedPlanta);
 
-            return MessageResponse.success(new PlantaDTO(savedPlanta));
-        } catch (IOException e) {
-            logger.error("Erro ao salvar a planta: ", e);
-            throw CustomMessageException.exceptionIOException("salvar", RECURSO, planta, e);
-        }
-    }
+			return MessageResponse.success(new PlantaDTO(savedPlanta));
+		} catch (IOException e) {
+			logger.error("Erro ao salvar a planta: ", e);
+			throw CustomMessageException.exceptionIOException("salvar", RECURSO, planta, e);
+		}
+	}
 
-    @Override
-    public ResponseEntity<PlantaDTO> deleteByPlacod(Long codigo) throws IOException {
-        try {
-            var entity = findEntity(codigo);
-            if (entity == null) {
-                throw new EntityNotFoundException("Não foi possível encontrar a Planta com o ID fornecido.");
-            }
+	@Override
+	public ResponseEntity<PlantaDTO> deleteByPlacod(Long codigo) throws IOException {
+		try {
+			var entity = findEntity(codigo);
+			if (entity == null) {
+				throw new EntityNotFoundException("Não foi possível encontrar a Planta com o ID fornecido.");
+			}
 
-            plantaRepository.removeByPlacod(entity.getPlacod());
-            return MessageResponse.success(null);
-        } catch (EmptyResultDataAccessException e) {
-            logger.error("Não foi possível encontrar a Planta com o ID fornecido. Error: ", e);
-            throw CustomMessageException.exceptionEntityNotFoundException(codigo, RECURSO, e);
-        } 
-    }
+			plantaRepository.removeByPlacod(entity.getPlacod());
+			return MessageResponse.success(null);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Não foi possível encontrar a Planta com o ID fornecido. Error: ", e);
+			throw CustomMessageException.exceptionEntityNotFoundException(codigo, RECURSO, e);
+		}
+	}
 
-    @Override
-    public ResponseEntity<PlantaDTO> update(Long codigo, PlantaModel planta) throws IOException {
-        Objects.requireNonNull(codigo, "Código da Planta está nulo.");
-        validatePlantaFields(planta);
+	@Override
+	public ResponseEntity<PlantaDTO> update(Long codigo, PlantaModel planta) throws IOException {
+		Objects.requireNonNull(codigo, "Código da Planta está nulo.");
+		validatePlantaFields(planta);
 
-        try {
-            var entity = findEntity(codigo);
-            var emp = empresaServiceImpl.findById(planta.getEmpresa());
-            entity.plantaUpdateOrSave(planta.getNome(), emp);
+		try {
+			var entity = findEntity(codigo);
+			var emp = empresaServiceImpl.findById(planta.getEmpresa());
+			entity.plantaUpdateOrSave(planta.getNome(), emp);
 
-            Planta updatedPlanta = plantaRepository.save(entity);
-            logger.info("Planta atualizada com sucesso: " + updatedPlanta);
+			Planta updatedPlanta = plantaRepository.save(entity);
+			logger.info("Planta atualizada com sucesso: " + updatedPlanta);
 
-            return MessageResponse.success(new PlantaDTO(updatedPlanta));
-        } catch (IOException e) {
-            logger.error("Erro ao atualizar a planta: ", e);
-            throw CustomMessageException.exceptionCodigoIOException("atualizar", RECURSO, codigo, planta, e);
-        }
-    }
+			return MessageResponse.success(new PlantaDTO(updatedPlanta));
+		} catch (IOException e) {
+			logger.error("Erro ao atualizar a planta: ", e);
+			throw CustomMessageException.exceptionCodigoIOException("atualizar", RECURSO, codigo, planta, e);
+		}
+	}
 
-    @Override
-    public List<Planta> findAll() throws IOException {
-        return plantaRepository.findAll();
-    }
+	@Override
+	public List<Planta> findAll() throws IOException {
+		return plantaRepository.findAll();
+	}
 
-    @Override
-    public ResponseEntity<List<PlantaDTO>> findAllPlantaDTO() throws IOException {
-        List<PlantaDTO> plantaDTOs = plantaRepository.findAll().stream()
-        .map(this::convertToPlantaDTO)
-        .collect(Collectors.toList());
-        return MessageResponse.success(plantaDTOs);
-    }
-    
-    @Override
-    public ResponseEntity<Page<PlantaDTO>> plantaFindAllPaginado(String searchTerm, Pageable pageable) throws EntityNotFoundException, IOException {
+	@Override
+	public ResponseEntity<List<PlantaDTO>> findAllPlantaDTO() throws IOException {
+		var check = checagemFixaAbrangencia();
+		Specification<Planta> spec = Specification.where(null);
 
-        var check = checagemFixaAbrangencia();
+		if (check.isHier() == 0) {
+			spec = spec.and(Planta.filterByFields(null, null));
+		} else {
+			spec = spec.and(Planta.filterByFields(null, check.listAbrangencia()));
+		}
+		List<PlantaDTO> plantaDTOs = plantaRepository.findAll(spec).stream().map(this::convertToPlantaDTO).collect(Collectors.toList());
+		return MessageResponse.success(plantaDTOs);
+	}
+
+	@Override
+	public ResponseEntity<Page<PlantaDTO>> plantaFindAllPaginado(String searchTerm, Pageable pageable) throws EntityNotFoundException, IOException {
+
+		var check = checagemFixaAbrangencia();
 		Specification<Planta> spec = Specification.where(null);
 
 		if (check.isHier() == 0) {
@@ -124,35 +130,40 @@ public class PlantaServiceImpl implements PlantaServInterface {
 		} else {
 			spec = spec.and(Planta.filterByFields(searchTerm, check.listAbrangencia()));
 		}
-        Page<Planta> result = plantaRepository.findAll(spec, pageable);
-        return ResponseEntity.ok(result.map(PlantaDTO::new));
-    }
+		Page<Planta> result = plantaRepository.findAll(spec, pageable);
+		return ResponseEntity.ok(result.map(PlantaDTO::new));
+	}
 
-    @Override
-    public ResponseEntity<PlantaDTO> findById(Long codigo) throws IOException, EmptyResultDataAccessException {
-        Objects.requireNonNull(codigo, "Código da Planta está nulo.");
+	@Override
+	public ResponseEntity<PlantaDTO> findById(Long codigo) throws IOException, EmptyResultDataAccessException {
+		Objects.requireNonNull(codigo, "Código da Planta está nulo.");
+		var check = checagemFixaAbrangencia();
+		Long idPermitted = abrangenciaHandler.findIdAbrangenciaPermi(check, codigo);
+		if (idPermitted == null) {
+			// throw new EntityNotFoundException("Acesso negado ou entidade não
+			// encontrada.");
+			return MessageResponse.success(null);
+		}
+		Planta result = findEntity(idPermitted);
+		if (result == null) {
+			logger.error("Planta não encontrada.");
+			throw new EntityNotFoundException("Planta não encontrada com o código: " + codigo);
+		}
 
-        Planta result = findEntity(codigo);
-        if (result == null) {
-            logger.error("Planta não encontrada.");
-            throw new EntityNotFoundException("Planta não encontrada com o código: " + codigo);
-        }
+		return MessageResponse.success(new PlantaDTO(result));
+	}
 
-        return MessageResponse.success(new PlantaDTO(result));
-    }
+	private PlantaDTO convertToPlantaDTO(Planta plantaEntity) {
+		return new PlantaDTO(plantaEntity);
+	}
 
-    private PlantaDTO convertToPlantaDTO(Planta plantaEntity) {
-        return new PlantaDTO(plantaEntity);
-    }
+	Planta findEntity(Long codigo) {
+		Objects.requireNonNull(codigo, "Código está nulo.");
+		return plantaRepository.findById(codigo).orElseThrow(() -> new EntityNotFoundException("Planta não encontrada com o código: " + codigo));
+	}
 
-    Planta findEntity(Long codigo) {
-        Objects.requireNonNull(codigo, "Código está nulo.");
-        return plantaRepository.findById(codigo)
-                .orElseThrow(() -> new EntityNotFoundException("Planta não encontrada com o código: " + codigo));
-    }
-
-    private void validatePlantaFields(PlantaModel planta) {
-        Objects.requireNonNull(planta.getEmpresa(), "Código da Empresa está nulo.");
-        Objects.requireNonNull(planta.getNome(), "Nome da planta está nulo.");
-    }
+	private void validatePlantaFields(PlantaModel planta) {
+		Objects.requireNonNull(planta.getEmpresa(), "Código da Empresa está nulo.");
+		Objects.requireNonNull(planta.getNome(), "Nome da planta está nulo.");
+	}
 }

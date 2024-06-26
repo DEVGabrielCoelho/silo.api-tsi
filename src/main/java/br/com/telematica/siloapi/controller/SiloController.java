@@ -58,40 +58,30 @@ public class SiloController extends SecurityRestController {
 	}
 
 	@GetMapping("/v1/paginado")
-    public ResponseEntity<Page<SiloDTO>> findAllPaginado(
-            @RequestParam(value = "filtro", required = false) String filtro,
-            @RequestParam(value = "pagina", defaultValue = "0") int pagina,
-            @RequestParam(value = "tamanho", defaultValue = "10") int tamanho,
-            @RequestParam(value = "ordenarPor", defaultValue = "silcod") String ordenarPor,
-            @RequestParam(value = "direcao", defaultValue = "ASC") String direcao) {
+	public ResponseEntity<Page<SiloDTO>> findAllPaginado(@RequestParam(value = "filtro", required = false) String filtro, @RequestParam(value = "pagina", defaultValue = "0") int pagina, @RequestParam(value = "tamanho", defaultValue = "10") int tamanho,
+			@RequestParam(value = "ordenarPor", defaultValue = "silcod") String ordenarPor, @RequestParam(value = "direcao", defaultValue = "ASC") String direcao) {
 
-        Sort sort = Sort.by(Sort.Direction.fromString(direcao), filtrarDirecao(ordenarPor));
-        Pageable pageable = PageRequest.of(pagina, tamanho, sort);
+		Sort sort = Sort.by(Sort.Direction.fromString(direcao), filtrarDirecao(ordenarPor));
+		Pageable pageable = PageRequest.of(pagina, tamanho, sort);
 
-        return silo.siloFindAllPaginado(filtro, pageable);
-    }
+		return silo.siloFindAllPaginado(filtro, pageable);
+	}
 
 	public String filtrarDirecao(String str) {
 		switch (str) {
-			case "codigo" -> {
-				return "silcod";
-			}
-			case "tipoSilo" -> {
-				return "tsicod";
-			}
-			case "planta" -> {
-				return "placod";
-			}
-			case "nome" -> {
-				return "silnom";
-			}
-			default -> throw new AssertionError();
+		case "codigo" -> {
+			return "silcod";
+		}
+		case "tipoSilo" -> {
+			return "tsicod";
+		}
+		case "planta" -> {
+			return "placod";
+		}
+		case "nome" -> {
+			return "silnom";
+		}
+		default -> throw new AssertionError();
 		}
 	}
 }
-
-
-
-
-
-

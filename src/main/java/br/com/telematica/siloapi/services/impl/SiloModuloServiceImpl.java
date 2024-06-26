@@ -43,20 +43,14 @@ public class SiloModuloServiceImpl implements SiloModuloServInterface {
 	@Lazy
 	private MedicaoServiceImpl medicaoServiceImpl;
 
-	private double volumeTotal = 0;
-	private double volumeStatus = 0;
-
 	@Autowired
 	private AbrangenciaHandler abrangenciaHandler;
-
 
 	@Override
 	public ResponseEntity<SiloModuloDTO> save(SiloModuloModel object) throws IOException {
 		try {
 			var silo = siloServiceImpl.findCodigo(object.getSilo());
-			var entity = new SiloModulo(null, silo, object.getDescricao(), object.getTotalSensor(),
-					object.getNumSerie(), object.getTimeoutKeepAlive(), object.getTimeoutMedicao(), null, null,
-					object.getGmt(), object.getCorKeepAlive(), object.getCorMedicao(), object.getStatus().getStatus());
+			var entity = new SiloModulo(null, silo, object.getDescricao(), object.getTotalSensor(), object.getNumSerie(), object.getTimeoutKeepAlive(), object.getTimeoutMedicao(), null, null, object.getGmt(), object.getCorKeepAlive(), object.getCorMedicao(), object.getStatus().getStatus());
 
 			SiloModulo result = siloModuloRepository.save(entity);
 			logger.info("Módulo do Silo salvo com sucesso: " + result);
@@ -71,8 +65,7 @@ public class SiloModuloServiceImpl implements SiloModuloServInterface {
 	public ResponseEntity<SiloModuloDTO> delete(Long codigo) throws IOException {
 		Objects.requireNonNull(codigo, "Código do Módulo do Silo está nulo.");
 		try {
-			var entity = siloModuloRepository.findById(codigo).orElseThrow(() -> new EntityNotFoundException(
-					"Não foi possível encontrar o módulo do silo com o ID fornecido: " + codigo));
+			var entity = siloModuloRepository.findById(codigo).orElseThrow(() -> new EntityNotFoundException("Não foi possível encontrar o módulo do silo com o ID fornecido: " + codigo));
 
 			siloModuloRepository.delete(entity);
 			logger.info("Módulo do Silo deletado com sucesso: " + entity);
@@ -87,12 +80,9 @@ public class SiloModuloServiceImpl implements SiloModuloServInterface {
 	public ResponseEntity<SiloModuloDTO> update(Long codigo, SiloModuloModel object) throws IOException {
 		try {
 			var silo = siloServiceImpl.findCodigo(object.getSilo());
-			var siloModulo = siloModuloRepository.findById(codigo).orElseThrow(() -> new EntityNotFoundException(
-					"Não foi possível encontrar o módulo do silo com o ID fornecido: " + codigo));
+			var siloModulo = siloModuloRepository.findById(codigo).orElseThrow(() -> new EntityNotFoundException("Não foi possível encontrar o módulo do silo com o ID fornecido: " + codigo));
 
-			var entity = new SiloModulo(siloModulo.getSmocod(), silo, object.getDescricao(), object.getTotalSensor(),
-					object.getNumSerie(), object.getTimeoutKeepAlive(), object.getTimeoutMedicao(), null, null,
-					object.getGmt(), object.getCorKeepAlive(), object.getCorMedicao(),
+			var entity = new SiloModulo(siloModulo.getSmocod(), silo, object.getDescricao(), object.getTotalSensor(), object.getNumSerie(), object.getTimeoutKeepAlive(), object.getTimeoutMedicao(), null, null, object.getGmt(), object.getCorKeepAlive(), object.getCorMedicao(),
 					object.getStatus().getStatus());
 
 			SiloModulo result = siloModuloRepository.save(entity);
@@ -107,8 +97,7 @@ public class SiloModuloServiceImpl implements SiloModuloServInterface {
 	@Override
 	public ResponseEntity<List<SiloModuloDTO>> findAll() {
 		List<SiloModulo> modulos = siloModuloRepository.findAll();
-		List<SiloModuloDTO> dtoList = modulos.stream().map(this::dtoCalc)
-				.collect(Collectors.toList());
+		List<SiloModuloDTO> dtoList = modulos.stream().map(this::dtoCalc).collect(Collectors.toList());
 		return MessageResponse.success(dtoList);
 	}
 
@@ -124,7 +113,7 @@ public class SiloModuloServiceImpl implements SiloModuloServInterface {
 			spec = spec.and(SiloModulo.filterByFields(searchTerm, checkModulo.listAbrangencia(), checkSilo.isHier() == 0 ? null : checkSilo.listAbrangencia()));
 		}
 		Page<SiloModulo> result = siloModuloRepository.findAll(spec, pageable);
-		return ResponseEntity.ok(result.map(SiloModuloDTO::new));
+		return ResponseEntity.ok(result.map(this::dtoCalc));
 	}
 
 	@Override
@@ -159,31 +148,32 @@ public class SiloModuloServiceImpl implements SiloModuloServInterface {
 
 	public SiloModuloDTO dtoCalc(SiloModulo siloModulo) {
 		TipoSilo tipoSilo = siloModulo.getSilo().getTipoSilo();
-		var tipo = TipoSiloEnum.valueOf(tipoSilo.getTsitip());
+		TipoSiloEnum tipo = TipoSiloEnum.valueOf(tipoSilo.getTsitip());
+		Medicao ultimaMedicao = medicaoServiceImpl.ultimaMedicao(siloModulo);
+
+		if (ultimaMedicao == null) {
+			return new SiloModuloDTO(siloModulo);
+		}
 		double raio = tipoSilo.getTsirai();
 		double largura = tipoSilo.getTsilar();
 		double comprimento = tipoSilo.getTsicom();
 		double alturaSilo = tipoSilo.getTsiach() - tipoSilo.getTsidse();
-		Medicao ultimaMedicao = medicaoServiceImpl.ultimaMedicao(siloModulo);
-		if (ultimaMedicao == null){
-			return new SiloModuloDTO(siloModulo);
-		}
+		double ultimaMed = ultimaMedicao.getMsidis() - tipoSilo.getTsidse();
+
+		double volumeTotal = 0;
+		double volumeStatus = 0;
+
 		if (tipo == TipoSiloEnum.HORIZONTAL) {
 			volumeTotal = Utils.calcularVolumeHorizontal(comprimento, largura, alturaSilo);
-			volumeStatus = Utils.calcularVolumeHorizontal(comprimento, largura, ultimaMedicao.getMsidis()); // valor da
-																											// medição
-
-		}
-		if (tipo == TipoSiloEnum.VERTICAL) {
+			volumeStatus = Utils.calcularVolumeHorizontal(comprimento, largura, ultimaMed);
+		} else if (tipo == TipoSiloEnum.VERTICAL) {
 			volumeTotal = Utils.calcularVolumeVertical(raio, alturaSilo);
-			volumeStatus = Utils.calcularVolumeVertical(raio, ultimaMedicao.getMsidis()); // valor da medição
-
+			volumeStatus = Utils.calcularVolumeVertical(raio, ultimaMed);
 		}
 
-		var siloModuloDTO = new SiloModuloDTO(siloModulo);
+		SiloModuloDTO siloModuloDTO = new SiloModuloDTO(siloModulo);
 		siloModuloDTO.volumeSilo(volumeTotal, volumeStatus);
 
 		return siloModuloDTO;
 	}
-
 }

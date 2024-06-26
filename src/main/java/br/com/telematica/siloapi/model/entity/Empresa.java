@@ -16,7 +16,7 @@ import jakarta.persistence.criteria.Predicate;
 
 @Entity
 @Table(name = "empresa")
-public class Empresa implements Serializable{
+public class Empresa implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 

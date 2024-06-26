@@ -14,7 +14,7 @@ public interface MedicaoRepository extends JpaRepository<Medicao, Date>, JpaSpec
 	void deleteByMsidth(Date msidth);
 
 	Medicao findByMsidth(Date msidth);
-	Optional<Medicao> findFirstBySilomoduloOrderByMsidthDesc(SiloModulo silomodulo);
 
+	Optional<Medicao> findFirstBySilomoduloOrderByMsidthDesc(SiloModulo silomodulo);
 
 }

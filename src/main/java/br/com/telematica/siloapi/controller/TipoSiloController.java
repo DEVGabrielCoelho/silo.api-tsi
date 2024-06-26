@@ -24,6 +24,7 @@ import br.com.telematica.siloapi.model.dto.TipoSiloDTO;
 import br.com.telematica.siloapi.services.TipoSiloServInterface;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 
 @RestController
@@ -60,35 +61,31 @@ public class TipoSiloController extends SecurityRestController {
 
 	@GetMapping("/v1/paginado")
 	@Operation(description = "Busca uma lista paginada de tipo de silo com base em critérios de busca e ordenação. Este endpoint permite a busca por um termo específico, além de suportar paginação e ordenação dos resultados.")
-	public ResponseEntity<Page<TipoSiloDTO>> findAllPaginado(
-            @RequestParam(value = "filtro", required = false) String filtro,
-            @RequestParam(value = "pagina", defaultValue = "0") int pagina,
-            @RequestParam(value = "tamanho", defaultValue = "10") int tamanho,
-            @RequestParam(value = "ordenarPor", defaultValue = "codigo") String ordenarPor,
-            @RequestParam(value = "direcao", defaultValue = "ASC") String direcao) {
+	public ResponseEntity<Page<TipoSiloDTO>> findAllPaginado(@RequestParam(value = "filtro", required = false) String filtro, @RequestParam(value = "pagina", defaultValue = "0") int pagina, @RequestParam(value = "tamanho", defaultValue = "10") int tamanho,
+			@RequestParam(value = "ordenarPor", defaultValue = "codigo") String ordenarPor, @RequestParam(value = "direcao", defaultValue = "ASC") String direcao) throws EntityNotFoundException, IOException {
 
-        Sort sort = Sort.by(Sort.Direction.fromString(direcao), filtrarDirecao(ordenarPor));
-        Pageable pageable = PageRequest.of(pagina, tamanho, sort);
+		Sort sort = Sort.by(Sort.Direction.fromString(direcao), filtrarDirecao(ordenarPor));
+		Pageable pageable = PageRequest.of(pagina, tamanho, sort);
 
-        return tipoSiloInterface.tipoSiloFindAllPaginado(filtro, pageable);
-    }
+		return tipoSiloInterface.tipoSiloFindAllPaginado(filtro, pageable);
+	}
 
 	public String filtrarDirecao(String str) {
 		switch (str) {
-			case "codigo" -> {
-				return "tsicod";
-			}
-			case "nome" -> {
-				return "tsinom";
-			}
-			case "descricao" -> {
-				return "tsides";
-			}
-			case "tipoSilo" -> {
-				return "tsitip";
-			}
-			default -> throw new AssertionError();
+		case "codigo" -> {
+			return "tsicod";
+		}
+		case "nome" -> {
+			return "tsinom";
+		}
+		case "descricao" -> {
+			return "tsides";
+		}
+		case "tipoSilo" -> {
+			return "tsitip";
+		}
+		default -> throw new AssertionError();
 		}
 	}
-	
+
 }

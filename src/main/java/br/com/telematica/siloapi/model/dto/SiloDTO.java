@@ -94,5 +94,4 @@ public class SiloDTO extends Codigo {
 		return builder.toString();
 	}
 
-	
 }

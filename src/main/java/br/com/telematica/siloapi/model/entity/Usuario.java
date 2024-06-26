@@ -84,7 +84,6 @@ public class Usuario implements UserDetails {
 		this.abrangencia = abrangencia;
 	}
 
-
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
@@ -204,7 +203,7 @@ public class Usuario implements UserDetails {
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		return Collections.singleton(new SimpleGrantedAuthority(this.perfil.getPernom()));
 	}
-	
+
 	@Override
 	public String getPassword() {
 		return this.getUsusen();

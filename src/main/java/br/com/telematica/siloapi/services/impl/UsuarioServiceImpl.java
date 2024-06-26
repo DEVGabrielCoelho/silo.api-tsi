@@ -58,7 +58,7 @@ public class UsuarioServiceImpl implements UsuarioServInterface {
 	public Usuario findLoginEntity(String login) {
 		return userRepository.findByUsulog(login).orElseThrow(() -> new EntityNotFoundException("Usuário não existe!"));
 	}
-	
+
 	public Usuario findLoginEntityNull(String login) {
 		return userRepository.findByUsulog(login).orElse(null);
 	}

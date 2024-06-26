@@ -16,13 +16,13 @@ public class LoggerDTO {
 
 	public static String consultaPagable(String value) {
 		switch (value) {
-			case "data" -> {
-				return "logdat";
-			}
-			case "tipoLogger" -> {
-				return "logtip";
-			}
-			default -> throw new IllegalArgumentException("Unexpected value: " + value);
+		case "data" -> {
+			return "logdat";
+		}
+		case "tipoLogger" -> {
+			return "logtip";
+		}
+		default -> throw new IllegalArgumentException("Unexpected value: " + value);
 		}
 	}
 

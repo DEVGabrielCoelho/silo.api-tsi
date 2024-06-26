@@ -1,17 +1,13 @@
 package br.com.telematica.siloapi.model.dto;
 
 import br.com.telematica.siloapi.model.entity.Planta;
-import io.swagger.v3.oas.annotations.media.Schema;
 
-@Schema(name = "PlantaDTO", description = "Objeto de transferência de dados de Planta")
 public class PlantaDTO extends Codigo {
 
-	@Schema(description = "Código da empresa", example = "1", nullable = false)
-	private Long empresa;
-	@Schema(description = "Nome da planta", example = "Planta 1", nullable = false)
+	private EmpresaDTO empresa;
 	private String nome;
 
-	public PlantaDTO(Long empresa, String nome) {
+	public PlantaDTO(EmpresaDTO empresa, String nome) {
 		this.empresa = empresa;
 		this.nome = nome;
 	}
@@ -23,7 +19,7 @@ public class PlantaDTO extends Codigo {
 	public PlantaDTO(Planta planta) {
 
 		this.setCodigo(planta.getPlacod());
-		this.empresa = planta.getEmpresa().getEmpcod();
+		this.empresa = new EmpresaDTO(planta.getEmpresa());
 		this.nome = planta.getPlanom();
 	}
 
@@ -39,11 +35,11 @@ public class PlantaDTO extends Codigo {
 		return builder.toString();
 	}
 
-	public Long getEmpresa() {
+	public EmpresaDTO getEmpresa() {
 		return empresa;
 	}
 
-	public void setEmpresa(Long empresa) {
+	public void setEmpresa(EmpresaDTO empresa) {
 		this.empresa = empresa;
 	}
 

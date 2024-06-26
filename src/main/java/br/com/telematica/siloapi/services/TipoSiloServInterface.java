@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 
 import br.com.telematica.siloapi.model.TipoSiloModel;
 import br.com.telematica.siloapi.model.dto.TipoSiloDTO;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
 public interface TipoSiloServInterface {
@@ -25,5 +26,5 @@ public interface TipoSiloServInterface {
 
 	public ResponseEntity<TipoSiloDTO> save(TipoSiloModel tipoSilo) throws IOException;
 
-	public ResponseEntity<Page<TipoSiloDTO>> tipoSiloFindAllPaginado(String searchTerm, Pageable pageable);
+	public ResponseEntity<Page<TipoSiloDTO>> tipoSiloFindAllPaginado(String searchTerm, Pageable pageable) throws EntityNotFoundException, IOException;
 }

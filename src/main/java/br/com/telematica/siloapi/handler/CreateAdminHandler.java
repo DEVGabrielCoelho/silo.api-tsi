@@ -45,8 +45,7 @@ public class CreateAdminHandler {
 
 	private static final Long CNPJTSI = Long.valueOf("44772937000150");
 
-	private static final String[] listaRecursos = { "PENDENCIA", "FIRMWARE", "LOGGER", "USUARIO", "PERFIL", "RECURSO",
-			"ABRANGENCIA", "EMPRESA", "PLANTA", "MEDICAO", "SILO", "TIPOSILO", "MODULO" };
+	private static final String[] listaRecursos = { "PENDENCIA", "FIRMWARE", "LOGGER", "USUARIO", "PERFIL", "RECURSO", "ABRANGENCIA", "EMPRESA", "PLANTA", "MEDICAO", "SILO", "TIPOSILO", "MODULO" };
 	private static final String[] listaAbrangencia = { "EMPRESA", "PLANTA", "SILO", "TIPOSILO", "MODULO" };
 
 	@PostConstruct
@@ -75,8 +74,7 @@ public class CreateAdminHandler {
 			logs.info("createEmpresa Start... ");
 			var empresa = empresaService.empresaFindByCnpjEntity(CNPJTSI);
 
-			EmpresaModel empresaModel = new EmpresaModel(CNPJTSI, "Telemática - Sistemas Inteligentes", "TSI",
-					"(99)99999-9999");
+			EmpresaModel empresaModel = new EmpresaModel(CNPJTSI, "Telemática - Sistemas Inteligentes", "TSI", "(99)99999-9999");
 			if (empresa == null)
 				empresaService.empresaSave(empresaModel);
 
@@ -90,16 +88,13 @@ public class CreateAdminHandler {
 			logs.info("createPerfil Start... ");
 			var perfil = perfilPermissaoService.findByIdPerfilEntity("ADMIN");
 			if (perfil == null)
-				perfil = perfilPermissaoService
-						.createUpdatePerfil(new Perfil(null, "ADMIN", "Perfil do Administrador."));
+				perfil = perfilPermissaoService.createUpdatePerfil(new Perfil(null, "ADMIN", "Perfil do Administrador."));
 			else
-				perfil = perfilPermissaoService
-						.createUpdatePerfil(new Perfil(perfil.getPercod(), "ADMIN", "Perfil do Administrador."));
+				perfil = perfilPermissaoService.createUpdatePerfil(new Perfil(perfil.getPercod(), "ADMIN", "Perfil do Administrador."));
 			int listItem = listaRecursos.length;
 			for (int i = 0; i < listItem; i++) {
 				RecursoMapEnum recursoEnum = RecursoMapEnum.valueOf(listaRecursos[i]);
-				var valueRecurso = perfilPermissaoService.findByPerfilAndRecurso(perfil,
-						recursoService.findByIdEntity(recursoEnum.getNome()));
+				var valueRecurso = perfilPermissaoService.findByPerfilAndRecurso(perfil, recursoService.findByIdEntity(recursoEnum.getNome()));
 				PermissaoModel permissao = new PermissaoModel(recursoEnum, 1, 1, 1, 1, 1);
 				if (valueRecurso == null)
 					perfilPermissaoService.saveEntityPermissao(perfil, permissao);
@@ -118,13 +113,11 @@ public class CreateAdminHandler {
 			if (perfil == null)
 				perfil = perfilPermissaoService.createUpdatePerfil(new Perfil(null, "DEVICE", "Perfil do DEVICE."));
 			else
-				perfil = perfilPermissaoService
-						.createUpdatePerfil(new Perfil(perfil.getPercod(), "DEVICE", "Perfil do DEVICE."));
+				perfil = perfilPermissaoService.createUpdatePerfil(new Perfil(perfil.getPercod(), "DEVICE", "Perfil do DEVICE."));
 			int listItem = listaRecursos.length;
 			for (int i = 0; i < listItem; i++) {
 				RecursoMapEnum recursoEnum = RecursoMapEnum.valueOf(listaRecursos[i]);
-				var valueRecurso = perfilPermissaoService.findByPerfilAndRecurso(perfil,
-						recursoService.findByIdEntity(recursoEnum.getNome()));
+				var valueRecurso = perfilPermissaoService.findByPerfilAndRecurso(perfil, recursoService.findByIdEntity(recursoEnum.getNome()));
 				PermissaoModel permissao = new PermissaoModel(RecursoMapEnum.valueOf(listaRecursos[i]), 1, 1, 1, 1, 1);
 				if (valueRecurso == null)
 					perfilPermissaoService.saveEntityPermissao(perfil, permissao);
@@ -173,15 +166,10 @@ public class CreateAdminHandler {
 				JsonNodeConverter jsonNode = new JsonNodeConverter();
 				String data = jsonNode.convertToDatabaseColumn(new ObjectMapper().createArrayNode());
 
-				AbrangenciaDetalhes abd = new AbrangenciaDetalhes(
-						null,
-						abrangencia,
-						recurso,
-						0,
-						data);
+				AbrangenciaDetalhes abd = new AbrangenciaDetalhes(null, abrangencia, recurso, 0, data);
 
-				if (abrangenciaService.findByAbrangenciaAndRecursoContainingAbrangencia(abrangencia,recurso) == null)
-					abrangenciaService.saveOrUpdateAbrangenciaDetalhes(abrangencia,abd);
+				if (abrangenciaService.findByAbrangenciaAndRecursoContainingAbrangencia(abrangencia, recurso) == null)
+					abrangenciaService.saveOrUpdateAbrangenciaDetalhes(abrangencia, abd);
 			}
 		} catch (Exception e) {
 			logs.error("createAbrangencia: ", e);
@@ -212,8 +200,7 @@ public class CreateAdminHandler {
 			var empresa = empresaService.empresaFindByCnpjEntity(CNPJTSI);
 			var perfil = perfilPermissaoService.findByIdPerfilEntity("ADMIN");
 			var abrangencia = abrangenciaService.findByIdEntity("ADMIN");
-			UsuarioModel usuario = new UsuarioModel("ADMIN", Long.valueOf(0), "admin", "admin", "admin@admin.com",
-					empresa.getEmpcod(), perfil.getPercod(), abrangencia.getAbrcod());
+			UsuarioModel usuario = new UsuarioModel("ADMIN", Long.valueOf(0), "admin", "admin", "admin@admin.com", empresa.getEmpcod(), perfil.getPercod(), abrangencia.getAbrcod());
 			var userCheck = usuarioService.findLoginEntityNull("admin");
 			if (userCheck == null)
 				usuarioService.saveUpdateEntity(usuario);
@@ -228,8 +215,7 @@ public class CreateAdminHandler {
 			var empresa = empresaService.empresaFindByCnpjEntity(CNPJTSI);
 			var perfil = perfilPermissaoService.findByIdPerfilEntity("DEVICE");
 			var abrangencia = abrangenciaService.findByIdEntity("DEVICE");
-			UsuarioModel usuario = new UsuarioModel("DEVICE", Long.valueOf(0), "device", "device", "DEVICE@DEVICE.com",
-					empresa.getEmpcod(), perfil.getPercod(), abrangencia.getAbrcod());
+			UsuarioModel usuario = new UsuarioModel("DEVICE", Long.valueOf(0), "device", "device", "DEVICE@DEVICE.com", empresa.getEmpcod(), perfil.getPercod(), abrangencia.getAbrcod());
 			var userCheck = usuarioService.findLoginEntityNull("device");
 			if (userCheck == null)
 				usuarioService.saveUpdateEntity(usuario);

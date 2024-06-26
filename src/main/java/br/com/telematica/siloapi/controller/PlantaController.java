@@ -59,15 +59,9 @@ public class PlantaController extends SecurityRestController {
 	}
 
 	@GetMapping("/v1/paginado")
-	public ResponseEntity<Page<PlantaDTO>> findAllPaginado(
-			@RequestParam(value = "filtro", required = false) String filtro,
-			@RequestParam(value = "pagina", defaultValue = "0") int pagina,
-			@RequestParam(value = "tamanho", defaultValue = "10") int tamanho,
-			@RequestParam(value = "ordenarPor", defaultValue = "codigo") String ordenarPor,
-			@RequestParam(value = "direcao", defaultValue = "ASC") String direcao) throws EntityNotFoundException, IOException {
+	public ResponseEntity<Page<PlantaDTO>> findAllPaginado(@RequestParam(value = "filtro", required = false) String filtro, @RequestParam(value = "pagina", defaultValue = "0") int pagina, @RequestParam(value = "tamanho", defaultValue = "10") int tamanho,
+			@RequestParam(value = "ordenarPor", defaultValue = "codigo") String ordenarPor, @RequestParam(value = "direcao", defaultValue = "ASC") String direcao) throws EntityNotFoundException, IOException {
 
-				
-		
 		Sort sort = Sort.by(Sort.Direction.fromString(direcao), filtrarDirecao(ordenarPor));
 		Pageable pageable = PageRequest.of(pagina, tamanho, sort);
 
@@ -76,16 +70,16 @@ public class PlantaController extends SecurityRestController {
 
 	public String filtrarDirecao(String str) {
 		switch (str) {
-			case "codigo" -> {
-				return "placod";
-			}
-			case "empresa" -> {
-				return "empcod";
-			}
-			case "nome" -> {
-				return "planom";
-			}
-			default -> throw new AssertionError();
+		case "codigo" -> {
+			return "placod";
+		}
+		case "empresa" -> {
+			return "empcod";
+		}
+		case "nome" -> {
+			return "planom";
+		}
+		default -> throw new AssertionError();
 		}
 	}
 }
