@@ -4,7 +4,7 @@ import br.com.telematica.siloapi.model.entity.SiloModulo;
 import br.com.telematica.siloapi.model.enums.StatusDeviceEnum;
 import br.com.telematica.siloapi.utils.Utils;
 
-public class SiloModuloDTO extends Codigo {
+public class SiloModuloDTO extends CodigoExtends {
 
 	private SiloDTO silo;
 	private String descricao;

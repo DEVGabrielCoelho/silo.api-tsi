@@ -1,6 +1,6 @@
 package br.com.telematica.siloapi.model.dto;
 
-public class Codigo {
+public class CodigoExtends {
 	private Long codigo;
 
 	public Long getCodigo() {
@@ -22,12 +22,12 @@ public class Codigo {
 		return builder.toString();
 	}
 
-	public Codigo(Long codigo) {
+	public CodigoExtends(Long codigo) {
 		super();
 		this.codigo = codigo;
 	}
 
-	public Codigo() {
+	public CodigoExtends() {
 		super();
 		
 	}

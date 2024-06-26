@@ -2,7 +2,7 @@ package br.com.telematica.siloapi.model.dto;
 
 import br.com.telematica.siloapi.model.entity.Empresa;
 
-public class EmpresaDTO extends Codigo {
+public class EmpresaDTO extends CodigoExtends {
 	private Long cnpj;
 	private String nome;
 	private String nomeFantasia;

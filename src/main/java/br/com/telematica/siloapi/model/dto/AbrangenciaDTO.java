@@ -2,7 +2,7 @@ package br.com.telematica.siloapi.model.dto;
 
 import br.com.telematica.siloapi.model.entity.Abrangencia;
 
-public class AbrangenciaDTO extends Codigo {
+public class AbrangenciaDTO extends CodigoExtends {
 
 	private String nome;
 

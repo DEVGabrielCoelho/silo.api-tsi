@@ -4,7 +4,7 @@ import java.util.List;
 
 import br.com.telematica.siloapi.model.entity.Abrangencia;
 
-public class AbrangenciaListaDetalhesDTO extends Codigo {
+public class AbrangenciaListaDetalhesDTO extends CodigoExtends {
 
 	private String nome;
 

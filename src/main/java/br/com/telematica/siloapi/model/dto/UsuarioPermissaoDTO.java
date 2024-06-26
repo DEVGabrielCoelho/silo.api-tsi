@@ -2,7 +2,7 @@ package br.com.telematica.siloapi.model.dto;
 
 import br.com.telematica.siloapi.model.entity.Usuario;
 
-public class UsuarioPermissaoDTO extends Codigo {
+public class UsuarioPermissaoDTO extends CodigoExtends {
 
 	private String login;
 	private String senha;
@@ -61,16 +61,19 @@ public class UsuarioPermissaoDTO extends Codigo {
 
 	public static String consultaPagable(String value) {
 		switch (value) {
-		case "codigo":
-			return "usucod";
-		case "login":
-			return "usulog";
-		case "senha":
-			return "ususen";
-		case "email":
-			return "usuema";
-		default:
-			throw new IllegalArgumentException("Unexpected value: " + value);
+			case "codigo" -> {
+				return "usucod";
+			}
+			case "login" -> {
+				return "usulog";
+			}
+			case "senha" -> {
+				return "ususen";
+			}
+			case "email" -> {
+				return "usuema";
+			}
+			default -> throw new IllegalArgumentException("Unexpected value: " + value);
 		}
 	}
 
@@ -100,7 +103,8 @@ public class UsuarioPermissaoDTO extends Codigo {
 		return builder.toString();
 	}
 
-	public UsuarioPermissaoDTO(Long codigo, String login, String senha, String email, EmpresaDTO empresa, PerfilPermissaoDTO perfil, AbrangenciaDTO abrangencia) {
+	public UsuarioPermissaoDTO(Long codigo, String login, String senha, String email, EmpresaDTO empresa,
+			PerfilPermissaoDTO perfil, AbrangenciaDTO abrangencia) {
 		super(codigo);
 		this.login = login;
 		this.senha = senha;
@@ -123,12 +127,12 @@ public class UsuarioPermissaoDTO extends Codigo {
 
 	public UsuarioPermissaoDTO() {
 		super();
-		
+
 	}
 
 	public UsuarioPermissaoDTO(Long codigo) {
 		super(codigo);
-		
+
 	}
 
 }

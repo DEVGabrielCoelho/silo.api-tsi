@@ -2,7 +2,7 @@ package br.com.telematica.siloapi.model.dto;
 
 import br.com.telematica.siloapi.model.entity.Recurso;
 
-public class RecursoDTO extends Codigo {
+public class RecursoDTO extends CodigoExtends {
 
 	private String nome;
 

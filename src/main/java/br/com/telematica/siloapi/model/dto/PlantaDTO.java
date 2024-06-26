@@ -3,7 +3,7 @@ package br.com.telematica.siloapi.model.dto;
 import br.com.telematica.siloapi.model.entity.Empresa;
 import br.com.telematica.siloapi.model.entity.Planta;
 
-public class PlantaDTO extends Codigo {
+public class PlantaDTO extends CodigoExtends {
 
 	private EmpresaDTO empresa;
 	private String nome;

@@ -2,7 +2,7 @@ package br.com.telematica.siloapi.model.dto;
 
 import br.com.telematica.siloapi.model.entity.Firmware;
 
-public class FirmwareDTO extends Codigo {
+public class FirmwareDTO extends CodigoExtends {
 
 	private String modelo;
 	private String nome;

@@ -8,7 +8,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 @Schema(description = "Tipo Silo")
-public class TipoSiloDTO extends Codigo {
+public class TipoSiloDTO extends CodigoExtends {
 
 	@NotBlank(message = "O campo 'nome' é obrigatório e não pode estar em branco.")
 	@Schema(description = "Nome do tipo de Silo", example = "Tipo 1")

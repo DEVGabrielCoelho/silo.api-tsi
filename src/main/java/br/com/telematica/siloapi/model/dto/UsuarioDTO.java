@@ -2,7 +2,7 @@ package br.com.telematica.siloapi.model.dto;
 
 import br.com.telematica.siloapi.model.entity.Usuario;
 
-public class UsuarioDTO extends Codigo {
+public class UsuarioDTO extends CodigoExtends {
 
 	private String nome;
 	private Long cpf;

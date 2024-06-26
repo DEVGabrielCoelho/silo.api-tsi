@@ -4,7 +4,7 @@ import br.com.telematica.siloapi.model.entity.Silo;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "Silo")
-public class SiloDTO extends Codigo {
+public class SiloDTO extends CodigoExtends {
 
 	@Schema(description = "Tipo do Silo", example = "1", nullable = false)
 	private TipoSiloDTO tipoSilo;

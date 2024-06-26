@@ -4,7 +4,7 @@ import java.util.List;
 
 import br.com.telematica.siloapi.model.entity.Perfil;
 
-public class PerfilPermissaoDTO extends Codigo {
+public class PerfilPermissaoDTO extends CodigoExtends {
 
 	private String nome;
 
