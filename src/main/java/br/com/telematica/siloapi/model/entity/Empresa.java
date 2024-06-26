@@ -107,7 +107,7 @@ public class Empresa implements Serializable {
 
 	public Empresa() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public static Specification<Empresa> filterByFields(String searchTerm, List<Long> listAbrangencia) {

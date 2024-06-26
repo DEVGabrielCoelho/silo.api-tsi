@@ -90,7 +90,7 @@ public class LoggerEntity {
 
 	public LoggerEntity() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public static Specification<LoggerEntity> filterByFields(String filtro, String startDateStr, String endDateStr) {

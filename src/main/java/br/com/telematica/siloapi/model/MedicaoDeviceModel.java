@@ -40,7 +40,7 @@ public class MedicaoDeviceModel {
 
 	public MedicaoDeviceModel() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	@Override

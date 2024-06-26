@@ -52,7 +52,7 @@ public class RecursoModel {
 
 	public RecursoModel() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 }

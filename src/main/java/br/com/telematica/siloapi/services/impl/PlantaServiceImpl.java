@@ -165,7 +165,7 @@ public class PlantaServiceImpl implements PlantaServInterface {
 
 	Planta findEntity(Long codigo) {
 		Objects.requireNonNull(codigo, "Código está nulo.");
-		return plantaRepository.findById(codigo).orElseThrow(() -> new EntityNotFoundException("Planta não encontrada com o código: " + codigo));
+		return plantaRepository.findById(codigo).orElse(null);
 	}
 
 	private void validatePlantaFields(PlantaModel planta) {

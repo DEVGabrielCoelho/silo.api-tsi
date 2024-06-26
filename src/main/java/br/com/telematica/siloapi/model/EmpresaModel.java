@@ -82,7 +82,7 @@ public class EmpresaModel {
 
 	public EmpresaModel() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 }

@@ -118,7 +118,7 @@ public class PermissaoModel {
 
 	public PermissaoModel() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 }

@@ -93,12 +93,12 @@ public class FirmwareDTO extends Codigo {
 
 	public FirmwareDTO() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public FirmwareDTO(Long codigo) {
 		super(codigo);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 }

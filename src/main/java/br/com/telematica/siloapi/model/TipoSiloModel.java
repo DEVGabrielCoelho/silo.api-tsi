@@ -52,7 +52,7 @@ public class TipoSiloModel {
 
 	public TipoSiloModel() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	@Override

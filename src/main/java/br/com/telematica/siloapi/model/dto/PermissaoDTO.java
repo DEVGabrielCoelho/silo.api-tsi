@@ -107,7 +107,7 @@ public class PermissaoDTO {
 
 	public PermissaoDTO() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 }

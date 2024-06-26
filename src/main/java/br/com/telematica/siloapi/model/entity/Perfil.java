@@ -83,7 +83,7 @@ public class Perfil implements Serializable {
 
 	public Perfil() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public static Specification<Perfil> filterByFields(String searchTerm) {

@@ -19,7 +19,7 @@ public class MedicaoDataModel {
 
 	public MedicaoDataModel() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	@Override

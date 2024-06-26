@@ -152,7 +152,8 @@ public class SiloServiceImpl implements SiloServInterface {
 	}
 
 	public Silo findCodigo(Long codigo) {
-		return siloRepository.findById(codigo).orElseThrow(() -> new EntityNotFoundException("Silo não encontrado com o ID: " + codigo));
+		Objects.requireNonNull(codigo, "Código do silo está nulo.");
+		return siloRepository.findById(codigo).orElse(null);
 	}
 
 	public SiloDTO abrangenciaSilo(Silo entity) {

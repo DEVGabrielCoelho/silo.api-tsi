@@ -71,12 +71,12 @@ public class AbrangenciaListaDetalhesDTO extends Codigo {
 
 	public AbrangenciaListaDetalhesDTO() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public AbrangenciaListaDetalhesDTO(Long codigo) {
 		super(codigo);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 }

@@ -159,10 +159,8 @@ public class TipoSiloServiceImpl implements TipoSiloServInterface {
 	}
 
 	TipoSilo findEntity(Long codigo) {
-		return tipoSiloRepository.findById(codigo).orElseThrow(() -> {
-			logger.error("Tipo Silo não encontrado com o ID: " + codigo);
-			return null;
-		});
+		Objects.requireNonNull(codigo, "Código do Tipo do Silo está nulo.");
+		return tipoSiloRepository.findById(codigo).orElse(null);
 	}
 
 	TipoSiloDTO findTipoSiloAbrangencia(Long codigo) {

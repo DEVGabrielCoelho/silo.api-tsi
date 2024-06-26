@@ -70,7 +70,7 @@ public class AbrangenciaDetalhesModel {
 
 	public AbrangenciaDetalhesModel() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 }

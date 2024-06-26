@@ -109,7 +109,7 @@ public class AbrangenciaDetalhes {
 
 	public AbrangenciaDetalhes() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 }

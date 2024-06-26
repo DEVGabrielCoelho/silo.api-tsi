@@ -123,12 +123,12 @@ public class UsuarioPermissaoDTO extends Codigo {
 
 	public UsuarioPermissaoDTO() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public UsuarioPermissaoDTO(Long codigo) {
 		super(codigo);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 }

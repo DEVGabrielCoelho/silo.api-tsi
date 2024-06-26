@@ -53,7 +53,7 @@ public class TokenValidationDeviceDTO {
 
 	public TokenValidationDeviceDTO() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 }

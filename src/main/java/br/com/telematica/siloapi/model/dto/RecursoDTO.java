@@ -54,12 +54,12 @@ public class RecursoDTO extends Codigo {
 
 	public RecursoDTO() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public RecursoDTO(Long codigo) {
 		super(codigo);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 }

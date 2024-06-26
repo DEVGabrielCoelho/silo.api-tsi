@@ -148,7 +148,7 @@ public class UsuarioModel {
 
 	public UsuarioModel() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 }

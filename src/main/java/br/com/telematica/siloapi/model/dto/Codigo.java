@@ -29,7 +29,7 @@ public class Codigo {
 
 	public Codigo() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 }

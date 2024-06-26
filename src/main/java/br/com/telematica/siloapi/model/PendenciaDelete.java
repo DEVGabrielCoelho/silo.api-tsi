@@ -69,7 +69,7 @@ public class PendenciaDelete {
 
 	public PendenciaDelete() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 }

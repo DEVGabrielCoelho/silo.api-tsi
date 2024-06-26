@@ -85,7 +85,7 @@ public class LoggerModel {
 
 	public LoggerModel() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 }

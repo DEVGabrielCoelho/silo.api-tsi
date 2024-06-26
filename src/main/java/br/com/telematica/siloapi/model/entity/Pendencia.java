@@ -161,7 +161,7 @@ public class Pendencia {
 
 	public Pendencia() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public static Specification<Pendencia> filterByFields(String searchTerm, Long modulo, Integer pendel) {

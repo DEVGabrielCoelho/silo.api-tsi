@@ -54,12 +54,12 @@ public class PerfilDTO extends Codigo {
 
 	public PerfilDTO() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public PerfilDTO(Long codigo) {
 		super(codigo);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 }

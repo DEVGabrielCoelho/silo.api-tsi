@@ -70,12 +70,12 @@ public class PerfilPermissaoDTO extends Codigo {
 
 	public PerfilPermissaoDTO() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public PerfilPermissaoDTO(Long codigo) {
 		super(codigo);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 }

@@ -82,7 +82,7 @@ public class ResponseAuthDTO {
 
 	public ResponseAuthDTO() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 }

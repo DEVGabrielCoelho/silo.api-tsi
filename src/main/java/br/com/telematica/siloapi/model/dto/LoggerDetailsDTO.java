@@ -79,7 +79,7 @@ public class LoggerDetailsDTO {
 
 	public LoggerDetailsDTO() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 }

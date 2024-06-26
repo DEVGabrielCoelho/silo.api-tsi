@@ -13,7 +13,7 @@ public class KeepAliveDTO {
 
 	public KeepAliveDTO() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	@Override

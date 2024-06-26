@@ -39,7 +39,7 @@ public class TokenValidationResponseDTO {
 
 	public TokenValidationResponseDTO() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	@Override

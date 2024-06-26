@@ -73,7 +73,7 @@ public class AbrangenciaDetalhesDTO {
 
 	public AbrangenciaDetalhesDTO() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 }

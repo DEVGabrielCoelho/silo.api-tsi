@@ -80,7 +80,7 @@ public class Abrangencia implements Serializable {
 
 	public Abrangencia() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public static Specification<Abrangencia> filterByFields(String searchTerm) {

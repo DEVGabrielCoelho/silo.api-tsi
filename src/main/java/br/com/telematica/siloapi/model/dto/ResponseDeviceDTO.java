@@ -56,7 +56,7 @@ public class ResponseDeviceDTO {
 
 	public ResponseDeviceDTO() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 }
