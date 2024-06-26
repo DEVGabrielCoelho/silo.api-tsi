@@ -41,29 +41,24 @@ public class PlantaServiceImpl implements PlantaServInterface {
 	@Autowired
 	private AbrangenciaHandler abrangenciaHandler;
 
-	public CheckAbrangenciaRec checagemFixaAbrangencia() {
-		return abrangenciaHandler.checkAbrangencia("PLANTA");
+	private static final String PLANTA = "PLANTA";
+
+	public CheckAbrangenciaRec findAbrangencia() {
+		return abrangenciaHandler.checkAbrangencia(PLANTA);
 	}
 
 	@Override
 	public ResponseEntity<PlantaDTO> save(PlantaModel planta) throws IOException {
 		validatePlantaFields(planta);
 
-		try {
-			var emp = empresaServiceImpl.findById(planta.getEmpresa());
-			if (emp == null)
-				throw new EntityNotFoundException("Empresa não encontrada.");
-			var entity = new Planta();
-			entity.plantaUpdateOrSave(planta.getNome(), emp);
-
-			Planta savedPlanta = plantaRepository.save(entity);
-			logger.info("Planta salva com sucesso: " + savedPlanta);
-
-			return MessageResponse.success(new PlantaDTO(savedPlanta));
-		} catch (IOException e) {
-			logger.error("Erro ao salvar a planta: ", e);
-			throw CustomMessageException.exceptionIOException("salvar", RECURSO, planta, e);
-		}
+		var emp = empresaServiceImpl.findById(planta.getEmpresa());
+		if (emp == null)
+			throw new EntityNotFoundException("Empresa não encontrada.");
+		var entity = new Planta();
+		entity.plantaUpdateOrSave(planta.getNome(), emp);
+		Planta savedPlanta = plantaRepository.save(entity);
+		logger.info("Planta salva com sucesso: " + savedPlanta);
+		return MessageResponse.create(new PlantaDTO(savedPlanta));
 	}
 
 	@Override
@@ -87,23 +82,19 @@ public class PlantaServiceImpl implements PlantaServInterface {
 		Objects.requireNonNull(codigo, "Código da Planta está nulo.");
 		validatePlantaFields(planta);
 
-		try {
-			var entity = findEntity(codigo);
-			if (entity == null)
-				throw new EntityNotFoundException("Planta não encontrada.");
-			var emp = empresaServiceImpl.findById(planta.getEmpresa());
-			if (emp == null)
-				throw new EntityNotFoundException("Empresa não encontrada.");
-			entity.plantaUpdateOrSave(planta.getNome(), emp);
+		var entity = findEntity(codigo);
+		if (entity == null)
+			throw new EntityNotFoundException("Planta não encontrada.");
+		var emp = empresaServiceImpl.findById(planta.getEmpresa());
+		if (emp == null)
+			throw new EntityNotFoundException("Empresa não encontrada.");
+		entity.plantaUpdateOrSave(planta.getNome(), emp);
 
-			Planta updatedPlanta = plantaRepository.save(entity);
-			logger.info("Planta atualizada com sucesso: " + updatedPlanta);
+		Planta updatedPlanta = plantaRepository.save(entity);
+		logger.info("Planta atualizada com sucesso: " + updatedPlanta);
 
-			return MessageResponse.success(new PlantaDTO(updatedPlanta));
-		} catch (IOException e) {
-			logger.error("Erro ao atualizar a planta: ", e);
-			throw CustomMessageException.exceptionCodigoIOException("atualizar", RECURSO, codigo, planta, e);
-		}
+		return MessageResponse.success(new PlantaDTO(updatedPlanta));
+
 	}
 
 	@Override
@@ -113,28 +104,29 @@ public class PlantaServiceImpl implements PlantaServInterface {
 
 	@Override
 	public ResponseEntity<List<PlantaDTO>> findAllPlantaDTO() throws IOException {
-		var check = checagemFixaAbrangencia();
+
 		Specification<Planta> spec = Specification.where(null);
 
-		if (check.isHier() == 0) {
+		if (findAbrangencia().isHier() == 0) {
 			spec = spec.and(Planta.filterByFields(null, null));
 		} else {
-			spec = spec.and(Planta.filterByFields(null, check.listAbrangencia()));
+			spec = spec.and(Planta.filterByFields(null, findAbrangencia().listAbrangencia()));
 		}
-		List<PlantaDTO> plantaDTOs = plantaRepository.findAll(spec).stream().map(this::convertToPlantaDTO).collect(Collectors.toList());
+		List<PlantaDTO> plantaDTOs = plantaRepository.findAll(spec).stream().map(this::convertToPlantaDTO)
+				.collect(Collectors.toList());
 		return MessageResponse.success(plantaDTOs);
 	}
 
 	@Override
-	public ResponseEntity<Page<PlantaDTO>> plantaFindAllPaginado(String searchTerm, Pageable pageable) throws EntityNotFoundException, IOException {
+	public ResponseEntity<Page<PlantaDTO>> plantaFindAllPaginado(String searchTerm, Pageable pageable)
+			throws EntityNotFoundException, IOException {
 
-		var check = checagemFixaAbrangencia();
 		Specification<Planta> spec = Specification.where(null);
 
-		if (check.isHier() == 0) {
+		if (findAbrangencia().isHier() == 0) {
 			spec = spec.and(Planta.filterByFields(searchTerm, null));
 		} else {
-			spec = spec.and(Planta.filterByFields(searchTerm, check.listAbrangencia()));
+			spec = spec.and(Planta.filterByFields(searchTerm, findAbrangencia().listAbrangencia()));
 		}
 		Page<Planta> result = plantaRepository.findAll(spec, pageable);
 		return ResponseEntity.ok(result.map(PlantaDTO::new));
@@ -143,8 +135,8 @@ public class PlantaServiceImpl implements PlantaServInterface {
 	@Override
 	public ResponseEntity<PlantaDTO> findById(Long codigo) throws IOException, EmptyResultDataAccessException {
 		Objects.requireNonNull(codigo, "Código da Planta está nulo.");
-		var check = checagemFixaAbrangencia();
-		Long idPermitted = abrangenciaHandler.findIdAbrangenciaPermi(check, codigo);
+
+		Long idPermitted = abrangenciaHandler.findIdAbrangenciaPermi(findAbrangencia(), codigo);
 		if (idPermitted == null) {
 			// throw new EntityNotFoundException("Acesso negado ou entidade não
 			// encontrada.");
@@ -174,8 +166,8 @@ public class PlantaServiceImpl implements PlantaServInterface {
 	}
 
 	PlantaDTO findPlantaAbrangencia(Long codigo) {
-		var check = checagemFixaAbrangencia();
-		Long idPermitted = abrangenciaHandler.findIdAbrangenciaPermi(check, codigo);
+
+		Long idPermitted = abrangenciaHandler.findIdAbrangenciaPermi(findAbrangencia(), codigo);
 		if (idPermitted == null) {
 			return null;
 		}

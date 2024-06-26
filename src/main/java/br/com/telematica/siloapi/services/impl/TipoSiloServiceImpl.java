@@ -36,8 +36,10 @@ public class TipoSiloServiceImpl implements TipoSiloServInterface {
 	@Autowired
 	private AbrangenciaHandler abrangenciaHandler;
 
-	public CheckAbrangenciaRec checagemFixaAbrangencia() {
-		return abrangenciaHandler.checkAbrangencia("TIPOSILO");
+	private static final String TIPOSILO = "TIPOSILO";
+
+	private CheckAbrangenciaRec findAbrangencia() {
+		return abrangenciaHandler.checkAbrangencia(TIPOSILO);
 	}
 
 	@Autowired
@@ -115,12 +117,11 @@ public class TipoSiloServiceImpl implements TipoSiloServInterface {
 
 	@Override
 	public ResponseEntity<List<TipoSiloDTO>> findAllTipoSiloDTO() throws IOException {
-		var check = checagemFixaAbrangencia();
 		Specification<TipoSilo> spec = Specification.where(null);
-		if (check.isHier() == 0) {
+		if (findAbrangencia().isHier() == 0) {
 			spec = spec.and(TipoSilo.filterByFields(null, null));
 		} else {
-			spec = spec.and(TipoSilo.filterByFields(null, check.listAbrangencia()));
+			spec = spec.and(TipoSilo.filterByFields(null, findAbrangencia().listAbrangencia()));
 		}
 		List<TipoSiloDTO> tipoSiloDTOList = tipoSiloRepository.findAll(spec).stream().map(this::convertToTipoSiloDTO).collect(Collectors.toList());
 		return MessageResponse.success(tipoSiloDTOList);
@@ -129,8 +130,8 @@ public class TipoSiloServiceImpl implements TipoSiloServInterface {
 	@Override
 	public ResponseEntity<TipoSiloDTO> findById(Long codigo) throws IOException, EntityNotFoundException {
 		Objects.requireNonNull(codigo, "Código do Tipo do Silo está nulo.");
-		var check = checagemFixaAbrangencia();
-		Long idPermitted = abrangenciaHandler.findIdAbrangenciaPermi(check, codigo);
+
+		Long idPermitted = abrangenciaHandler.findIdAbrangenciaPermi(findAbrangencia(), codigo);
 		if (idPermitted == null) {
 			// throw new EntityNotFoundException("Acesso negado ou entidade não
 			// encontrada.");
@@ -143,12 +144,11 @@ public class TipoSiloServiceImpl implements TipoSiloServInterface {
 
 	@Override
 	public ResponseEntity<Page<TipoSiloDTO>> tipoSiloFindAllPaginado(String searchTerm, Pageable pageable) {
-		var check = checagemFixaAbrangencia();
 		Specification<TipoSilo> spec = Specification.where(null);
-		if (check.isHier() == 0) {
+		if (findAbrangencia().isHier() == 0) {
 			spec = spec.and(TipoSilo.filterByFields(searchTerm, null));
 		} else {
-			spec = spec.and(TipoSilo.filterByFields(searchTerm, check.listAbrangencia()));
+			spec = spec.and(TipoSilo.filterByFields(searchTerm, findAbrangencia().listAbrangencia()));
 		}
 		Page<TipoSilo> result = tipoSiloRepository.findAll(spec, pageable);
 		return ResponseEntity.ok(result.map(TipoSiloDTO::new));
@@ -164,8 +164,7 @@ public class TipoSiloServiceImpl implements TipoSiloServInterface {
 	}
 
 	TipoSiloDTO findTipoSiloAbrangencia(Long codigo) {
-		var check = checagemFixaAbrangencia();
-		Long idPermitted = abrangenciaHandler.findIdAbrangenciaPermi(check, codigo);
+		Long idPermitted = abrangenciaHandler.findIdAbrangenciaPermi(findAbrangencia(), codigo);
 		if (idPermitted == null) {
 			return null;
 		}

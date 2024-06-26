@@ -49,8 +49,10 @@ public class SiloModuloServiceImpl implements SiloModuloServInterface {
 	private AbrangenciaHandler abrangenciaHandler;
 
 	private static final String MODULO = "MODULO";
-	private final CheckAbrangenciaRec check = abrangenciaHandler.checkAbrangencia(MODULO); 
 
+	private CheckAbrangenciaRec findAbrangencia() {
+		return abrangenciaHandler.checkAbrangencia(MODULO);
+	}
 
 	@Override
 	public ResponseEntity<SiloModuloDTO> save(SiloModuloModel object) throws IOException {
@@ -60,9 +62,7 @@ public class SiloModuloServiceImpl implements SiloModuloServInterface {
 		if (findEntityNSE(object.getNumSerie()) != null)
 			throw new EntityNotFoundException("Número de Série já cadastrado.");
 
-		var entity = new SiloModulo(null, silo, object.getDescricao(), object.getTotalSensor(), object.getNumSerie(),
-				object.getTimeoutKeepAlive(), object.getTimeoutMedicao(), null, null, object.getGmt(),
-				object.getCorKeepAlive(), object.getCorMedicao(), object.getStatus().getStatus());
+		var entity = new SiloModulo(null, silo, object.getDescricao(), object.getTotalSensor(), object.getNumSerie(), object.getTimeoutKeepAlive(), object.getTimeoutMedicao(), null, null, object.getGmt(), object.getCorKeepAlive(), object.getCorMedicao(), object.getStatus().getStatus());
 
 		SiloModulo result = siloModuloRepository.save(entity);
 		logger.info("Módulo do Silo salvo com sucesso: " + result);
@@ -74,8 +74,7 @@ public class SiloModuloServiceImpl implements SiloModuloServInterface {
 	public ResponseEntity<SiloModuloDTO> delete(Long codigo) throws IOException {
 		Objects.requireNonNull(codigo, "Código do Módulo do Silo está nulo.");
 		try {
-			var entity = siloModuloRepository.findById(codigo).orElseThrow(() -> new EntityNotFoundException(
-					"Não foi possível encontrar o módulo do silo com o ID fornecido: " + codigo));
+			var entity = siloModuloRepository.findById(codigo).orElseThrow(() -> new EntityNotFoundException("Não foi possível encontrar o módulo do silo com o ID fornecido: " + codigo));
 
 			siloModuloRepository.delete(entity);
 			logger.info("Módulo do Silo deletado com sucesso: " + entity);
@@ -91,12 +90,9 @@ public class SiloModuloServiceImpl implements SiloModuloServInterface {
 		var silo = siloServiceImpl.findCodigo(object.getSilo());
 		if (silo == null)
 			throw new EntityNotFoundException("Silo não encontrado.");
-		var siloModulo = siloModuloRepository.findById(codigo).orElseThrow(() -> new EntityNotFoundException(
-				"Não foi possível encontrar o módulo do silo com o ID fornecido: " + codigo));
+		var siloModulo = siloModuloRepository.findById(codigo).orElseThrow(() -> new EntityNotFoundException("Não foi possível encontrar o módulo do silo com o ID fornecido: " + codigo));
 
-		var entity = new SiloModulo(siloModulo.getSmocod(), silo, object.getDescricao(), object.getTotalSensor(),
-				object.getNumSerie(), object.getTimeoutKeepAlive(), object.getTimeoutMedicao(), null, null,
-				object.getGmt(), object.getCorKeepAlive(), object.getCorMedicao(),
+		var entity = new SiloModulo(siloModulo.getSmocod(), silo, object.getDescricao(), object.getTotalSensor(), object.getNumSerie(), object.getTimeoutKeepAlive(), object.getTimeoutMedicao(), null, null, object.getGmt(), object.getCorKeepAlive(), object.getCorMedicao(),
 				object.getStatus().getStatus());
 
 		SiloModulo result = siloModuloRepository.save(entity);
@@ -110,10 +106,10 @@ public class SiloModuloServiceImpl implements SiloModuloServInterface {
 		// check = abrangenciaHandler.checkAbrangencia(MODULO);
 		Specification<SiloModulo> spec = Specification.where(null);
 
-		if (check.isHier() == 0) {
+		if (findAbrangencia().isHier() == 0) {
 			spec = spec.and(SiloModulo.filterByFields(null, null));
 		} else {
-			spec = spec.and(SiloModulo.filterByFields(null, check.listAbrangencia()));
+			spec = spec.and(SiloModulo.filterByFields(null, findAbrangencia().listAbrangencia()));
 		}
 		List<SiloModulo> modulos = siloModuloRepository.findAll(spec);
 		List<SiloModuloDTO> dtoList = modulos.stream().map(this::dtoCalc).collect(Collectors.toList());
@@ -121,14 +117,13 @@ public class SiloModuloServiceImpl implements SiloModuloServInterface {
 	}
 
 	@Override
-	public ResponseEntity<Page<SiloModuloDTO>> siloModuloFindAllPaginado(String searchTerm, Pageable pageable)
-			throws EntityNotFoundException, IOException {
+	public ResponseEntity<Page<SiloModuloDTO>> siloModuloFindAllPaginado(String searchTerm, Pageable pageable) throws EntityNotFoundException, IOException {
 		Specification<SiloModulo> spec = Specification.where(null);
 		// check = abrangenciaHandler.checkAbrangencia(MODULO);
-		if (check.isHier() == 0) {
+		if (findAbrangencia().isHier() == 0) {
 			spec = spec.and(SiloModulo.filterByFields(searchTerm, null));
 		} else {
-			spec = spec.and(SiloModulo.filterByFields(searchTerm, check.listAbrangencia()));
+			spec = spec.and(SiloModulo.filterByFields(searchTerm, findAbrangencia().listAbrangencia()));
 		}
 		Page<SiloModulo> result = siloModuloRepository.findAll(spec, pageable);
 		return ResponseEntity.ok(result.map(this::dtoCalc));
@@ -137,7 +132,7 @@ public class SiloModuloServiceImpl implements SiloModuloServInterface {
 	@Override
 	public ResponseEntity<SiloModuloDTO> findId(Long codigo) {
 		// var check = abrangenciaHandler.checkAbrangencia(MODULO);
-		Long idPermitted = abrangenciaHandler.findIdAbrangenciaPermi(check, codigo);
+		Long idPermitted = abrangenciaHandler.findIdAbrangenciaPermi(findAbrangencia(), codigo);
 		if (idPermitted == null) {
 			return MessageResponse.success(null);
 		}
@@ -155,12 +150,12 @@ public class SiloModuloServiceImpl implements SiloModuloServInterface {
 		return siloModuloRepository.findBySmonse(nse).orElse(null);
 	}
 
-	public void registerKeepAliveInModulo(SiloModulo modulo, Date date) throws EntityNotFoundException {
+	void registerKeepAliveInModulo(SiloModulo modulo, Date date) throws EntityNotFoundException {
 		var mod = siloModuloRepository.save(modulo.sireneModuloRegisterKeep(date));
 		logger.info("Registro de último KeepAlive efetuado com sucesso: " + mod);
 	}
 
-	public void registerMedicaoInModulo(SiloModulo modulo, Date date) throws EntityNotFoundException {
+	void registerMedicaoInModulo(SiloModulo modulo, Date date) throws EntityNotFoundException {
 		var mod = siloModuloRepository.save(modulo.sireneModuloRegisterMedicao(date));
 		logger.info("Registro de última Medição efetuado com sucesso: " + mod);
 	}

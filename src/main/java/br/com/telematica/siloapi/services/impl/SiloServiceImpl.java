@@ -19,6 +19,7 @@ import br.com.telematica.siloapi.handler.AbrangenciaHandler;
 import br.com.telematica.siloapi.model.SiloModel;
 import br.com.telematica.siloapi.model.dto.SiloDTO;
 import br.com.telematica.siloapi.model.entity.Silo;
+import br.com.telematica.siloapi.records.CheckAbrangenciaRec;
 import br.com.telematica.siloapi.repository.SiloRepository;
 import br.com.telematica.siloapi.services.SiloServInterface;
 import br.com.telematica.siloapi.utils.message.MessageResponse;
@@ -40,6 +41,12 @@ public class SiloServiceImpl implements SiloServInterface {
 
 	@Autowired
 	private AbrangenciaHandler abrangenciaHandler;
+
+	private static final String SILO = "SILO";
+
+	private CheckAbrangenciaRec findAbrangencia() {
+		return abrangenciaHandler.checkAbrangencia(SILO);
+	}
 
 	@Override
 	public ResponseEntity<SiloDTO> save(SiloModel siloModel) throws IOException {
@@ -107,13 +114,12 @@ public class SiloServiceImpl implements SiloServInterface {
 
 	@Override
 	public ResponseEntity<List<SiloDTO>> findAllSiloDTO() throws IOException {
-		var checkSilo = abrangenciaHandler.checkAbrangencia("SILO");
 		Specification<Silo> spec = Specification.where(null);
 
-		if (checkSilo.isHier() == 0) {
+		if (findAbrangencia().isHier() == 0) {
 			spec = spec.and(Silo.filterByFields(null, null));
 		} else {
-			spec = spec.and(Silo.filterByFields(null, checkSilo.listAbrangencia()));
+			spec = spec.and(Silo.filterByFields(null, findAbrangencia().listAbrangencia()));
 		}
 
 		List<SiloDTO> siloDTOList = siloRepository.findAll(spec).stream().map(SiloDTO::new).collect(Collectors.toList());
@@ -123,8 +129,7 @@ public class SiloServiceImpl implements SiloServInterface {
 	@Override
 	public ResponseEntity<SiloDTO> findById(Long codigo) {
 		Objects.requireNonNull(codigo, "Código do Silo está nulo.");
-		var check = abrangenciaHandler.checkAbrangencia("SILO");
-		Long idPermitted = abrangenciaHandler.findIdAbrangenciaPermi(check, codigo);
+		Long idPermitted = abrangenciaHandler.findIdAbrangenciaPermi(findAbrangencia(), codigo);
 		if (idPermitted == null) {
 			return MessageResponse.success(null);
 		}
@@ -135,13 +140,12 @@ public class SiloServiceImpl implements SiloServInterface {
 	@Override
 	public ResponseEntity<Page<SiloDTO>> siloFindAllPaginado(String searchTerm, Pageable pageable) {
 		try {
-			var checkSilo = abrangenciaHandler.checkAbrangencia("SILO");
 			Specification<Silo> spec = Specification.where(null);
 
-			if (checkSilo.isHier() == 0) {
+			if (findAbrangencia().isHier() == 0) {
 				spec = spec.and(Silo.filterByFields(searchTerm, null));
 			} else {
-				spec = spec.and(Silo.filterByFields(searchTerm, checkSilo.listAbrangencia()));
+				spec = spec.and(Silo.filterByFields(searchTerm, findAbrangencia().listAbrangencia()));
 			}
 
 			Page<Silo> result = siloRepository.findAll(spec, pageable);

@@ -37,8 +37,10 @@ public class EmpresaServiceImpl implements EmpresaServInterface {
 	@Autowired
 	private AbrangenciaHandler abrangenciaHandler;
 
-	public CheckAbrangenciaRec checagemFixaAbrangencia() {
-		return abrangenciaHandler.checkAbrangencia("EMPRESA");
+	private static final String EMPRESA = "EMPRESA";
+
+	private CheckAbrangenciaRec findAbrangencia() {
+		return abrangenciaHandler.checkAbrangencia(EMPRESA);
 	}
 
 	@Override
@@ -59,13 +61,12 @@ public class EmpresaServiceImpl implements EmpresaServInterface {
 	public ResponseEntity<Page<EmpresaDTO>> empresaFindAllPaginado(String nome, Pageable pageable) throws IOException {
 		Objects.requireNonNull(pageable, "Pageable da Empresa está nulo.");
 
-		var check = checagemFixaAbrangencia();
 		Specification<Empresa> spec = Specification.where(null);
 
-		if (check.isHier() == 0) {
+		if (findAbrangencia().isHier() == 0) {
 			spec = spec.and(Empresa.filterByFields(nome, null));
 		} else {
-			spec = spec.and(Empresa.filterByFields(nome, check.listAbrangencia()));
+			spec = spec.and(Empresa.filterByFields(nome, findAbrangencia().listAbrangencia()));
 		}
 
 		Page<Empresa> result = empresaRepository.findAll(spec, pageable);
@@ -84,13 +85,13 @@ public class EmpresaServiceImpl implements EmpresaServInterface {
 
 	@Override
 	public ResponseEntity<List<EmpresaDTO>> empresaFindAll() throws IOException {
-		var check = checagemFixaAbrangencia();
+
 		Specification<Empresa> spec = Specification.where(null);
 
-		if (check.isHier() == 0) {
+		if (findAbrangencia().isHier() == 0) {
 			spec = spec.and(Empresa.filterByFields(null, null));
 		} else {
-			spec = spec.and(Empresa.filterByFields(null, check.listAbrangencia()));
+			spec = spec.and(Empresa.filterByFields(null, findAbrangencia().listAbrangencia()));
 		}
 		List<Empresa> result = empresaRepository.findAll(spec);
 		return MessageResponse.success(result.stream().map(EmpresaDTO::new).collect(Collectors.toList()));
@@ -120,7 +121,8 @@ public class EmpresaServiceImpl implements EmpresaServInterface {
 		Objects.requireNonNull(empresaModel.getNome(), "Nome da Empresa está nulo.");
 
 		try {
-			Empresa empresa = new Empresa(null, empresaModel.getCnpj(), empresaModel.getNome(), empresaModel.getNomeFantasia(), empresaModel.getTelefone());
+			Empresa empresa = new Empresa(null, empresaModel.getCnpj(), empresaModel.getNome(),
+					empresaModel.getNomeFantasia(), empresaModel.getTelefone());
 			Empresa savedEmpresa = empresaRepository.save(empresa);
 			return MessageResponse.create(new EmpresaDTO(savedEmpresa));
 		} catch (Exception e) {
@@ -131,8 +133,8 @@ public class EmpresaServiceImpl implements EmpresaServInterface {
 
 	@Override
 	public ResponseEntity<EmpresaDTO> findByIdApi(Long codigo) throws IOException {
-		var check = checagemFixaAbrangencia();
-		Long idPermitted = abrangenciaHandler.findIdAbrangenciaPermi(check, codigo);
+
+		Long idPermitted = abrangenciaHandler.findIdAbrangenciaPermi(findAbrangencia(), codigo);
 		if (idPermitted == null) {
 			// throw new EntityNotFoundException("Acesso negado ou entidade não
 			// encontrada.");
@@ -151,8 +153,8 @@ public class EmpresaServiceImpl implements EmpresaServInterface {
 		if (empresa == null) {
 			return MessageResponse.success(null);
 		}
-		var check = checagemFixaAbrangencia();
-		Long idPermitted = abrangenciaHandler.findIdAbrangenciaPermi(check, empresa.getEmpcod());
+
+		Long idPermitted = abrangenciaHandler.findIdAbrangenciaPermi(findAbrangencia(), empresa.getEmpcod());
 		if (idPermitted == null) {
 			// throw new EntityNotFoundException("Acesso negado ou entidade não
 			// encontrada.");
@@ -162,7 +164,7 @@ public class EmpresaServiceImpl implements EmpresaServInterface {
 		return MessageResponse.success(new EmpresaDTO(empresa));
 	}
 
-	public Empresa findById(Long codigo) throws IOException {
+	public Empresa findById(Long codigo) {
 		Objects.requireNonNull(codigo, "Código da Empresa está nulo.");
 		Empresa emp = empresaRepository.findById(codigo).orElse(null);
 		if (emp == null) {
@@ -172,8 +174,8 @@ public class EmpresaServiceImpl implements EmpresaServInterface {
 	}
 
 	public Empresa findByIdAbrangencia(Empresa emp) {
-		var check = checagemFixaAbrangencia();
-		var findIdAbrangencia = abrangenciaHandler.findIdAbrangenciaPermi(check, emp.getEmpcod());
+
+		var findIdAbrangencia = abrangenciaHandler.findIdAbrangenciaPermi(findAbrangencia(), emp.getEmpcod());
 		if (findIdAbrangencia == null) {
 			return null;
 		}
