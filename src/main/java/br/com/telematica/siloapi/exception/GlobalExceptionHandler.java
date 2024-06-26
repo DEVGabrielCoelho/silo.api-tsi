@@ -66,13 +66,13 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(TokenExpiredException.class)
 	public ResponseEntity<ResponseGlobalModel> handleTokenExpiredException(TokenExpiredException ex) {
 		log.error("TokenExpiredException: " + ex);
-		return MessageResponse.badRequest(MessageResponse.responseGlobalModelError(ex.getMessage()));
+		return MessageResponse.notAuthorize(MessageResponse.responseGlobalModelError(ex.getMessage()));
 	}
 
 	@ExceptionHandler(JWTVerificationException.class)
 	public ResponseEntity<ResponseGlobalModel> handleJWTVerificationException(JWTVerificationException ex) {
 		log.error("JWTVerificationException: " + ex);
-		return MessageResponse.badRequest(MessageResponse.responseGlobalModelError(ex.getMessage()));
+		return MessageResponse.notAuthorize(MessageResponse.responseGlobalModelError(ex.getMessage()));
 	}
 
 	@ExceptionHandler(JWTCreationException.class)

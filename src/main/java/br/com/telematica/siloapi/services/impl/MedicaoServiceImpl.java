@@ -31,6 +31,7 @@ import br.com.telematica.siloapi.repository.MedicaoRepository;
 import br.com.telematica.siloapi.services.MedicaoServInterface;
 import br.com.telematica.siloapi.utils.Utils;
 import br.com.telematica.siloapi.utils.message.MessageResponse;
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class MedicaoServiceImpl implements MedicaoServInterface {
@@ -50,6 +51,9 @@ public class MedicaoServiceImpl implements MedicaoServInterface {
 		checkDataMedicao(medicaoModel);
 		Date dateMedicao = sdfStringforDate(medicaoModel.getDataMedicao());
 		var siloModulo = siloModuloServiceImpl.findEntity(medicaoModel.getSilo());
+		if (siloModulo == null)
+			throw new EntityNotFoundException("Módulo não encontrado.");
+		
 		siloModuloServiceImpl.registerMedicaoInModulo(siloModulo, new Date());
 		Medicao medicao = new Medicao(dateMedicao, siloModulo, medicaoModel.getUmidade(), medicaoModel.getAna(), medicaoModel.getBarometro(), medicaoModel.getTemperatura(), medicaoModel.getDistancia());
 		Medicao savedMedicao = medicaoRepository.save(medicao);
@@ -62,6 +66,8 @@ public class MedicaoServiceImpl implements MedicaoServInterface {
 
 		Date dateMedicao = Utils.convertTimestampToDate(medicaoModel.getTimestamp());
 		var siloModulo = siloModuloServiceImpl.findEntity(Long.valueOf(medicaoModel.getDevEUI()));
+		if (siloModulo == null)
+			throw new EntityNotFoundException("Módulo não encontrado.");
 		siloModuloServiceImpl.registerMedicaoInModulo(siloModulo, new Date());
 		Medicao medicao = new Medicao(dateMedicao, siloModulo, medicaoModel.getObject().getHumidity(), medicaoModel.getObject().getAnalogInput(), medicaoModel.getObject().getBarometer(), medicaoModel.getObject().getTemperature(), medicaoModel.getObject().getIlluminance());
 

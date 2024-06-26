@@ -1,5 +1,6 @@
 package br.com.telematica.siloapi.model.dto;
 
+import br.com.telematica.siloapi.model.entity.Empresa;
 import br.com.telematica.siloapi.model.entity.Planta;
 
 public class PlantaDTO extends Codigo {
@@ -26,7 +27,7 @@ public class PlantaDTO extends Codigo {
 		default -> throw new AssertionError();
 		}
 	}
-	
+
 	public PlantaDTO(Long codigo) {
 		super(codigo);
 	}
@@ -35,6 +36,13 @@ public class PlantaDTO extends Codigo {
 
 		this.setCodigo(planta.getPlacod());
 		this.empresa = new EmpresaDTO(planta.getEmpresa());
+		this.nome = planta.getPlanom();
+	}
+
+	public PlantaDTO(Planta planta, Empresa empresa) {
+
+		this.setCodigo(planta.getPlacod());
+		this.empresa = empresa == null ? null : new EmpresaDTO(empresa);
 		this.nome = planta.getPlanom();
 	}
 

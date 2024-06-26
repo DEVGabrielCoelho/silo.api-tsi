@@ -37,7 +37,7 @@ public class EmpresaServiceImpl implements EmpresaServInterface {
 	@Autowired
 	private AbrangenciaHandler abrangenciaHandler;
 
-	public CheckAbrangenciaRec checagemFixaAbrangencia() throws EntityNotFoundException, IOException {
+	public CheckAbrangenciaRec checagemFixaAbrangencia() {
 		return abrangenciaHandler.checkAbrangencia("EMPRESA");
 	}
 
@@ -171,7 +171,7 @@ public class EmpresaServiceImpl implements EmpresaServInterface {
 		return findByIdAbrangencia(emp);
 	}
 
-	public Empresa findByIdAbrangencia(Empresa emp) throws IOException {
+	public Empresa findByIdAbrangencia(Empresa emp) {
 		var check = checagemFixaAbrangencia();
 		var findIdAbrangencia = abrangenciaHandler.findIdAbrangenciaPermi(check, emp.getEmpcod());
 		if (findIdAbrangencia == null) {

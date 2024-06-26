@@ -230,18 +230,13 @@ public class SiloModulo {
 		this.smosta = smosta;
 	}
 
-	public static Specification<SiloModulo> filterByFields(String searchTerm, List<Long> listSmocod, List<Long> listSilcod) {
+	public static Specification<SiloModulo> filterByFields(String searchTerm, List<Long> listSmocod) {
 		return (root, query, criteriaBuilder) -> {
 			List<Predicate> predicates = new ArrayList<>();
 
 			// Filtragem por lista de IDs de SiloModulo
 			if (listSmocod != null && !listSmocod.isEmpty()) {
 				predicates.add(root.get("smocod").in(listSmocod));
-			}
-
-			// Filtragem por lista de IDs de Silo
-			if (listSilcod != null && !listSilcod.isEmpty()) {
-				predicates.add(root.get("silo").get("silcod").in(listSilcod));
 			}
 
 			// Filtragem por termo de busca

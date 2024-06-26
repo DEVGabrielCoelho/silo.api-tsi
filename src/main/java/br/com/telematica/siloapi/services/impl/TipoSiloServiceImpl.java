@@ -36,7 +36,7 @@ public class TipoSiloServiceImpl implements TipoSiloServInterface {
 	@Autowired
 	private AbrangenciaHandler abrangenciaHandler;
 
-	public CheckAbrangenciaRec checagemFixaAbrangencia() throws EntityNotFoundException, IOException {
+	public CheckAbrangenciaRec checagemFixaAbrangencia() {
 		return abrangenciaHandler.checkAbrangencia("TIPOSILO");
 	}
 
@@ -73,6 +73,8 @@ public class TipoSiloServiceImpl implements TipoSiloServInterface {
 		Objects.requireNonNull(codigo, "Código do Tipo do Silo está nulo.");
 		try {
 			TipoSilo tipoSilo = findEntity(codigo);
+			if (tipoSilo == null)
+				throw new EntityNotFoundException("Tipo Silo não encontrado.");
 			tipoSiloRepository.deleteById(tipoSilo.getTsicod());
 
 			logger.info("Tipo Silo com ID " + codigo + " deletado com sucesso.");
@@ -140,7 +142,7 @@ public class TipoSiloServiceImpl implements TipoSiloServInterface {
 	}
 
 	@Override
-	public ResponseEntity<Page<TipoSiloDTO>> tipoSiloFindAllPaginado(String searchTerm, Pageable pageable) throws EntityNotFoundException, IOException {
+	public ResponseEntity<Page<TipoSiloDTO>> tipoSiloFindAllPaginado(String searchTerm, Pageable pageable) {
 		var check = checagemFixaAbrangencia();
 		Specification<TipoSilo> spec = Specification.where(null);
 		if (check.isHier() == 0) {
@@ -161,6 +163,16 @@ public class TipoSiloServiceImpl implements TipoSiloServInterface {
 			logger.error("Tipo Silo não encontrado com o ID: " + codigo);
 			return null;
 		});
+	}
+
+	TipoSiloDTO findTipoSiloAbrangencia(Long codigo) {
+		var check = checagemFixaAbrangencia();
+		Long idPermitted = abrangenciaHandler.findIdAbrangenciaPermi(check, codigo);
+		if (idPermitted == null) {
+			return null;
+		}
+		TipoSilo result = findEntity(idPermitted);
+		return new TipoSiloDTO(result);
 	}
 
 }

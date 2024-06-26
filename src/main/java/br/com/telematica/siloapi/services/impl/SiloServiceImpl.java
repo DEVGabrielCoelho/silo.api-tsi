@@ -45,7 +45,11 @@ public class SiloServiceImpl implements SiloServInterface {
 	public ResponseEntity<SiloDTO> save(SiloModel siloModel) throws IOException {
 		try {
 			var tipoSilo = tipoSiloService.findEntity(siloModel.getTipoSilo());
+			if (tipoSilo == null)
+				throw new EntityNotFoundException("Tipo Silo não encontrado.");
 			var planta = plantaService.findEntity(siloModel.getPlanta());
+			if (planta == null)
+				throw new EntityNotFoundException("Planta não encontrado.");
 			var entity = new Silo(null, tipoSilo, siloModel.getNome(), planta, siloModel.getLatitude(), siloModel.getLongitude());
 			var result = siloRepository.save(entity);
 
@@ -77,9 +81,15 @@ public class SiloServiceImpl implements SiloServInterface {
 	@Override
 	public ResponseEntity<SiloDTO> update(Long codigo, SiloModel siloModel) throws IOException {
 		try {
+			var silo = findCodigo(codigo);
+
 			var tipoSilo = tipoSiloService.findEntity(siloModel.getTipoSilo());
+			if (tipoSilo == null)
+				throw new EntityNotFoundException("Tipo Silo não encontrado.");
 			var planta = plantaService.findEntity(siloModel.getPlanta());
-			var entity = new Silo(codigo, tipoSilo, siloModel.getNome(), planta, siloModel.getLatitude(), siloModel.getLongitude());
+			if (planta == null)
+				throw new EntityNotFoundException("Planta não encontrado.");
+			var entity = new Silo(silo.getSilcod(), tipoSilo, siloModel.getNome(), planta, siloModel.getLatitude(), siloModel.getLongitude());
 			var result = siloRepository.save(entity);
 
 			logger.info("Silo atualizado com sucesso: " + result);
@@ -97,14 +107,28 @@ public class SiloServiceImpl implements SiloServInterface {
 
 	@Override
 	public ResponseEntity<List<SiloDTO>> findAllSiloDTO() throws IOException {
-		List<SiloDTO> siloDTOList = siloRepository.findAll().stream().map(SiloDTO::new).collect(Collectors.toList());
+		var checkSilo = abrangenciaHandler.checkAbrangencia("SILO");
+		Specification<Silo> spec = Specification.where(null);
+
+		if (checkSilo.isHier() == 0) {
+			spec = spec.and(Silo.filterByFields(null, null));
+		} else {
+			spec = spec.and(Silo.filterByFields(null, checkSilo.listAbrangencia()));
+		}
+
+		List<SiloDTO> siloDTOList = siloRepository.findAll(spec).stream().map(SiloDTO::new).collect(Collectors.toList());
 		return MessageResponse.success(siloDTOList);
 	}
 
 	@Override
 	public ResponseEntity<SiloDTO> findById(Long codigo) {
 		Objects.requireNonNull(codigo, "Código do Silo está nulo.");
-		var result = findCodigo(codigo);
+		var check = abrangenciaHandler.checkAbrangencia("SILO");
+		Long idPermitted = abrangenciaHandler.findIdAbrangenciaPermi(check, codigo);
+		if (idPermitted == null) {
+			return MessageResponse.success(null);
+		}
+		var result = findCodigo(idPermitted);
 		return MessageResponse.success(new SiloDTO(result));
 	}
 
@@ -112,27 +136,38 @@ public class SiloServiceImpl implements SiloServInterface {
 	public ResponseEntity<Page<SiloDTO>> siloFindAllPaginado(String searchTerm, Pageable pageable) {
 		try {
 			var checkSilo = abrangenciaHandler.checkAbrangencia("SILO");
-			var checkTipo = abrangenciaHandler.checkAbrangencia("TIPOSILO");
-			var checkPlanta = abrangenciaHandler.checkAbrangencia("PLANTA");
 			Specification<Silo> spec = Specification.where(null);
 
 			if (checkSilo.isHier() == 0) {
-				spec = spec.and(Silo.filterByFields(searchTerm, null, null, null));
+				spec = spec.and(Silo.filterByFields(searchTerm, null));
 			} else {
-				spec = spec.and(Silo.filterByFields(searchTerm, checkSilo.listAbrangencia(), checkTipo.isHier() == 0 ? null : checkTipo.listAbrangencia(), checkPlanta.isHier() == 0 ? null : checkPlanta.listAbrangencia()));
+				spec = spec.and(Silo.filterByFields(searchTerm, checkSilo.listAbrangencia()));
 			}
 
 			Page<Silo> result = siloRepository.findAll(spec, pageable);
-			return ResponseEntity.ok(result.map(SiloDTO::new));
+			return ResponseEntity.ok(result.map(this::abrangenciaSilo));
 		} catch (EntityNotFoundException ex) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-		} catch (IOException ex) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
 
 	public Silo findCodigo(Long codigo) {
 		return siloRepository.findById(codigo).orElseThrow(() -> new EntityNotFoundException("Silo não encontrado com o ID: " + codigo));
+	}
+
+	public SiloDTO abrangenciaSilo(Silo entity) {
+		var tipoSiloDTO = tipoSiloService.findTipoSiloAbrangencia(entity.getTipoSilo().getTsicod());
+		var plantaDTO = plantaService.findPlantaAbrangencia(entity.getPlanta().getPlacod());
+
+		SiloDTO siloDTO = new SiloDTO();
+		siloDTO.setCodigo(entity.getSilcod());
+		siloDTO.setTipoSilo(tipoSiloDTO);
+		siloDTO.setPlanta(plantaDTO);
+		siloDTO.setNome(entity.getSilnom());
+		siloDTO.setLongitude(entity.getSillon());
+		siloDTO.setLatitude(entity.getSillat());
+
+		return siloDTO;
 	}
 
 }

@@ -116,23 +116,13 @@ public class Silo {
 		return builder.toString();
 	}
 
-	public static Specification<Silo> filterByFields(String searchTerm, List<Long> listSilcod, List<Long> listTsicod, List<Long> listPlacod) {
+	public static Specification<Silo> filterByFields(String searchTerm, List<Long> listSilcod) {
 		return (root, query, criteriaBuilder) -> {
 			List<Predicate> predicates = new ArrayList<>();
 
 			// Filtragem por lista de IDs de Silo
 			if (listSilcod != null && !listSilcod.isEmpty()) {
 				predicates.add(root.get("silcod").in(listSilcod));
-			}
-
-			// Filtragem por lista de IDs de TipoSilo
-			if (listTsicod != null && !listTsicod.isEmpty()) {
-				predicates.add(root.get("tipoSilo").get("tsicod").in(listTsicod));
-			}
-
-			// Filtragem por lista de IDs de Planta
-			if (listPlacod != null && !listPlacod.isEmpty()) {
-				predicates.add(root.get("planta").get("placod").in(listPlacod));
 			}
 
 			// Filtragem por termo de busca

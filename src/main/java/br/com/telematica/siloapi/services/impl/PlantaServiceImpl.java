@@ -41,7 +41,7 @@ public class PlantaServiceImpl implements PlantaServInterface {
 	@Autowired
 	private AbrangenciaHandler abrangenciaHandler;
 
-	public CheckAbrangenciaRec checagemFixaAbrangencia() throws EntityNotFoundException, IOException {
+	public CheckAbrangenciaRec checagemFixaAbrangencia() {
 		return abrangenciaHandler.checkAbrangencia("PLANTA");
 	}
 
@@ -51,6 +51,8 @@ public class PlantaServiceImpl implements PlantaServInterface {
 
 		try {
 			var emp = empresaServiceImpl.findById(planta.getEmpresa());
+			if (emp == null)
+				throw new EntityNotFoundException("Empresa não encontrada.");
 			var entity = new Planta();
 			entity.plantaUpdateOrSave(planta.getNome(), emp);
 
@@ -87,7 +89,11 @@ public class PlantaServiceImpl implements PlantaServInterface {
 
 		try {
 			var entity = findEntity(codigo);
+			if (entity == null)
+				throw new EntityNotFoundException("Planta não encontrada.");
 			var emp = empresaServiceImpl.findById(planta.getEmpresa());
+			if (emp == null)
+				throw new EntityNotFoundException("Empresa não encontrada.");
 			entity.plantaUpdateOrSave(planta.getNome(), emp);
 
 			Planta updatedPlanta = plantaRepository.save(entity);
@@ -147,7 +153,7 @@ public class PlantaServiceImpl implements PlantaServInterface {
 		Planta result = findEntity(idPermitted);
 		if (result == null) {
 			logger.error("Planta não encontrada.");
-			throw new EntityNotFoundException("Planta não encontrada com o código: " + codigo);
+			return MessageResponse.success(null);
 		}
 
 		return MessageResponse.success(new PlantaDTO(result));
@@ -165,5 +171,19 @@ public class PlantaServiceImpl implements PlantaServInterface {
 	private void validatePlantaFields(PlantaModel planta) {
 		Objects.requireNonNull(planta.getEmpresa(), "Código da Empresa está nulo.");
 		Objects.requireNonNull(planta.getNome(), "Nome da planta está nulo.");
+	}
+
+	PlantaDTO findPlantaAbrangencia(Long codigo) {
+		var check = checagemFixaAbrangencia();
+		Long idPermitted = abrangenciaHandler.findIdAbrangenciaPermi(check, codigo);
+		if (idPermitted == null) {
+			return null;
+		}
+		Planta result = findEntity(idPermitted);
+		if (result == null) {
+			logger.error("Planta não encontrada.");
+			return null;
+		}
+		return new PlantaDTO(result, empresaServiceImpl.findByIdAbrangencia(result.getEmpresa()));
 	}
 }
