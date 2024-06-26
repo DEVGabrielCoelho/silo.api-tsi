@@ -24,6 +24,7 @@ hs_err_pid*
 replay_pid*
 HELP.md
 target/
+http_teste/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
@@ -56,4 +57,3 @@ build/
 ### VS Code ###
 .vscode/
 .mvn/
-http/
