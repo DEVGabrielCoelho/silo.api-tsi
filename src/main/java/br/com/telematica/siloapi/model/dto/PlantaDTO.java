@@ -12,6 +12,21 @@ public class PlantaDTO extends Codigo {
 		this.nome = nome;
 	}
 
+	public static String filtrarDirecao(String str) {
+		switch (str.toUpperCase()) {
+		case "CODIGO" -> {
+			return "placod";
+		}
+		case "EMPRESA" -> {
+			return "empcod";
+		}
+		case "NOME" -> {
+			return "planom";
+		}
+		default -> throw new AssertionError();
+		}
+	}
+	
 	public PlantaDTO(Long codigo) {
 		super(codigo);
 	}

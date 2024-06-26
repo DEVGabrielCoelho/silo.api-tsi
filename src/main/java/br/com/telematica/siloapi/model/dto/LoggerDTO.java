@@ -15,11 +15,11 @@ public class LoggerDTO {
 	private String mensagem;
 
 	public static String consultaPagable(String value) {
-		switch (value) {
-		case "data" -> {
+		switch (value.toUpperCase()) {
+		case "DATA" -> {
 			return "logdat";
 		}
-		case "tipoLogger" -> {
+		case "TIPOLOGGER" -> {
 			return "logtip";
 		}
 		default -> throw new IllegalArgumentException("Unexpected value: " + value);

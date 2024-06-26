@@ -41,21 +41,22 @@ public class EmpresaDTO extends Codigo {
 	}
 
 	public static String consultaPagable(String value) {
-		switch (value) {
-		case "codigo":
+		switch (value.toUpperCase()) {
+		case "CODIGO":
 			return "empcod";
-		case "cnpj":
+		case "CNPJ":
 			return "empcnp";
-		case "nome":
+		case "NOME":
 			return "empnom";
-		case "nomeFantasia":
+		case "NOMEFANTASIA":
 			return "empfan";
-		case "telefone":
+		case "TELEFONE":
 			return "emptel";
 		default:
 			throw new IllegalArgumentException("Unexpected value: " + value);
 		}
 	}
+	
 
 	@Override
 	public String toString() {

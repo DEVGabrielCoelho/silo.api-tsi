@@ -23,6 +23,8 @@ import br.com.telematica.siloapi.model.SiloModuloModel;
 import br.com.telematica.siloapi.model.dto.SiloModuloDTO;
 import br.com.telematica.siloapi.services.SiloModuloServInterface;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.EntityNotFoundException;
 
@@ -58,31 +60,28 @@ public class SiloModuloController extends SecurityRestController {
 		return siloModuloServInterface.delete(codigo);
 	}
 
-	@GetMapping("/v1/paginado")
-	public ResponseEntity<Page<SiloModuloDTO>> findAllPaginado(@RequestParam(value = "filtro", required = false) String filtro, @RequestParam(value = "pagina", defaultValue = "0") int pagina, @RequestParam(value = "tamanho", defaultValue = "10") int tamanho,
-			@RequestParam(value = "ordenarPor", defaultValue = "codigo") String ordenarPor, @RequestParam(value = "direcao", defaultValue = "ASC") String direcao) throws EntityNotFoundException, IOException {
+	@Operation(description = "Recupera uma lista paginada de objetos SiloModuloDTO com filtragem e ordenação opcionais.")
+    @Parameters({
+        @Parameter(name = "filtro", description = "Termo de filtro opcional para buscar Módulos de Silo."),
+        @Parameter(name = "pagina", description = "Número da página a ser recuperada, começando em 0."),
+        @Parameter(name = "tamanho", description = "Número de itens por página."),
+        @Parameter(name = "ordenarPor", description = "Campo pelo qual os resultados serão ordenados. (codigo, silo, descricao, numSerie)"),
+        @Parameter(name = "direcao", description = "Direção da ordenação, podendo ser ASC (ascendente) ou DESC (descendente).")
+    })
+    @GetMapping("/v1/paginado")
+    public ResponseEntity<Page<SiloModuloDTO>> findAllPaginado(
+            @RequestParam(value = "filtro", required = false) String filtro,
+            @RequestParam(value = "pagina", defaultValue = "0") int pagina,
+            @RequestParam(value = "tamanho", defaultValue = "10") int tamanho,
+            @RequestParam(value = "ordenarPor", defaultValue = "codigo") String ordenarPor,
+            @RequestParam(value = "direcao", defaultValue = "ASC") String direcao) throws EntityNotFoundException, IOException {
 
-		Sort sort = Sort.by(Sort.Direction.fromString(direcao), filtrarDirecao(ordenarPor));
-		Pageable pageable = PageRequest.of(pagina, tamanho, sort);
+        Sort sort = Sort.by(Sort.Direction.fromString(direcao), SiloModuloDTO.filtrarDirecao(ordenarPor));
+        Pageable pageable = PageRequest.of(pagina, tamanho, sort);
 
-		return siloModuloServInterface.siloModuloFindAllPaginado(filtro, pageable);
-	}
+        return siloModuloServInterface.siloModuloFindAllPaginado(filtro, pageable);
+    }
 
-	public String filtrarDirecao(String str) {
-		switch (str) {
-		case "codigo" -> {
-			return "smocod";
-		}
-		case "silo" -> {
-			return "silcod";
-		}
-		case "descricao" -> {
-			return "smodes";
-		}
-		case "numSerie" -> {
-			return "smonse";
-		}
-		default -> throw new AssertionError();
-		}
-	}
+
+	
 }

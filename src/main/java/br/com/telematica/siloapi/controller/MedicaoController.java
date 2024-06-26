@@ -66,11 +66,13 @@ public class MedicaoController extends SecurityRestController {
 
 	@GetMapping("/v1/paginado")
 	public ResponseEntity<Page<MedicaoDTO>> findAllPaginado(@RequestParam(value = "filtro", required = false) String filtro, @RequestParam(value = "dataInicio", required = false) String dataInicio, @RequestParam(value = "dataFim", required = false) String dataFim,
-			@RequestParam(value = "pagina", defaultValue = "0") int pagina, @RequestParam(value = "tamanho", defaultValue = "10") int tamanho, @RequestParam(value = "ordenarPor", defaultValue = "msidth") String ordenarPor, @RequestParam(value = "direcao", defaultValue = "ASC") String direcao) {
+			@RequestParam(value = "pagina", defaultValue = "0") int pagina, @RequestParam(value = "tamanho", defaultValue = "10") int tamanho, @RequestParam(value = "ordenarPor", defaultValue = "data") String ordenarPor, @RequestParam(value = "direcao", defaultValue = "ASC") String direcao) {
 
-		Sort sort = Sort.by(Sort.Direction.fromString(direcao), ordenarPor);
+		Sort sort = Sort.by(Sort.Direction.fromString(direcao), MedicaoDTO.filtrarDirecao(ordenarPor));
 		Pageable pageable = PageRequest.of(pagina, tamanho, sort);
 
 		return medicaoService.medicaoFindAllPaginado(filtro, dataInicio, dataFim, pageable);
 	}
+	
+	
 }

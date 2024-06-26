@@ -38,6 +38,24 @@ public class TipoSiloDTO extends Codigo {
 	@Schema(description = "comprimento em centímetro", example = "150.0")
 	private Double comprimento = Double.valueOf(0);
 
+	public static String filtrarDirecao(String str) {
+		switch (str.toUpperCase()) {
+		case "CODIGO" -> {
+			return "tsicod";
+		}
+		case "NOME" -> {
+			return "tsinom";
+		}
+		case "DESCRICAO" -> {
+			return "tsides";
+		}
+		case "TIPOSILO" -> {
+			return "tsitip";
+		}
+		default -> throw new AssertionError();
+		}
+	}
+	
 	public TipoSiloDTO(Long codigo, @NotBlank(message = "O campo 'nome' é obrigatório e não pode estar em branco.") String nome, @NotBlank(message = "O campo 'descricao' é obrigatório e não pode estar em branco.") String descricao,
 			@NotBlank(message = "O campo 'tipoSilo' é obrigatório e não pode estar em branco.") TipoSiloEnum tipoSilo, @NotNull(message = "O campo 'distanciaSensor' é obrigatório e não pode estar nulo.") Double distanciaSensor,
 			@NotNull(message = "O campo 'alturaCheio' é obrigatório e não pode estar nulo.") Double alturaCheio, Double raio, Double largura, Double comprimento) {

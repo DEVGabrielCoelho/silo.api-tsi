@@ -21,6 +21,24 @@ public class SiloModuloDTO extends Codigo {
 	private String volumeCheio = "0.00";
 	private String volumeStatus = "0.00";
 
+	public static String filtrarDirecao(String str) {
+		switch (str.toUpperCase()) {
+		case "CODIGO" -> {
+			return "smocod";
+		}
+		case "SILO" -> {
+			return "silcod";
+		}
+		case "DESCRICAO" -> {
+			return "smodes";
+		}
+		case "NUMSERIE" -> {
+			return "smonse";
+		}
+		default -> throw new AssertionError();
+		}
+	}
+	
 	public SiloModuloDTO(Long codigo, SiloDTO silo, String descricao, Long totalSensor, String numSerie, Long timeoutKeepAlive, Long timeoutMedicao, String ultimaKeepAlive, String ultimaMedicao, Integer gmt, String corKeepAlive, String corMedicao, StatusDeviceEnum status, String volumeCheio,
 			String volumeStatus) {
 		super(codigo);

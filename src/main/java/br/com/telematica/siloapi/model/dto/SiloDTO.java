@@ -17,6 +17,24 @@ public class SiloDTO extends Codigo {
 	@Schema(description = "longitude", example = "2222", nullable = true)
 	private Double longitude;
 
+	public static String filtrarDirecao(String str) {
+		switch (str.toUpperCase()) {
+		case "CODIGO" -> {
+			return "silcod";
+		}
+		case "TIPOSILO" -> {
+			return "tsicod";
+		}
+		case "PLANTA" -> {
+			return "placod";
+		}
+		case "NOME" -> {
+			return "silnom";
+		}
+		default -> throw new AssertionError();
+		}
+	}
+
 	public SiloDTO() {
 	}
 

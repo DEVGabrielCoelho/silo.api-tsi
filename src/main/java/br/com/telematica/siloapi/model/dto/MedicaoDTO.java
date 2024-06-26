@@ -9,11 +9,11 @@ import jakarta.validation.constraints.NotBlank;
 public class MedicaoDTO {
 
 	@NotBlank
-	@Schema(description = "Data", example = "2021-08-01T00:00:00.000Z")
-	private String dataMedicao;
+	@Schema(description = "data", example = "2021-08-01T00:00:00.000Z")
+	private String data;
 	@NotBlank
-	@Schema(description = "Objeto", example = "1")
-	private SiloModuloDTO siloModulo;
+	@Schema(description = "modulo", example = "1")
+	private SiloModuloDTO modulo;
 	@NotBlank
 	@Schema(description = "Umidade", example = "1.0")
 	private Double umidade;
@@ -32,10 +32,22 @@ public class MedicaoDTO {
 
 	public MedicaoDTO() {
 	}
+	
+	public static String filtrarDirecao(String str) {
+		switch (str.toUpperCase()) {
+		case "DATA" -> {
+			return "msidth";
+		}
+		case "MODULO" -> {
+			return "smocod";
+		}
+		default -> throw new AssertionError();
+		}
+	}
 
-	public MedicaoDTO(String dataMedicao, SiloModuloDTO siloModulo, Double umidade, Double ana, Double barometro, Double temperatura, Double distancia) {
-		this.dataMedicao = dataMedicao;
-		this.siloModulo = siloModulo;
+	public MedicaoDTO(String data, SiloModuloDTO modulo, Double umidade, Double ana, Double barometro, Double temperatura, Double distancia) {
+		this.data = data;
+		this.modulo = modulo;
 		this.umidade = umidade;
 		this.ana = ana;
 		this.barometro = barometro;
@@ -44,8 +56,8 @@ public class MedicaoDTO {
 	}
 
 	public MedicaoDTO(Medicao medEntity) {
-		this.dataMedicao = Utils.sdfDateforString(medEntity.getMsidth());
-		this.siloModulo = new SiloModuloDTO(medEntity.getSilomodulo());
+		this.data = Utils.sdfDateforString(medEntity.getMsidth());
+		this.modulo = new SiloModuloDTO(medEntity.getSilomodulo());
 		this.umidade = medEntity.getMsiumi();
 		this.ana = medEntity.getMsiana();
 		this.barometro = medEntity.getMsibar();
@@ -53,20 +65,20 @@ public class MedicaoDTO {
 		this.distancia = medEntity.getMsidis();
 	}
 
-	public String getDataMedicao() {
-		return dataMedicao;
+	public String getData() {
+		return data;
 	}
 
-	public void setDataMedicao(String dataMedicao) {
-		this.dataMedicao = dataMedicao;
+	public void setData(String data) {
+		this.data = data;
 	}
 
-	public SiloModuloDTO getSiloModulo() {
-		return siloModulo;
+	public SiloModuloDTO getModulo() {
+		return modulo;
 	}
 
-	public void setSiloModulo(SiloModuloDTO siloModulo) {
-		this.siloModulo = siloModulo;
+	public void setModulo(SiloModuloDTO modulo) {
+		this.modulo = modulo;
 	}
 
 	public Double getUmidade() {
@@ -112,10 +124,10 @@ public class MedicaoDTO {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("MedicaoDTO [dataMedicao=");
-		builder.append(dataMedicao);
-		builder.append(", siloModulo=");
-		builder.append(siloModulo);
+		builder.append("MedicaoDTO [data=");
+		builder.append(data);
+		builder.append(", modulo=");
+		builder.append(modulo);
 		builder.append(", umidade=");
 		builder.append(umidade);
 		builder.append(", ana=");
