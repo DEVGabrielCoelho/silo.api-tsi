@@ -27,4 +27,6 @@ public interface TipoSiloServInterface {
 	public ResponseEntity<TipoSiloDTO> save(TipoSiloModel tipoSilo) throws IOException;
 
 	public ResponseEntity<Page<TipoSiloDTO>> tipoSiloFindAllPaginado(String searchTerm, Pageable pageable) throws EntityNotFoundException, IOException;
+
+	List<TipoSiloDTO> sendListAbrangenciaTipoSiloDTO() throws IOException;
 }

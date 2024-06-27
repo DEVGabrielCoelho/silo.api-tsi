@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 
 import br.com.telematica.siloapi.model.PlantaModel;
 import br.com.telematica.siloapi.model.dto.PlantaDTO;
-import br.com.telematica.siloapi.model.entity.Planta;
 import jakarta.persistence.EntityNotFoundException;
 
 public interface PlantaServInterface {
@@ -21,7 +20,7 @@ public interface PlantaServInterface {
 
 	ResponseEntity<PlantaDTO> update(Long codigo, PlantaModel planta) throws IOException;
 
-	List<Planta> findAll() throws IOException;
+	List<PlantaDTO> sendListAbrangenciaPlantaDTO() throws IOException;
 
 	ResponseEntity<List<PlantaDTO>> findAllPlantaDTO() throws IOException;
 

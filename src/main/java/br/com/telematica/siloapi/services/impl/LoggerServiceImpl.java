@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -46,7 +45,7 @@ public class LoggerServiceImpl implements LoggerServInterface {
 	public ResponseEntity<List<LoggerDTO>> findByAll() throws EntityNotFoundException, IOException {
 		List<LoggerEntity> listAll = logRepository.findAll();
 
-		List<LoggerDTO> loggerDTOs = listAll.stream().map(LoggerDTO::new).collect(Collectors.toList());
+		List<LoggerDTO> loggerDTOs = listAll.stream().map(LoggerDTO::new).toList();
 
 		return MessageResponse.success(loggerDTOs);
 	}
@@ -67,7 +66,7 @@ public class LoggerServiceImpl implements LoggerServInterface {
 
 		List<LoggerEntity> listAll = logRepository.findBySmocod(codigo);
 
-		List<LoggerDTO> loggerDTOs = listAll.stream().map(LoggerDTO::new).collect(Collectors.toList());
+		List<LoggerDTO> loggerDTOs = listAll.stream().map(LoggerDTO::new).toList();
 
 		return MessageResponse.success(loggerDTOs);
 	}

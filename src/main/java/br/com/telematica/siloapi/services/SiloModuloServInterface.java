@@ -25,4 +25,6 @@ public interface SiloModuloServInterface {
 
 	ResponseEntity<Page<SiloModuloDTO>> siloModuloFindAllPaginado(String searchTerm, Pageable pageable) throws EntityNotFoundException, IOException;
 
+	List<SiloModuloDTO> sendListAbrangenciaModuloDTO();
+
 }

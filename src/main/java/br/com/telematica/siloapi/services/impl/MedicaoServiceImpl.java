@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +20,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import br.com.telematica.siloapi.exception.CustomMessageException;
+import br.com.telematica.siloapi.exception.CustomMessageExcep;
 import br.com.telematica.siloapi.model.MedicaoDeviceModel;
 import br.com.telematica.siloapi.model.MedicaoModel;
 import br.com.telematica.siloapi.model.dto.MedicaoDTO;
@@ -53,7 +52,7 @@ public class MedicaoServiceImpl implements MedicaoServInterface {
 		var siloModulo = siloModuloServiceImpl.findEntity(medicaoModel.getSilo());
 		if (siloModulo == null)
 			throw new EntityNotFoundException("Módulo não encontrado.");
-		
+
 		siloModuloServiceImpl.registerMedicaoInModulo(siloModulo, new Date());
 		Medicao medicao = new Medicao(dateMedicao, siloModulo, medicaoModel.getUmidade(), medicaoModel.getAna(), medicaoModel.getBarometro(), medicaoModel.getTemperatura(), medicaoModel.getDistancia());
 		Medicao savedMedicao = medicaoRepository.save(medicao);
@@ -85,7 +84,7 @@ public class MedicaoServiceImpl implements MedicaoServInterface {
 			return MessageResponse.success(null);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Não foi possível encontrar a Medição com o ID fornecido. Erro: ", e);
-			throw CustomMessageException.exceptionEntityNotFoundException(msidth, RECURSO, e);
+			throw CustomMessageExcep.exceptionEntityNotFoundException(msidth, RECURSO, e);
 		}
 	}
 
@@ -114,7 +113,7 @@ public class MedicaoServiceImpl implements MedicaoServInterface {
 
 	@Override
 	public ResponseEntity<List<MedicaoDTO>> findAllMedicaoDTO() throws IOException {
-		List<MedicaoDTO> medicaoDTOs = medicaoRepository.findAll().stream().map(this::convertToMedicaoDTO).collect(Collectors.toList());
+		List<MedicaoDTO> medicaoDTOs = medicaoRepository.findAll().stream().map(this::convertToMedicaoDTO).toList();
 		return MessageResponse.success(medicaoDTOs);
 	}
 

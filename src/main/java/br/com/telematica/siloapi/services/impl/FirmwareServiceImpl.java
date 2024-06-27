@@ -6,7 +6,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -101,7 +100,7 @@ public class FirmwareServiceImpl implements FirmwareServInterface {
 	@Override
 	public ResponseEntity<List<FirmwareDTO>> findAll() {
 		List<Firmware> firmwares = firmwareRepository.findAll();
-		List<FirmwareDTO> firmwareDTOs = firmwares.stream().map(FirmwareDTO::new).collect(Collectors.toList());
+		List<FirmwareDTO> firmwareDTOs = firmwares.stream().map(FirmwareDTO::new).toList();
 
 		return MessageResponse.success(firmwareDTOs);
 	}

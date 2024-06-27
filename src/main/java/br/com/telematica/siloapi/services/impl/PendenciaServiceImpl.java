@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -49,7 +48,7 @@ public class PendenciaServiceImpl implements PendenciaServInterface {
 		siloModuloServiceImpl.registerKeepAliveInModulo(modulo, dateKeep);
 
 		var listaPendenciaNova = findByPenStaAndpendel(StatusEnum.PENDENCIA.toString());
-		listaPendenciaNova.stream().map(pendencia -> listFirmware.add(pendencia.getId())).collect(Collectors.toList());
+		listaPendenciaNova.stream().map(pendencia -> listFirmware.add(pendencia.getId())).toList();
 		itensPendencias.setFirmware(listFirmware);
 
 		return MessageResponse.success(new KeepAliveDTO(dateKeepString, itensPendencias));
@@ -58,20 +57,20 @@ public class PendenciaServiceImpl implements PendenciaServInterface {
 	@Override
 	public ResponseEntity<List<PendenciasDTO>> findByAll() {
 		List<Pendencia> pendList = pendenciaRepository.findByPendel(1);
-		return MessageResponse.success(pendList.stream().map(PendenciasDTO::new).collect(Collectors.toList()));
+		return MessageResponse.success(pendList.stream().map(PendenciasDTO::new).toList());
 	}
 
 	@Override
 	public ResponseEntity<List<PendenciasDTO>> findByPentipAndpendel(String tipo) {
 		Objects.requireNonNull(tipo, "Tipo está nulo.");
 		List<Pendencia> pendList = pendenciaRepository.findByPentipAndPendel(tipo, 1);
-		return MessageResponse.success(pendList.stream().map(PendenciasDTO::new).collect(Collectors.toList()));
+		return MessageResponse.success(pendList.stream().map(PendenciasDTO::new).toList());
 	}
 
 	public List<PendenciasDTO> findByPenStaAndpendel(String status) {
 		Objects.requireNonNull(status, "Status está nulo.");
 		List<Pendencia> pendList = pendenciaRepository.findByPenstaAndPendel(status, 1);
-		return pendList.stream().map(PendenciasDTO::new).collect(Collectors.toList());
+		return pendList.stream().map(PendenciasDTO::new).toList();
 	}
 
 	@Override
@@ -85,7 +84,7 @@ public class PendenciaServiceImpl implements PendenciaServInterface {
 		Objects.requireNonNull(tipo, "Tipo está nulo.");
 		Objects.requireNonNull(status, "Status está nulo.");
 		List<Pendencia> pendList = pendenciaRepository.findByPentipAndPenstaAndPendel(tipo, status, 1);
-		return MessageResponse.success(pendList.stream().map(PendenciasDTO::new).collect(Collectors.toList()));
+		return MessageResponse.success(pendList.stream().map(PendenciasDTO::new).toList());
 	}
 
 	@Override

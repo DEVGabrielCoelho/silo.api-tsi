@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,14 +72,9 @@ public class EmpresaServiceImpl implements EmpresaServInterface {
 		return MessageResponse.success(result.map(EmpresaDTO::new));
 	}
 
-	public List<EmpresaDTO> findByEmpresa() {
-		try {
-			var result = empresaRepository.findAll();
-			return result.stream().map(EmpresaDTO::new).collect(Collectors.toList());
-		} catch (Exception e) {
-			log.error("Erro ao buscar empresas.", e);
-			return List.of();
-		}
+	@Autowired
+	public List<EmpresaDTO> sendListAbrangenciaEmpresaDTO() {
+		return empresaRepository.findAll().stream().map(EmpresaDTO::new).toList();
 	}
 
 	@Override
@@ -94,7 +88,7 @@ public class EmpresaServiceImpl implements EmpresaServInterface {
 			spec = spec.and(Empresa.filterByFields(null, findAbrangencia().listAbrangencia()));
 		}
 		List<Empresa> result = empresaRepository.findAll(spec);
-		return MessageResponse.success(result.stream().map(EmpresaDTO::new).collect(Collectors.toList()));
+		return MessageResponse.success(result.stream().map(EmpresaDTO::new).toList());
 	}
 
 	@Override
@@ -121,8 +115,7 @@ public class EmpresaServiceImpl implements EmpresaServInterface {
 		Objects.requireNonNull(empresaModel.getNome(), "Nome da Empresa está nulo.");
 
 		try {
-			Empresa empresa = new Empresa(null, empresaModel.getCnpj(), empresaModel.getNome(),
-					empresaModel.getNomeFantasia(), empresaModel.getTelefone());
+			Empresa empresa = new Empresa(null, empresaModel.getCnpj(), empresaModel.getNome(), empresaModel.getNomeFantasia(), empresaModel.getTelefone());
 			Empresa savedEmpresa = empresaRepository.save(empresa);
 			return MessageResponse.create(new EmpresaDTO(savedEmpresa));
 		} catch (Exception e) {

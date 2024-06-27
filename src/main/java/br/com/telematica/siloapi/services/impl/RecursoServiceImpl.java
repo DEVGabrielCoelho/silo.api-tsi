@@ -3,7 +3,6 @@ package br.com.telematica.siloapi.services.impl;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -103,7 +102,7 @@ public class RecursoServiceImpl implements RecursoServInterface {
 
 	@Override
 	public ResponseEntity<List<RecursoDTO>> findAll() throws EntityNotFoundException, IOException {
-		List<RecursoDTO> recursos = findAllEntity().stream().map(RecursoDTO::new).collect(Collectors.toList());
+		List<RecursoDTO> recursos = findAllEntity().stream().map(RecursoDTO::new).toList();
 		return MessageResponse.success(recursos);
 	}
 

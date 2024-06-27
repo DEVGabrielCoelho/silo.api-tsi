@@ -2,10 +2,8 @@ package br.com.telematica.siloapi.config;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -26,15 +24,15 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme;
 @SecurityScheme(name = "bearerAuth", description = "JWT Authentication", type = SecuritySchemeType.HTTP, scheme = "bearer", bearerFormat = "JWT", in = SecuritySchemeIn.HEADER)
 public class SecurityConfig {
 
-	@Autowired
-	@Lazy
-	private JWTAuthFilter authFilter;
+//	@Autowired
+//	@Lazy
+//	private JWTAuthFilter authFilter;
 
 	private static final String[] WHITE_LIST_URL = { "/api/modulo-device/v1/keepAlive/**", "/api/modulo-device/v1/auth-validate", "/api/modulo-device/v1/auth", "/api/autenticacao/v1/**", "/v2/api-docs", "/v3/api-docs", "/v3/api-docs/**", "/swagger-resources", "/swagger-resources/**",
 			"/configuration/ui", "/configuration/security", "/swagger-ui/**", "/webjars/**", "/swagger-ui.html", "/swagger-ui/index.html" };
 
 	@Bean
-	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+	SecurityFilterChain filterChain(JWTAuthFilter authFilter, HttpSecurity http) throws Exception {
 		http.csrf(csrf -> csrf.disable())
 				// Filtro de requisição
 				.addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class).authorizeHttpRequests(requests -> requests

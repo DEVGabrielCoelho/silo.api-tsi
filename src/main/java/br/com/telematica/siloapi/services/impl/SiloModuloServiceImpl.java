@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -112,8 +111,13 @@ public class SiloModuloServiceImpl implements SiloModuloServInterface {
 			spec = spec.and(SiloModulo.filterByFields(null, findAbrangencia().listAbrangencia()));
 		}
 		List<SiloModulo> modulos = siloModuloRepository.findAll(spec);
-		List<SiloModuloDTO> dtoList = modulos.stream().map(this::dtoCalc).collect(Collectors.toList());
+		List<SiloModuloDTO> dtoList = modulos.stream().map(this::dtoCalc).toList();
 		return MessageResponse.success(dtoList);
+	}
+
+	@Override
+	public List<SiloModuloDTO> sendListAbrangenciaModuloDTO() {
+		return siloModuloRepository.findAll().stream().map(SiloModuloDTO::new).toList();
 	}
 
 	@Override

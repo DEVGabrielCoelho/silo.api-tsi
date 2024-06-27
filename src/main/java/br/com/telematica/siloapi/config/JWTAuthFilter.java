@@ -98,14 +98,12 @@ public class JWTAuthFilter extends OncePerRequestFilter {
 				}
 			}
 			filterChain.doFilter(request, response);
-		} catch (TokenExpiredException e) {
-			accessDeniedHandler.handle(request, response, new AccessDeniedException(e.getMessage()));
-		} catch (AccessDeniedException e) {
+		} catch (TokenExpiredException | AccessDeniedException e) {
 			accessDeniedHandler.handle(request, response, new AccessDeniedException(e.getMessage()));
 		}
 	}
 
-	private TokenDeviceRecord recoverToken(HttpServletRequest request) throws IOException {
+	private TokenDeviceRecord recoverToken(HttpServletRequest request) {
 		String authHeader = request.getHeader("Authorization");
 		if (authHeader == null) {
 			return null;

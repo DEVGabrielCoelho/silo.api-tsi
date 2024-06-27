@@ -3,7 +3,6 @@ package br.com.telematica.siloapi.services.impl;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +14,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import br.com.telematica.siloapi.exception.CustomMessageException;
+import br.com.telematica.siloapi.exception.CustomMessageExcep;
 import br.com.telematica.siloapi.handler.AbrangenciaHandler;
 import br.com.telematica.siloapi.model.PlantaModel;
 import br.com.telematica.siloapi.model.dto.PlantaDTO;
@@ -73,7 +72,7 @@ public class PlantaServiceImpl implements PlantaServInterface {
 			return MessageResponse.success(null);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Não foi possível encontrar a Planta com o ID fornecido. Error: ", e);
-			throw CustomMessageException.exceptionEntityNotFoundException(codigo, RECURSO, e);
+			throw CustomMessageExcep.exceptionEntityNotFoundException(codigo, RECURSO, e);
 		}
 	}
 
@@ -98,8 +97,8 @@ public class PlantaServiceImpl implements PlantaServInterface {
 	}
 
 	@Override
-	public List<Planta> findAll() throws IOException {
-		return plantaRepository.findAll();
+	public List<PlantaDTO> sendListAbrangenciaPlantaDTO() throws IOException {
+		return plantaRepository.findAll().stream().map(PlantaDTO::new).toList();
 	}
 
 	@Override
@@ -112,14 +111,12 @@ public class PlantaServiceImpl implements PlantaServInterface {
 		} else {
 			spec = spec.and(Planta.filterByFields(null, findAbrangencia().listAbrangencia()));
 		}
-		List<PlantaDTO> plantaDTOs = plantaRepository.findAll(spec).stream().map(this::convertPlantaDTO)
-				.collect(Collectors.toList());
+		List<PlantaDTO> plantaDTOs = plantaRepository.findAll(spec).stream().map(this::convertPlantaDTO).toList();
 		return MessageResponse.success(plantaDTOs);
 	}
 
 	@Override
-	public ResponseEntity<Page<PlantaDTO>> plantaFindAllPaginado(String searchTerm, Pageable pageable)
-			throws EntityNotFoundException, IOException {
+	public ResponseEntity<Page<PlantaDTO>> plantaFindAllPaginado(String searchTerm, Pageable pageable) throws EntityNotFoundException, IOException {
 
 		Specification<Planta> spec = Specification.where(null);
 

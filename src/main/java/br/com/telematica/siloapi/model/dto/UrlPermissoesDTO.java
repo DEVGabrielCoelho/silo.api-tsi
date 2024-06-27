@@ -39,35 +39,35 @@ public class UrlPermissoesDTO {
 	}
 
 	public String[] getBuscar() {
-		return buscar.toArray(new String[0]);
+		return buscar.toArray(String[]::new);
 	}
 
 	public String[] getDeletar() {
-		return deletar.toArray(new String[0]);
+		return deletar.toArray(String[]::new);
 	}
 
 	public String[] getCriar() {
-		return criar.toArray(new String[0]);
+		return criar.toArray(String[]::new);
 	}
 
 	public String[] getEditar() {
-		return editar.toArray(new String[0]);
+		return editar.toArray(String[]::new);
 	}
 
 	public String[] getPerfil() {
-		return perfil.toArray(new String[0]);
+		return perfil.toArray(String[]::new);
 	}
 
 	public void setPerfil(PerfilDTO listaPerfil) {
 		perfil.add(listaPerfil.getDescricao().toUpperCase());
-		System.out.println(perfil.toString());
+		// System.out.println(perfil.toString());
 	}
 
 	public void setPerfil(List<PerfilDTO> listaPerfil) {
 		for (PerfilDTO per : listaPerfil) {
 			perfil.add(per.getDescricao().toUpperCase());
 		}
-		System.out.println(perfil.toString());
+		// System.out.println(perfil.toString());
 	}
 
 	public void setPerfil(String str) {
@@ -77,17 +77,24 @@ public class UrlPermissoesDTO {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("UrlPermissoesDTO [ \n 	urlGet    =");
-		builder.append(buscar);
-		builder.append(", \n 	urlDelete =");
-		builder.append(deletar);
-		builder.append(",\n 	urlPost   =");
-		builder.append(criar);
-		builder.append(",\n 	urlPut    =");
-		builder.append(editar);
-		builder.append(",\n 	perfil	  =");
-		builder.append(perfil);
-		builder.append("\n]");
+		builder.append("UrlPermissoesDTO [");
+		if (buscar != null) {
+			builder.append("buscar=").append(buscar).append(", ");
+		}
+		if (deletar != null) {
+			builder.append("deletar=").append(deletar).append(", ");
+		}
+		if (criar != null) {
+			builder.append("criar=").append(criar).append(", ");
+		}
+		if (editar != null) {
+			builder.append("editar=").append(editar).append(", ");
+		}
+		if (perfil != null) {
+			builder.append("perfil=").append(perfil);
+		}
+		builder.append("]");
 		return builder.toString();
 	}
+
 }

@@ -11,6 +11,10 @@ import br.com.telematica.siloapi.utils.Utils;
 @Component
 public class MessageResponse {
 
+	private MessageResponse() {
+//		throw new IllegalStateException("MessageResponse class");
+	}
+
 	// Método para páginas
 	public static <T> ResponseEntity<Page<T>> page(Page<T> page) {
 		return new ResponseEntity<>(page, HttpStatus.OK);

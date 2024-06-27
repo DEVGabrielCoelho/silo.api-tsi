@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -116,7 +115,7 @@ public class UsuarioServiceImpl implements UsuarioServInterface {
 	@Override
 	public ResponseEntity<List<UsuarioDTO>> findAll() throws EntityNotFoundException, IOException {
 		List<Usuario> users = findAllEntity();
-		List<UsuarioDTO> userDTOs = users.stream().map(UsuarioDTO::new).collect(Collectors.toList());
+		List<UsuarioDTO> userDTOs = users.stream().map(UsuarioDTO::new).toList();
 		return MessageResponse.success(userDTOs);
 	}
 
@@ -154,7 +153,7 @@ public class UsuarioServiceImpl implements UsuarioServInterface {
 		}
 	}
 
-	private Usuario updateUserInfo(Usuario user, UsuarioModel userModel) throws EntityNotFoundException, IOException {
+	private Usuario updateUserInfo(Usuario user, UsuarioModel userModel) throws EntityNotFoundException {
 		Perfil perfil = permissaoService.findByIdPerfilEntity(userModel.getPerfil());
 		Empresa empresa = empresaService.findByIdEntity(userModel.getEmpresa());
 		Abrangencia abrangencia = abrangenciaService.findByIdEntity(userModel.getAbrangencia());

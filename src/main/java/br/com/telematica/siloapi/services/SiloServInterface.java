@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 
 import br.com.telematica.siloapi.model.SiloModel;
 import br.com.telematica.siloapi.model.dto.SiloDTO;
-import br.com.telematica.siloapi.model.entity.Silo;
 
 public interface SiloServInterface {
 
@@ -19,7 +18,7 @@ public interface SiloServInterface {
 
 	ResponseEntity<SiloDTO> update(Long codigo, SiloModel siloDTO) throws IOException;
 
-	List<Silo> findAll() throws IOException;
+	List<SiloDTO> sendListAbrangenciaSiloDTO() throws IOException;
 
 	ResponseEntity<List<SiloDTO>> findAllSiloDTO() throws IOException;
 

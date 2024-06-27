@@ -3,7 +3,6 @@ package br.com.telematica.siloapi.services.impl;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +27,11 @@ import br.com.telematica.siloapi.records.ItensAbrangentes;
 import br.com.telematica.siloapi.repository.AbrangenciaDetalhesRepository;
 import br.com.telematica.siloapi.repository.AbrangenciaRepository;
 import br.com.telematica.siloapi.services.AbrangenciaServInterface;
+import br.com.telematica.siloapi.services.EmpresaServInterface;
+import br.com.telematica.siloapi.services.PlantaServInterface;
+import br.com.telematica.siloapi.services.SiloModuloServInterface;
+import br.com.telematica.siloapi.services.SiloServInterface;
+import br.com.telematica.siloapi.services.TipoSiloServInterface;
 import br.com.telematica.siloapi.utils.JsonNodeConverter;
 import br.com.telematica.siloapi.utils.message.MessageResponse;
 import jakarta.persistence.EntityNotFoundException;
@@ -45,7 +49,15 @@ public class AbrangenciaServiceImpl implements AbrangenciaServInterface {
 	@Autowired
 	private RecursoServiceImpl recursoService;
 	@Autowired
-	private EmpresaServiceImpl empresaService;
+	private EmpresaServInterface empresaService;
+	@Autowired
+	private PlantaServInterface plantaServInterface;
+	@Autowired
+	private TipoSiloServInterface tipoSiloServInterface;
+	@Autowired
+	private SiloServInterface siloServInterface;
+	@Autowired
+	private SiloModuloServInterface siloModuloServInterface;
 
 	public AbrangenciaDetalhes findByAbrangenciaAndRecursoContaining(Abrangencia codigo, Recurso nome) {
 		List<AbrangenciaDetalhes> results = abrangenciaDetalhesRepository.findByAbrangencia_abrcodAndRecurso_recnomContaining(codigo.getAbrcod(), nome.getRecnom());
@@ -75,13 +87,17 @@ public class AbrangenciaServiceImpl implements AbrangenciaServInterface {
 		return new AbrangenciaDTO(abrangencia);
 	}
 
-	public ItensAbrangentes findByItemAbrangenceEntity() {
-		var empresaList = empresaService.findByEmpresa();
-		return new ItensAbrangentes(empresaList);
+	public ItensAbrangentes findByItemAbrangenceEntity() throws IOException {
+		var empresaList = empresaService.sendListAbrangenciaEmpresaDTO();
+		var planta = plantaServInterface.sendListAbrangenciaPlantaDTO();
+		var tipoSilo = tipoSiloServInterface.sendListAbrangenciaTipoSiloDTO();
+		var silo = siloServInterface.sendListAbrangenciaSiloDTO();
+		var modulo = siloModuloServInterface.sendListAbrangenciaModuloDTO();
+		return new ItensAbrangentes(empresaList, planta, tipoSilo, silo, modulo);
 	}
 
 	@Override
-	public ResponseEntity<ItensAbrangentes> findByItemAbrangence() {
+	public ResponseEntity<ItensAbrangentes> findByItemAbrangence() throws IOException {
 		return MessageResponse.success(findByItemAbrangenceEntity());
 	}
 
@@ -95,7 +111,7 @@ public class AbrangenciaServiceImpl implements AbrangenciaServInterface {
 
 		return MessageResponse.success(result.map(abrangencia -> {
 			var details = abrangenciaDetalhesRepository.findByAbrangencia_Abrcod(abrangencia.getAbrcod());
-			var detailsDTOList = details.stream().map(AbrangenciaDetalhesDTO::new).collect(Collectors.toList());
+			var detailsDTOList = details.stream().map(AbrangenciaDetalhesDTO::new).toList();
 			return new AbrangenciaListaDetalhesDTO(abrangencia, detailsDTOList);
 		}));
 	}
@@ -130,7 +146,7 @@ public class AbrangenciaServiceImpl implements AbrangenciaServInterface {
 
 	public List<AbrangenciaDetalhesDTO> createAbrangenciaDetalhesList(Abrangencia abrangencia, List<AbrangenciaDetalhesModel> recursos) {
 		return recursos == null ? List.of() // Retorna uma lista vazia em vez de null.
-				: recursos.stream().map(recurso -> new AbrangenciaDetalhesDTO(saveOrUpdateAbrangenciaDetalhes(abrangencia, recurso))).collect(Collectors.toList());
+				: recursos.stream().map(recurso -> new AbrangenciaDetalhesDTO(saveOrUpdateAbrangenciaDetalhes(abrangencia, recurso))).toList();
 	}
 
 	@Override
@@ -140,7 +156,7 @@ public class AbrangenciaServiceImpl implements AbrangenciaServInterface {
 
 		Abrangencia abrangencia = abrangenciaRepository.save(new Abrangencia(codigo, abrangenciaModel.getNome(), abrangenciaModel.getDescricao()));
 
-		List<AbrangenciaDetalhesDTO> abrangenciaDetalhesDTOList = abrangenciaModel.getRecursos() == null ? null : abrangenciaModel.getRecursos().stream().map(recurso -> new AbrangenciaDetalhesDTO(saveOrUpdateAbrangenciaDetalhes(abrangencia, recurso))).collect(Collectors.toList());
+		List<AbrangenciaDetalhesDTO> abrangenciaDetalhesDTOList = abrangenciaModel.getRecursos() == null ? null : abrangenciaModel.getRecursos().stream().map(recurso -> new AbrangenciaDetalhesDTO(saveOrUpdateAbrangenciaDetalhes(abrangencia, recurso))).toList();
 
 		if (abrangenciaDetalhesDTOList == null || abrangenciaDetalhesDTOList.isEmpty()) {
 			abrangenciaDetalhesRepository.deleteById(codigo);
@@ -155,9 +171,9 @@ public class AbrangenciaServiceImpl implements AbrangenciaServInterface {
 
 		List<AbrangenciaListaDetalhesDTO> abrangenciaDTOList = abrangenciaList.stream().map(abrangencia -> {
 			var details = abrangenciaDetalhesRepository.findByAbrangencia_Abrcod(abrangencia.getAbrcod());
-			var detailsDTOList = details.stream().map(AbrangenciaDetalhesDTO::new).collect(Collectors.toList());
+			var detailsDTOList = details.stream().map(AbrangenciaDetalhesDTO::new).toList();
 			return new AbrangenciaListaDetalhesDTO(abrangencia, detailsDTOList);
-		}).collect(Collectors.toList());
+		}).toList();
 
 		return MessageResponse.success(abrangenciaDTOList);
 	}
@@ -166,7 +182,7 @@ public class AbrangenciaServiceImpl implements AbrangenciaServInterface {
 	public ResponseEntity<AbrangenciaListaDetalhesDTO> findById(@NonNull Long codigo) throws EntityNotFoundException, IOException {
 		Abrangencia abrangencia = findByIdEntity(codigo);
 
-		List<AbrangenciaDetalhesDTO> detailsDTOList = abrangenciaDetalhesRepository.findByAbrangencia_Abrcod(abrangencia.getAbrcod()).stream().map(AbrangenciaDetalhesDTO::new).collect(Collectors.toList());
+		List<AbrangenciaDetalhesDTO> detailsDTOList = abrangenciaDetalhesRepository.findByAbrangencia_Abrcod(abrangencia.getAbrcod()).stream().map(AbrangenciaDetalhesDTO::new).toList();
 
 		return MessageResponse.success(new AbrangenciaListaDetalhesDTO(abrangencia, detailsDTOList.isEmpty() ? null : detailsDTOList));
 	}

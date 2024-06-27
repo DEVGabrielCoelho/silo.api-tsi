@@ -24,7 +24,6 @@ import br.com.telematica.siloapi.services.EmpresaServInterface;
 import br.com.telematica.siloapi.utils.Utils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @CrossOrigin
@@ -37,27 +36,21 @@ public class EmpresaController extends SecurityRestController {
 	private EmpresaServInterface empresaService;
 
 	@Operation(description = "Recupera uma lista paginada de objetos EmpresaDTO com filtragem e ordenação opcionais.")
-    @Parameters({
-        @Parameter(name = "pagina", description = "Número da página a ser recuperada, começando em 0."),
-        @Parameter(name = "tamanho", description = "Número de itens por página."),
-        @Parameter(name = "filtro", description = "Termo de filtro opcional para buscar Empresas."),
-        @Parameter(name = "ordenarPor", description = "Campo pelo qual os resultados serão ordenados. (codigo, cnpj, nome, nomeFantasia, telefone)"),
-        @Parameter(name = "direcao", description = "Direção da ordenação, podendo ser ASC (ascendente) ou DESC (descendente).")
-    })
-    @GetMapping("/v1/paginado")
-    public ResponseEntity<Page<EmpresaDTO>> buscarEmpresaPaginado(
-            @RequestParam(value = "pagina", defaultValue = "0") Integer pagina,
-            @RequestParam(value = "tamanho", defaultValue = "10") Integer tamanho,
-            @RequestParam(value = "filtro", required = false) String filtro,
-            @RequestParam(value = "ordenarPor", defaultValue = "codigo") String ordenarPor,
-            @RequestParam(value = "direcao", defaultValue = "ASC", required = false) @NonNull String direcao) throws IOException {
+	@Parameter(name = "pagina", description = "Número da página a ser recuperada, começando em 0.")
+	@Parameter(name = "tamanho", description = "Número de itens por página.")
+	@Parameter(name = "filtro", description = "Termo de filtro opcional para buscar Empresas.")
+	@Parameter(name = "ordenarPor", description = "Campo pelo qual os resultados serão ordenados. (codigo, cnpj, nome, nomeFantasia, telefone)")
+	@Parameter(name = "direcao", description = "Direção da ordenação, podendo ser ASC (ascendente) ou DESC (descendente).")
+	@GetMapping("/v1/paginado")
+	public ResponseEntity<Page<EmpresaDTO>> buscarEmpresaPaginado(@RequestParam(value = "pagina", defaultValue = "0") Integer pagina, @RequestParam(value = "tamanho", defaultValue = "10") Integer tamanho, @RequestParam(value = "filtro", required = false) String filtro,
+			@RequestParam(value = "ordenarPor", defaultValue = "codigo") String ordenarPor, @RequestParam(value = "direcao", defaultValue = "ASC", required = false) @NonNull String direcao) throws IOException {
 
-        String ordenarEntity = EmpresaDTO.consultaPagable(ordenarPor);
-        if (ordenarEntity == null) {
-            return ResponseEntity.badRequest().body(Page.empty());
-        }
-        return empresaService.empresaFindAllPaginado(filtro, Utils.consultaPage(ordenarEntity, direcao, pagina, tamanho));
-    }
+		String ordenarEntity = EmpresaDTO.consultaPagable(ordenarPor);
+		if (ordenarEntity == null) {
+			return ResponseEntity.badRequest().body(Page.empty());
+		}
+		return empresaService.empresaFindAllPaginado(filtro, Utils.consultaPage(ordenarEntity, direcao, pagina, tamanho));
+	}
 
 	@GetMapping("/v1/buscar/{codigo}")
 	@Operation(description = "Buscar empresa pelo código. Retorna os detalhes de uma empresa específica com base no código fornecido.")

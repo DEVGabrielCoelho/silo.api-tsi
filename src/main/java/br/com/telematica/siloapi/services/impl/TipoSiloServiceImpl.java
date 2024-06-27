@@ -3,7 +3,6 @@ package br.com.telematica.siloapi.services.impl;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +13,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import br.com.telematica.siloapi.exception.CustomMessageException;
+import br.com.telematica.siloapi.exception.CustomMessageExcep;
 import br.com.telematica.siloapi.handler.AbrangenciaHandler;
 import br.com.telematica.siloapi.model.TipoSiloModel;
 import br.com.telematica.siloapi.model.dto.TipoSiloDTO;
@@ -66,7 +65,7 @@ public class TipoSiloServiceImpl implements TipoSiloServInterface {
 			return MessageResponse.success(new TipoSiloDTO(result));
 		} catch (Exception e) {
 			logger.error("Erro ao salvar o Tipo de Silo: ", e);
-			throw CustomMessageException.exceptionIOException("salvar", RECURSO, tipoSiloModel, e);
+			throw CustomMessageExcep.exceptionIOException("salvar", RECURSO, tipoSiloModel, e);
 		}
 	}
 
@@ -83,17 +82,17 @@ public class TipoSiloServiceImpl implements TipoSiloServInterface {
 			return MessageResponse.success(null);
 		} catch (EntityNotFoundException e) {
 			logger.error("Não foi possível encontrar o tipo silo com o ID fornecido: ", e);
-			throw CustomMessageException.exceptionEntityNotFoundException(codigo, RECURSO, e);
+			throw CustomMessageExcep.exceptionEntityNotFoundException(codigo, RECURSO, e);
 		} catch (Exception e) {
 			logger.error("Erro ao deletar o tipo do silo: ", e);
-			throw CustomMessageException.exceptionIOException("deletar", RECURSO, codigo, e);
+			throw CustomMessageExcep.exceptionIOException("deletar", RECURSO, codigo, e);
 		}
 	}
 
 	@Override
 	public ResponseEntity<TipoSiloDTO> update(Long codigo, TipoSiloModel tipoSiloModel) throws IOException {
 		try {
-			TipoSilo resultEntity = tipoSiloRepository.findById(codigo).orElseThrow(() -> CustomMessageException.exceptionEntityNotFoundException(codigo, RECURSO, null));
+			TipoSilo resultEntity = tipoSiloRepository.findById(codigo).orElseThrow(() -> CustomMessageExcep.exceptionEntityNotFoundException(codigo, RECURSO, null));
 
 			resultEntity.setTsinom(tipoSiloModel.getNome());
 			resultEntity.setTsides(tipoSiloModel.getDescricao());
@@ -111,7 +110,7 @@ public class TipoSiloServiceImpl implements TipoSiloServInterface {
 			return MessageResponse.success(new TipoSiloDTO(result));
 		} catch (Exception e) {
 			logger.error("Erro ao atualizar o Tipo de Silo: ", e);
-			throw CustomMessageException.exceptionCodigoIOException("atualizar", RECURSO, codigo, tipoSiloModel, e);
+			throw CustomMessageExcep.exceptionCodigoIOException("atualizar", RECURSO, codigo, tipoSiloModel, e);
 		}
 	}
 
@@ -123,8 +122,13 @@ public class TipoSiloServiceImpl implements TipoSiloServInterface {
 		} else {
 			spec = spec.and(TipoSilo.filterByFields(null, findAbrangencia().listAbrangencia()));
 		}
-		List<TipoSiloDTO> tipoSiloDTOList = tipoSiloRepository.findAll(spec).stream().map(this::convertToTipoSiloDTO).collect(Collectors.toList());
+		List<TipoSiloDTO> tipoSiloDTOList = tipoSiloRepository.findAll(spec).stream().map(this::convertToTipoSiloDTO).toList();
 		return MessageResponse.success(tipoSiloDTOList);
+	}
+
+	@Override
+	public List<TipoSiloDTO> sendListAbrangenciaTipoSiloDTO() throws IOException {
+		return tipoSiloRepository.findAll().stream().map(TipoSiloDTO::new).toList();
 	}
 
 	@Override

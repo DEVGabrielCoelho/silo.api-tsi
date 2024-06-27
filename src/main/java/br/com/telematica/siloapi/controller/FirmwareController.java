@@ -2,7 +2,6 @@ package br.com.telematica.siloapi.controller;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
-import java.text.ParseException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,34 +42,32 @@ public class FirmwareController extends SecurityRestController {
 
 	@GetMapping("/v1/listar")
 	@Operation(description = "Listar todos os firmwares cadastrados. Retorna uma lista de todos os firmwares existentes.")
-	public ResponseEntity<List<FirmwareDTO>> BuscarListaFirmware() throws ParseException {
+	public ResponseEntity<List<FirmwareDTO>> buscarListaFirmware() {
 		return firmService.findAll();
 	}
 
 	@GetMapping("/v1/buscar/{codigo}")
 	@Operation(description = "Buscar firmware pelo código. Retorna os detalhes de um firmware específico com base no código fornecido.")
-	public ResponseEntity<FirmwareDTO> buscarFirmwarePorId(@PathVariable Long codigo) throws ParseException {
+	public ResponseEntity<FirmwareDTO> buscarFirmwarePorId(@PathVariable Long codigo) {
 		return firmService.findById(codigo);
 	}
 
 	@GetMapping("/v1/download/{codigo}")
 	@Operation(description = "Download do firmware pelo código. Permite o download de um firmware específico com base no código fornecido.")
-	public ResponseEntity<Resource> buscarFirmwareParaDownload(@PathVariable Long codigo) throws ParseException, NoSuchAlgorithmException {
+	public ResponseEntity<Resource> buscarFirmwareParaDownload(@PathVariable Long codigo) throws NoSuchAlgorithmException {
 		return firmService.findByIdDownload(codigo);
 	}
 
 	@PostMapping(path = "/v1/criar", consumes = { "multipart/form-data" })
 	@Operation(description = "Criar um novo firmware. Recebe o arquivo e os detalhes do firmware e o armazena no sistema.")
 	public ResponseEntity<FirmwareDTO> criarFirmware(@RequestParam("arquivo") MultipartFile arquivo, @RequestParam(name = "modelo") String modelo) throws IOException {
-		var save = firmService.save(arquivo, modelo);
-		return save;
+		return firmService.save(arquivo, modelo);
 	}
 
 	@PutMapping(path = "/v1/atualizar", consumes = { "multipart/form-data" })
 	@Operation(description = "Atualizar um firmware existente. Recebe o código, o novo arquivo e os detalhes do firmware e os atualiza no sistema.")
 	public ResponseEntity<FirmwareDTO> atualizarFirmware(@RequestParam("codigo") Long codigo, @RequestParam("arquivo") MultipartFile arquivo, @RequestParam("numSerie") String numSerie) throws IOException {
-		var save = firmService.update(codigo, arquivo, numSerie);
-		return save;
+		return firmService.update(codigo, arquivo, numSerie);
 	}
 
 	@DeleteMapping("/v1/deletar/{codigo}")

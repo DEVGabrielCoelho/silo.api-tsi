@@ -49,7 +49,7 @@ public class PendencyController extends SecurityRestController {
 	@GetMapping("/v1/paginado")
 	@Operation(description = "Busca paginada de pendências. Retorna uma lista paginada de pendências com opções de filtragem e ordenação.")
 	public ResponseEntity<Page<PendenciasDTO>> buscarPendenciaPaginado(@RequestParam(value = "pagina", defaultValue = "0") Integer pagina, @RequestParam(value = "tamanho", defaultValue = "10") Integer tamanho, @RequestParam(value = "filtro", required = false) String filtro,
-			@RequestParam(value = "modulo", required = false) Long modulo, @RequestParam(value = "ordenarPor", defaultValue = "id") String ordenarPor, @RequestParam(value = "direcao", defaultValue = "ASC", required = false) String direcao) throws EntityNotFoundException, IOException {
+			@RequestParam(value = "modulo", required = false) Long modulo, @RequestParam(value = "ordenarPor", defaultValue = "id") String ordenarPor, @RequestParam(value = "direcao", defaultValue = "ASC", required = false) String direcao) throws EntityNotFoundException {
 		String ordenarEntity = PendenciasDTO.consultaPagable(ordenarPor);
 		if (ordenarEntity == null) {
 			return ResponseEntity.badRequest().body(Page.empty());
@@ -59,7 +59,7 @@ public class PendencyController extends SecurityRestController {
 
 	@GetMapping("/v1/listar")
 	@Operation(description = "Listar todas as pendências cadastradas. Retorna uma lista de todas as pendências existentes.")
-	public ResponseEntity<List<PendenciasDTO>> buscarListaPendencia() throws ParseException {
+	public ResponseEntity<List<PendenciasDTO>> buscarListaPendencia() {
 		return pendenciaService.findByAll();
 	}
 

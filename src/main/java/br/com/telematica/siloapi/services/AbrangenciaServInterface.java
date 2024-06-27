@@ -27,6 +27,6 @@ public interface AbrangenciaServInterface {
 
 	ResponseEntity<Page<AbrangenciaListaDetalhesDTO>> findAll(String nome, Pageable pageable) throws EntityNotFoundException, IOException;
 
-	ResponseEntity<ItensAbrangentes> findByItemAbrangence();
+	ResponseEntity<ItensAbrangentes> findByItemAbrangence() throws IOException;
 
 }

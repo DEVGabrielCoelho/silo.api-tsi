@@ -1,7 +1,6 @@
 package br.com.telematica.siloapi.controller;
 
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,22 +37,19 @@ public class RecursoController extends SecurityRestController {
 	@PostMapping("/v1/criar")
 	@Operation(description = "Criar um novo recurso. Recebe os detalhes do recurso e o armazena no sistema. Obs: Gerado automaticamente ao iniciar a aplicação.")
 	public ResponseEntity<RecursoDTO> criarRecurso(@RequestBody RecursoModel cadastro) {
-		var recursoService = recursoServImpl.save(cadastro);
-		return recursoService;
+		return recursoServImpl.save(cadastro);
 	}
 
 	@GetMapping("/v1/buscar/{codigo}")
 	@Operation(description = "Buscar recurso pelo código. Retorna os detalhes de um recurso específico com base no código fornecido.")
 	public ResponseEntity<RecursoDTO> buscarRecursoPorCodigo(@PathVariable Long codigo) throws EntityNotFoundException, IOException {
-		var recursoList = recursoServImpl.findById(codigo);
-		return recursoList;
+		return recursoServImpl.findById(codigo);
 	}
 
 	@GetMapping("/v1/listar")
 	@Operation(description = "Listar todos os recursos cadastrados. Retorna uma lista de todos os recursos existentes.")
 	public ResponseEntity<List<RecursoDTO>> buscarListarRecurso() throws EntityNotFoundException, IOException {
-		var recursoList = recursoServImpl.findAll();
-		return recursoList;
+		return recursoServImpl.findAll();
 	}
 
 	@GetMapping("/v1/paginado")
@@ -65,15 +61,13 @@ public class RecursoController extends SecurityRestController {
 
 	@PutMapping("/v1/atualizar/{codigo}")
 	@Operation(description = "Atualizar um recurso existente. Atualiza os detalhes de um recurso com base no código fornecido. Obs: Como recurso é gerado automaticamente, se alterado pode ocasionar algum problema nas funcionalidades.")
-	public ResponseEntity<RecursoDTO> atualizarRecurso(@Valid @PathVariable Long codigo, @Valid @RequestBody RecursoModel entity) throws ParseException {
-		var recursoService = recursoServImpl.update(codigo, entity);
-		return recursoService;
+	public ResponseEntity<RecursoDTO> atualizarRecurso(@Valid @PathVariable Long codigo, @Valid @RequestBody RecursoModel entity) {
+		return recursoServImpl.update(codigo, entity);
 	}
 
 	@DeleteMapping("/v1/deletar/{codigo}")
 	@Operation(description = "Deletar um recurso pelo código. Remove um recurso específico com base no código fornecido. Obs: Como recurso é gerado automaticamente, se alterado pode ocasionar algum problema nas funcionalidades.")
 	public ResponseEntity<ResponseGlobalModel> deletarRecurso(@Valid @PathVariable Long codigo) throws IOException {
-		var recursoService = recursoServImpl.delete(codigo);
-		return recursoService;
+		return recursoServImpl.delete(codigo);
 	}
 }

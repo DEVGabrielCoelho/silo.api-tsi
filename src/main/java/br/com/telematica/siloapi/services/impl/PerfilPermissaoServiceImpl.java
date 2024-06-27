@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -51,15 +50,15 @@ public class PerfilPermissaoServiceImpl implements PerfilPermServInterface {
 	public PerfilPermissaoDTO findByIdPerfil(Long codigo) throws EntityNotFoundException {
 		Objects.requireNonNull(codigo, "Código do Perfil está nulo.");
 		Perfil perfil = findByIdPerfilEntity(codigo);
-		List<PermissaoDTO> permissoes = permissaoRepository.findByPerfil_percod(perfil.getPercod()).orElseThrow(() -> new EntityNotFoundException("Permissões não encontradas para o perfil com código: " + codigo)).stream().map(PermissaoDTO::new).collect(Collectors.toList());
+		List<PermissaoDTO> permissoes = permissaoRepository.findByPerfil_percod(perfil.getPercod()).orElseThrow(() -> new EntityNotFoundException("Permissões não encontradas para o perfil com código: " + codigo)).stream().map(PermissaoDTO::new).toList();
 		return new PerfilPermissaoDTO(perfil, permissoes);
 	}
 
 	public List<PerfilPermissaoDTO> findAllPerfil() throws EntityNotFoundException {
 		return perfilRepository.findAll().stream().map(perfil -> {
-			List<PermissaoDTO> permissoes = permissaoRepository.findByPerfil_percod(perfil.getPercod()).orElseGet(ArrayList::new).stream().map(PermissaoDTO::new).collect(Collectors.toList());
+			List<PermissaoDTO> permissoes = permissaoRepository.findByPerfil_percod(perfil.getPercod()).orElseGet(ArrayList::new).stream().map(PermissaoDTO::new).toList();
 			return new PerfilPermissaoDTO(perfil, permissoes);
-		}).collect(Collectors.toList());
+		}).toList();
 	}
 
 	public Page<PerfilPermissaoDTO> findAllPagePerfil(String nome, Pageable pageable) throws EntityNotFoundException {
@@ -67,7 +66,7 @@ public class PerfilPermissaoServiceImpl implements PerfilPermServInterface {
 		Specification<Perfil> spec = Perfil.filterByFields(nome);
 		Page<Perfil> result = perfilRepository.findAll(spec, pageable);
 		return result.map(perfil -> {
-			List<PermissaoDTO> permissoes = permissaoRepository.findByPerfil_percod(perfil.getPercod()).orElseGet(ArrayList::new).stream().map(PermissaoDTO::new).collect(Collectors.toList());
+			List<PermissaoDTO> permissoes = permissaoRepository.findByPerfil_percod(perfil.getPercod()).orElseGet(ArrayList::new).stream().map(PermissaoDTO::new).toList();
 			return new PerfilPermissaoDTO(perfil, permissoes);
 		});
 	}
@@ -94,7 +93,7 @@ public class PerfilPermissaoServiceImpl implements PerfilPermServInterface {
 			Objects.requireNonNull(perModel.getNome(), "Nome do Perfil está nulo.");
 			Perfil perfil = createUpdatePerfil(new Perfil(null, perModel.getNome().toUpperCase(), perModel.getDescricao()));
 
-			List<PermissaoDTO> permissaoList = perModel.getPermissoes().stream().map(permissao -> saveEntityPermissao(perfil, permissao)).collect(Collectors.toList());
+			List<PermissaoDTO> permissaoList = perModel.getPermissoes().stream().map(permissao -> saveEntityPermissao(perfil, permissao)).toList();
 
 			return new PerfilPermissaoDTO(perfil, permissaoList);
 		} catch (Exception e) {
@@ -111,7 +110,7 @@ public class PerfilPermissaoServiceImpl implements PerfilPermServInterface {
 		perfil.setPerdes(perModel.getDescricao());
 		Perfil perfilUp = perfilRepository.save(perfil);
 
-		List<PermissaoDTO> permissaoList = perModel.getPermissoes().stream().map(permissao -> updateEntityPermissao(perfilUp, permissao)).collect(Collectors.toList());
+		List<PermissaoDTO> permissaoList = perModel.getPermissoes().stream().map(permissao -> updateEntityPermissao(perfilUp, permissao)).toList();
 
 		return new PerfilPermissaoDTO(perfilUp, permissaoList);
 	}

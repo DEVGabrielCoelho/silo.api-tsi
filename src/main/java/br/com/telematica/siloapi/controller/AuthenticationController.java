@@ -1,9 +1,12 @@
 package br.com.telematica.siloapi.controller;
 
+import java.io.IOException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,7 +36,7 @@ public class AuthenticationController {
 
 	@PostMapping("/v1/auth")
 	@Operation(description = "Realizar autenticação de usuário. Recebe credenciais e retorna um token de acesso.")
-	public ResponseEntity<ResponseAuthDTO> postAuth(@Valid @RequestBody @NonNull AuthModel auth) throws Exception {
+	public ResponseEntity<ResponseAuthDTO> postAuth(@Valid @RequestBody @NonNull AuthModel auth) throws AuthenticationException, IOException  {
 		return userServImpl.authLogin(auth);
 	}
 

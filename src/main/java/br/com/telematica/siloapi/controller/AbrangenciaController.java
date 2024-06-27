@@ -1,7 +1,6 @@
 package br.com.telematica.siloapi.controller;
 
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,29 +40,25 @@ public class AbrangenciaController extends SecurityRestController {
 	@PostMapping("/v1/criar")
 	@Operation(description = "Criar uma nova Abrangência. Envia um objeto de abrangência e armazena-o no sistema.")
 	public ResponseEntity<AbrangenciaListaDetalhesDTO> criarAbrangencia(@RequestBody AbrangenciaModel cadastro) throws IOException {
-		var abrangenciaService = abrangenciaServImpl.save(cadastro);
-		return abrangenciaService;
+		return abrangenciaServImpl.save(cadastro);
 	}
 
 	@GetMapping("/v1/buscar/{codigo}")
 	@Operation(description = "Buscar uma abrangência pelo código. Retorna os detalhes de uma abrangência específica com base no código fornecido.")
 	public ResponseEntity<AbrangenciaListaDetalhesDTO> buscarAbrangenciaPorCodigo(@PathVariable @NonNull Long codigo) throws EntityNotFoundException, IOException {
-		var abrangenciaList = abrangenciaServImpl.findById(codigo);
-		return abrangenciaList;
+		return abrangenciaServImpl.findById(codigo);
 	}
 
 	@GetMapping("/v1/listar")
 	@Operation(description = "Listar todas as abrangências cadastradas. Retorna uma lista de todas as abrangências existentes.")
 	public ResponseEntity<List<AbrangenciaListaDetalhesDTO>> buscarListarAbrangencia() throws EntityNotFoundException, IOException {
-		var abrangenciaList = abrangenciaServImpl.findAll();
-		return abrangenciaList;
+		return abrangenciaServImpl.findAll();
 	}
 
 	@GetMapping("/v1/lista-items-abrangentes")
 	@Operation(description = "Listar todos os itens abrangentes por recurso. Retorna uma lista detalhada dos itens abrangentes organizados por recurso.")
 	public ResponseEntity<ItensAbrangentes> buscarListarItemsAbrangentes() throws EntityNotFoundException, IOException {
-		var abrangenciaList = abrangenciaServImpl.findByItemAbrangence();
-		return abrangenciaList;
+		return abrangenciaServImpl.findByItemAbrangence();
 	}
 
 	@GetMapping("/v1/paginado")
@@ -75,15 +70,13 @@ public class AbrangenciaController extends SecurityRestController {
 
 	@PutMapping("/v1/atualizar/{codigo}")
 	@Operation(description = "Atualizar uma abrangência existente. Atualiza os detalhes de uma abrangência com base no código fornecido.")
-	public ResponseEntity<AbrangenciaListaDetalhesDTO> atualizarAbrangencia(@Valid @PathVariable Long codigo, @Valid @RequestBody AbrangenciaModel entity) throws ParseException {
-		var abrangenciaService = abrangenciaServImpl.update(codigo, entity);
-		return abrangenciaService;
+	public ResponseEntity<AbrangenciaListaDetalhesDTO> atualizarAbrangencia(@Valid @PathVariable Long codigo, @Valid @RequestBody AbrangenciaModel entity) {
+		return abrangenciaServImpl.update(codigo, entity);
 	}
 
 	@DeleteMapping("/v1/deletar/{codigo}")
 	@Operation(description = "Deletar uma abrangência pelo código. Remove uma abrangência específica com base no código fornecido.")
 	public ResponseEntity<AbrangenciaListaDetalhesDTO> deletarAbrangencia(@Valid @PathVariable @NonNull Long codigo) throws IOException {
-		var abrangenciaService = abrangenciaServImpl.delete(codigo);
-		return abrangenciaService;
+		return abrangenciaServImpl.delete(codigo);
 	}
 }

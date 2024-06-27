@@ -24,7 +24,6 @@ import br.com.telematica.siloapi.model.dto.PlantaDTO;
 import br.com.telematica.siloapi.services.PlantaServInterface;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.EntityNotFoundException;
 
@@ -61,26 +60,19 @@ public class PlantaController extends SecurityRestController {
 	}
 
 	@Operation(description = "Recupera uma lista paginada de objetos PlantaDTO com filtragem e ordenação opcionais.")
-    @Parameters({
-        @Parameter(name = "filtro", description = "Termo de filtro opcional para buscar Plantas."),
-        @Parameter(name = "pagina", description = "Número da página a ser recuperada, começando em 0."),
-        @Parameter(name = "tamanho", description = "Número de itens por página."),
-        @Parameter(name = "ordenarPor", description = "Campo pelo qual os resultados serão ordenados. (codigo, empresa, nome)"),
-        @Parameter(name = "direcao", description = "Direção da ordenação, podendo ser ASC (ascendente) ou DESC (descendente).")
-    })
-    @GetMapping("/v1/paginado")
-    public ResponseEntity<Page<PlantaDTO>> findAllPaginado(
-            @RequestParam(value = "filtro", required = false) String filtro,
-            @RequestParam(value = "pagina", defaultValue = "0") int pagina,
-            @RequestParam(value = "tamanho", defaultValue = "10") int tamanho,
-            @RequestParam(value = "ordenarPor", defaultValue = "codigo") String ordenarPor,
-            @RequestParam(value = "direcao", defaultValue = "ASC") String direcao) throws EntityNotFoundException, IOException {
+	@Parameter(name = "filtro", description = "Termo de filtro opcional para buscar Plantas.")
+	@Parameter(name = "pagina", description = "Número da página a ser recuperada, começando em 0.")
+	@Parameter(name = "tamanho", description = "Número de itens por página.")
+	@Parameter(name = "ordenarPor", description = "Campo pelo qual os resultados serão ordenados. (codigo, empresa, nome)")
+	@Parameter(name = "direcao", description = "Direção da ordenação, podendo ser ASC (ascendente) ou DESC (descendente).")
+	@GetMapping("/v1/paginado")
+	public ResponseEntity<Page<PlantaDTO>> findAllPaginado(@RequestParam(value = "filtro", required = false) String filtro, @RequestParam(value = "pagina", defaultValue = "0") int pagina, @RequestParam(value = "tamanho", defaultValue = "10") int tamanho,
+			@RequestParam(value = "ordenarPor", defaultValue = "codigo") String ordenarPor, @RequestParam(value = "direcao", defaultValue = "ASC") String direcao) throws EntityNotFoundException, IOException {
 
-        Sort sort = Sort.by(Sort.Direction.fromString(direcao), PlantaDTO.filtrarDirecao(ordenarPor));
-        Pageable pageable = PageRequest.of(pagina, tamanho, sort);
+		Sort sort = Sort.by(Sort.Direction.fromString(direcao), PlantaDTO.filtrarDirecao(ordenarPor));
+		Pageable pageable = PageRequest.of(pagina, tamanho, sort);
 
-        return planta.plantaFindAllPaginado(filtro, pageable);
-    }
+		return planta.plantaFindAllPaginado(filtro, pageable);
+	}
 
-	
 }

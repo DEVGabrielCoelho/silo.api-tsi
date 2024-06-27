@@ -24,7 +24,6 @@ import br.com.telematica.siloapi.model.dto.SiloDTO;
 import br.com.telematica.siloapi.services.SiloServInterface;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
@@ -60,26 +59,19 @@ public class SiloController extends SecurityRestController {
 	}
 
 	@Operation(description = "Recupera uma lista paginada de objetos SiloDTO com filtragem e ordenação opcionais.")
-    @Parameters({
-        @Parameter(name = "filtro", description = "Termo de filtro opcional para buscar Silos."),
-        @Parameter(name = "pagina", description = "Número da página a ser recuperada, começando em 0."),
-        @Parameter(name = "tamanho", description = "Número de itens por página."),
-        @Parameter(name = "ordenarPor", description = "Campo pelo qual os resultados serão ordenados. (codigo, tipoSilo, planta, nome)"),
-        @Parameter(name = "direcao", description = "Direção da ordenação, podendo ser ASC (ascendente) ou DESC (descendente).")
-    })
-    @GetMapping("/v1/paginado")
-    public ResponseEntity<Page<SiloDTO>> findAllPaginado(
-            @RequestParam(value = "filtro", required = false) String filtro,
-            @RequestParam(value = "pagina", defaultValue = "0") int pagina,
-            @RequestParam(value = "tamanho", defaultValue = "10") int tamanho,
-            @RequestParam(value = "ordenarPor", defaultValue = "silcod") String ordenarPor,
-            @RequestParam(value = "direcao", defaultValue = "ASC") String direcao) {
+	@Parameter(name = "filtro", description = "Termo de filtro opcional para buscar Silos.")
+	@Parameter(name = "pagina", description = "Número da página a ser recuperada, começando em 0.")
+	@Parameter(name = "tamanho", description = "Número de itens por página.")
+	@Parameter(name = "ordenarPor", description = "Campo pelo qual os resultados serão ordenados. (codigo, tipoSilo, planta, nome)")
+	@Parameter(name = "direcao", description = "Direção da ordenação, podendo ser ASC (ascendente) ou DESC (descendente).")
+	@GetMapping("/v1/paginado")
+	public ResponseEntity<Page<SiloDTO>> findAllPaginado(@RequestParam(value = "filtro", required = false) String filtro, @RequestParam(value = "pagina", defaultValue = "0") int pagina, @RequestParam(value = "tamanho", defaultValue = "10") int tamanho,
+			@RequestParam(value = "ordenarPor", defaultValue = "silcod") String ordenarPor, @RequestParam(value = "direcao", defaultValue = "ASC") String direcao) {
 
-        Sort sort = Sort.by(Sort.Direction.fromString(direcao), SiloDTO.filtrarDirecao(ordenarPor));
-        Pageable pageable = PageRequest.of(pagina, tamanho, sort);
+		Sort sort = Sort.by(Sort.Direction.fromString(direcao), SiloDTO.filtrarDirecao(ordenarPor));
+		Pageable pageable = PageRequest.of(pagina, tamanho, sort);
 
-        return silo.siloFindAllPaginado(filtro, pageable);
-    }
+		return silo.siloFindAllPaginado(filtro, pageable);
+	}
 
-	
 }

@@ -25,5 +25,7 @@ public interface EmpresaServInterface {
 	ResponseEntity<EmpresaDTO> findByIdApi(Long codigo) throws IOException;
 
 	ResponseEntity<EmpresaDTO> empresaFindByCnpjApi(Long codigo) throws IOException;
+	
+	List<EmpresaDTO> sendListAbrangenciaEmpresaDTO();
 
 }

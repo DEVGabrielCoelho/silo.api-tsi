@@ -30,7 +30,7 @@ public class AuthDeviceUtil {
 
 	public static boolean validarTokenBase(String token) {
 		String decodedToken = Utils.decode(token);
-		System.out.println("Decoded Token: " + decodedToken);
+//		System.out.println("Decoded Token: " + decodedToken);
 		String[] parse = splitSenha(decodedToken, "_");
 		if (parse.length < 3)
 			return false;
@@ -55,7 +55,7 @@ public class AuthDeviceUtil {
 		try {
 			return senha.split(typeSplit);
 		} catch (RuntimeException e) {
-			return null;
+			return new String[0];
 		}
 	}
 

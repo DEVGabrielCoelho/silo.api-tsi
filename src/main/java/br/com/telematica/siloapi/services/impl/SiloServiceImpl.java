@@ -3,7 +3,6 @@ package br.com.telematica.siloapi.services.impl;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,7 +61,7 @@ public class SiloServiceImpl implements SiloServInterface {
 
 			logger.info("Silo salvo com sucesso: " + result);
 			return MessageResponse.success(new SiloDTO(result));
-		} catch (Exception e) {
+		} catch (EntityNotFoundException e) {
 			logger.error("Erro ao salvar o Silo: ", e);
 			throw new IOException("Erro ao salvar o Silo: " + siloModel, e);
 		}
@@ -101,15 +100,15 @@ public class SiloServiceImpl implements SiloServInterface {
 
 			logger.info("Silo atualizado com sucesso: " + result);
 			return MessageResponse.success(new SiloDTO(result));
-		} catch (Exception e) {
+		} catch (EntityNotFoundException e) {
 			logger.error("Erro ao atualizar o Silo: ", e);
 			throw new IOException("Erro ao atualizar o Silo " + codigo + ": " + siloModel, e);
 		}
 	}
 
 	@Override
-	public List<Silo> findAll() throws IOException {
-		return siloRepository.findAll();
+	public List<SiloDTO> sendListAbrangenciaSiloDTO() throws IOException {
+		return siloRepository.findAll().stream().map(SiloDTO::new).toList();
 	}
 
 	@Override
@@ -122,7 +121,7 @@ public class SiloServiceImpl implements SiloServInterface {
 			spec = spec.and(Silo.filterByFields(null, findAbrangencia().listAbrangencia()));
 		}
 
-		List<SiloDTO> siloDTOList = siloRepository.findAll(spec).stream().map(SiloDTO::new).collect(Collectors.toList());
+		List<SiloDTO> siloDTOList = siloRepository.findAll(spec).stream().map(this::abrangenciaSilo).toList();
 		return MessageResponse.success(siloDTOList);
 	}
 

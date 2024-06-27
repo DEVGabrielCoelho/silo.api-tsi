@@ -61,7 +61,7 @@ public class AbrangenciaDetalhesModel {
 		return builder.toString();
 	}
 
-	public AbrangenciaDetalhesModel(RecursoMapEnum recurso, Integer all, Integer hierarquia, JsonNode dados) {
+	public AbrangenciaDetalhesModel(RecursoMapEnum recurso, Integer hierarquia, JsonNode dados) {
 		super();
 		this.recurso = recurso;
 		this.hierarquia = hierarquia;

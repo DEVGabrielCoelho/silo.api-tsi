@@ -33,8 +33,8 @@ public class Utils {
 	private static SimpleDateFormat sdf;
 	private static final SimpleDateFormat sdfbase = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 
-	public static String convertDateToString(Date smohke) {
-		LocalDateTime localDateTime = LocalDateTime.ofInstant(new Date().toInstant(), ZoneId.systemDefault());
+	public static String convertDateToString(Date date) {
+		LocalDateTime localDateTime = LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
 		return dtfPadrao.format(localDateTime);
 	}
 
